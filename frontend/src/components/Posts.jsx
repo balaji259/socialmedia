@@ -1,11 +1,184 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
 
+// Define all styles at the top
+const postComponentContainerStyle = {
+  marginTop: '15px',
+  padding: '20px',
+  backgroundColor: 'transparent',
+  maxHeight: '80vh',
+  overflowY: 'scroll',
+};
+
+const postInputContainerStyle = {
+  backgroundColor: '#fff',
+  padding: '10px',
+  borderRadius: '5px',
+  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.2)',
+};
+
+const textareaStyle = {
+  width: '100%',
+  height: '80px',
+  padding: '10px',
+  borderRadius: '5px',
+  borderColor: '#ddd',
+  resize: 'none',
+};
+
+const submitButtonStyle = {
+  backgroundColor: '#007bff',
+  color: '#fff',
+  padding: '8px 15px',
+  border: 'none',
+  cursor: 'pointer',
+  marginTop: '10px',
+};
+
+const userPostStyle = {
+  backgroundColor: '#ffffff',
+  padding: '15px',
+  marginBottom: '20px',
+  borderRadius: '8px',
+  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+  border: '2px solid black'
+};
+
+const postHeaderStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  marginBottom: '10px',
+  position: 'relative'
+};
+
+const profilePicStyle = {
+  width: '40px',
+  height: '40px',
+  borderRadius: '50%',
+  marginRight: '10px',
+};
+
+const usernameStyle = {
+  fontWeight: 'bold',
+};
+
+const toggleButtonStyle = {
+  background: 'none',
+  border: 'none',
+  fontSize: '24px',
+  cursor: 'pointer',
+};
+
+const dropdownMenuStyle = {
+  position: 'absolute',
+  right: '20px',
+  top: '20px', // Position the dropdown below the three dots
+  backgroundColor: '#333',
+  color: '#fff',
+  borderRadius: '4px',
+  padding: '8px 0',
+  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+  zIndex: 1
+};
+
+const menuItemStyle = {
+  padding: '8px 16px',
+  cursor: 'pointer',
+};
+
+menuItemStyle[':hover'] = { backgroundColor: '#444' };
+
+const postMediaStyle = {
+  width: '100%',
+  maxHeight: '400px',
+  borderRadius: '8px',
+  marginTop: '10px',
+};
+
+const postFooterStyle = {
+  display: 'flex',
+  justifyContent: 'space-around',
+  marginTop: '15px',
+};
+
+const postButtonStyle = {
+  background: 'none',
+  border: 'none',
+  fontSize: '16px',
+  cursor: 'pointer',
+  color: '#007bff',
+};
+
+const commentsSectionStyle = {
+  marginTop: '10px',
+};
+
+const commentStyle = {
+  padding: '5px 0',
+  borderTop: '1px solid #e0e0e0',
+  fontSize: '14px',
+};
+
+const menuStyle = {
+  position: 'absolute',
+  top: '100%',
+  right: '0',
+  backgroundColor: '#fff',
+  border: '1px solid #ddd',
+  borderRadius: '5px',
+  boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
+  zIndex: 1,
+};
+
+// const menuItemStyle = {
+//   display: 'block',
+//   padding: '8px 12px',
+//   cursor: 'pointer',
+//   color: '#007bff',
+//   backgroundColor: 'white',
+//   border: 'none',
+//   width: '100%',
+//   textAlign: 'left',
+// };
+
+// const toggleButtonStyle = {
+//   background: 'none',
+//   border: 'none',
+//   fontSize: '24px',
+//   cursor: 'pointer'
+// };
+
+// const dropdownMenuStyle = {
+//   position: 'absolute',
+//   right: '10px',
+//   top: '30px',
+//   backgroundColor: '#333',
+//   color: '#fff',
+//   borderRadius: '4px',
+//   padding: '8px 0',
+//   boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+//   zIndex: 1
+// };
+
+// const menuItemStyle = {
+//   padding: '8px 16px',
+//   cursor: 'pointer',
+// };
+
+// menuItemStyle[':hover'] = { backgroundColor: '#444' }; // Inline pseudo-selector
+
+// Existing inline CSS styles...
+// Add postComponentContainerStyle, postInputContainerStyle, textareaStyle, submitButtonStyle, userPostStyle, postHeaderStyle, profilePicStyle, usernameStyle, postFooterStyle, postButtonStyle, commentsSectionStyle, commentStyle, etc., here.
+
+
+
 const PostComponent = () => {
   const [posts, setPosts] = useState([]);
   const [postContent, setPostContent] = useState("");
   const [mediaContent, setMediaContent] = useState(null);
-  
+  const [showMenus, setShowMenus] = useState({}); // Track which post's menu is open
+
   const backendBaseUrl = 'http://localhost:7000';
 
   const fetchPosts = async () => {
@@ -71,24 +244,22 @@ const PostComponent = () => {
         setMediaContent(null);
         await fetchPosts(); // Refresh posts
       } else {
-        toast.error("Failed to create post", { duration: 2000 });
+        alert("Failed to create post");
       }
     } catch (error) {
       console.error("Error submitting form:", error);
-      toast.error("Error submitting form", { duration: 2000 });
+      alert("Error submitting form");
     }
   };
 
-  // Like/Dislike functionality
   const handleLikeToggle = async (postId) => {
     const token = localStorage.getItem("token");
-  
+
     if (!token) {
       alert("No token found. Please log in again.");
       return;
     }
-  
-    // Decode user ID from token (assuming JWT format)
+
     const base64Url = token.split(".")[1];
     const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
     const jsonPayload = decodeURIComponent(
@@ -98,21 +269,18 @@ const PostComponent = () => {
         .join("")
     );
     const { userId } = JSON.parse(jsonPayload);
-  
+
     try {
       const response = await fetch(`${backendBaseUrl}/posts/like/${userId}/${postId}`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
       });
-  
+
       if (response.ok) {
         const data = await response.json();
-  
-        // Update the posts state to reflect the new like status and count immediately
         setPosts((prevPosts) =>
           prevPosts.map((post) => {
             if (post.postId === postId) {
-              // Toggle 'liked' status and update 'likesCount'
               const isLiked = !post.liked;
               const updatedLikesCount = isLiked ? post.likesCount + 1 : post.likesCount - 1;
               
@@ -122,14 +290,21 @@ const PostComponent = () => {
           })
         );
       } else {
-        toast.error("Failed to update like status", { duration: 2000 });
+        alert("Failed to update like status");
       }
     } catch (error) {
       console.error("Error updating like status:", error);
-      toast.error("Error updating like status", { duration: 2000 });
+      alert("Error updating like status");
     }
   };
-  
+
+  const handleToggleMenu = (postId) => {
+    setShowMenus((prevMenus) => ({
+      ...prevMenus,
+      [postId]: !prevMenus[postId]
+    }));
+  };
+
   return (
     <div style={postComponentContainerStyle}>
       <div style={postInputContainerStyle}>
@@ -149,7 +324,7 @@ const PostComponent = () => {
           <button type="submit" style={submitButtonStyle}>Post</button>
         </form>
       </div>
-  
+
       <div style={{ marginTop: '20px' }}>
         {posts.map((post, index) => (
           <div key={index} style={userPostStyle}>
@@ -160,11 +335,18 @@ const PostComponent = () => {
                 style={profilePicStyle}
               />
               <span style={usernameStyle}>{post.user?.username || "Anonymous"}</span>
-              <button style={toggleButtonStyle}>⋮</button>
+              <button style={toggleButtonStyle} onClick={() => handleToggleMenu(post.postId)}>⋮</button>
+              
+              {showMenus[post.postId] && (
+                <div style={dropdownMenuStyle}>
+                  <div style={menuItemStyle}>Edit</div>
+                  <div style={menuItemStyle}>Delete</div>
+                </div>
+              )}
             </div>
 
             <p>{post.caption}</p>
-  
+
             {post.content && post.content.mediaUrl && (
               post.postType === 'video' ? (
                 <video
@@ -180,22 +362,22 @@ const PostComponent = () => {
                 />
               )
             )}
-  
+
             <div style={postFooterStyle}>
               <button
                 style={postButtonStyle}
-                onClick={() => handleLikeToggle(post.postId)} // Fix: Access correct property for post ID
+                onClick={() => handleLikeToggle(post.postId)}
               >
                 {post.liked ? '👎 Dislike' : '👍 Like'} {post.likesCount}
               </button>
-              <button style={postButtonStyle}>💬 comments</button>
+              <button style={postButtonStyle}>💬 Comment</button>
               <button style={postButtonStyle}>🔗 Share</button>
             </div>
-  
+
             <div style={commentsSectionStyle}>
-              {post.comments.map((comment, idx) => (
-                <div key={idx} style={commentStyle}>
-                  <strong>{comment.username}:</strong> {comment.text}
+              {post.comments.map((comment, i) => (
+                <div key={i} style={commentStyle}>
+                  <strong>{comment.user?.username || "Anonymous"}:</strong> {comment.text}
                 </div>
               ))}
             </div>
@@ -204,107 +386,6 @@ const PostComponent = () => {
       </div>
     </div>
   );
-};
-
-
-
-// ... (CSS styles remain the same)
-const postComponentContainerStyle = {
-  marginTop: '15px',
-  padding: '20px',
-  backgroundColor: 'transparent',
-  maxHeight: '80vh',
-  overflowY: 'scroll',
-};
-
-const postInputContainerStyle = {
-  backgroundColor: '#fff',
-  padding: '10px',
-  borderRadius: '5px',
-  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.2)',
-};
-
-const textareaStyle = {
-  width: '100%',
-  height: '80px',
-  padding: '10px',
-  borderRadius: '5px',
-  borderColor: '#ddd',
-  resize: 'none',
-};
-
-const submitButtonStyle = {
-  backgroundColor: '#007bff',
-  color: '#fff',
-  padding: '8px 15px',
-  border: 'none',
-  cursor: 'pointer',
-  marginTop: '10px',
-};
-
-const userPostStyle = {
-  backgroundColor: '#ffffff',
-  padding: '15px',
-  marginBottom: '20px',
-  borderRadius: '8px',
-  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-  border:'2px solid black'
-};
-
-const postHeaderStyle = {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  marginBottom: '10px',
-};
-
-const profilePicStyle = {
-  width: '40px',
-  height: '40px',
-  borderRadius: '50%',
-  marginRight: '10px',
-};
-
-const usernameStyle = {
-  fontWeight: 'bold',
-};
-
-const toggleButtonStyle = {
-  background: 'none',
-  border: 'none',
-  fontSize: '20px',
-  cursor: 'pointer',
-};
-
-const postMediaStyle = {
-  width: '100%',
-  maxHeight: '400px',
-  borderRadius: '8px',
-  marginTop: '10px',
-};
-
-const postFooterStyle = {
-  display: 'flex',
-  justifyContent: 'space-around',
-  marginTop: '15px',
-};
-
-const postButtonStyle = {
-  background: 'none',
-  border: 'none',
-  fontSize: '16px',
-  cursor: 'pointer',
-  color: '#007bff',
-};
-
-const commentsSectionStyle = {
-  marginTop: '10px',
-};
-
-const commentStyle = {
-  padding: '5px 0',
-  borderTop: '1px solid #e0e0e0',
-  fontSize: '14px',
 };
 
 export default PostComponent;
