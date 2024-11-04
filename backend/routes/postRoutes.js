@@ -168,7 +168,7 @@ function formatNestedReply(nestedReply) {
 // POST route to like/unlike a post
 
 // Like/Unlike Post
-router.post('/like/:userId/:postId', async (req, res) => {
+    router.post('/like/:userId/:postId', async (req, res) => {
     const { postId, userId } = req.params;
 
     console.log(`postid ${postId}`);

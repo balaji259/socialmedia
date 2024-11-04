@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { fetchUserDetails, displayPosts } from './userPosts';
 import { toast } from 'react-hot-toast';
 
 const PostComponent = () => {
@@ -7,8 +6,7 @@ const PostComponent = () => {
   const [postContent, setPostContent] = useState("");
   const [mediaContent, setMediaContent] = useState(null);
   
-// const BACKEND_URL='http://localhost:7000'
-const backendBaseUrl='http://localhost:7000'
+  const backendBaseUrl = 'http://localhost:7000';
 
   const fetchPosts = async () => {
     const token = localStorage.getItem("token");
@@ -21,24 +19,12 @@ const backendBaseUrl='http://localhost:7000'
       }
       
       const data = await response.json();
-      console.log(`posts`);
-      console.log(data);
       setPosts(data);
-
-      // Log the media URL if it exists
-      data.forEach(post => {
-        if (post.content && post.content.mediaUrl) {
-          console.log("Media URL:", `${backendBaseUrl}/${post.content.mediaUrl}`);
-        }
-      });
+      console.log(data);
     } catch (error) {
       console.error("Error fetching posts:", error);
     }
   };
-
-
- 
-
 
   useEffect(() => {
     fetchPosts();
@@ -81,19 +67,69 @@ const backendBaseUrl='http://localhost:7000'
       });
 
       if (response.ok) {
-        // alert("Post created successfully!");
         setPostContent("");
         setMediaContent(null);
         await fetchPosts(); // Refresh posts
       } else {
-        toast.error("Failed to create post",{duration:2000});
+        toast.error("Failed to create post", { duration: 2000 });
       }
     } catch (error) {
       console.error("Error submitting form:", error);
-      toast.error("Error submitting form",{duration:2000});
+      toast.error("Error submitting form", { duration: 2000 });
     }
   };
 
+  // Like/Dislike functionality
+  const handleLikeToggle = async (postId) => {
+    const token = localStorage.getItem("token");
+  
+    if (!token) {
+      alert("No token found. Please log in again.");
+      return;
+    }
+  
+    // Decode user ID from token (assuming JWT format)
+    const base64Url = token.split(".")[1];
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split("")
+        .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+        .join("")
+    );
+    const { userId } = JSON.parse(jsonPayload);
+  
+    try {
+      const response = await fetch(`${backendBaseUrl}/posts/like/${userId}/${postId}`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+  
+      if (response.ok) {
+        const data = await response.json();
+  
+        // Update the posts state to reflect the new like status and count immediately
+        setPosts((prevPosts) =>
+          prevPosts.map((post) => {
+            if (post.postId === postId) {
+              // Toggle 'liked' status and update 'likesCount'
+              const isLiked = !post.liked;
+              const updatedLikesCount = isLiked ? post.likesCount + 1 : post.likesCount - 1;
+              
+              return { ...post, liked: isLiked, likesCount: updatedLikesCount };
+            }
+            return post;
+          })
+        );
+      } else {
+        toast.error("Failed to update like status", { duration: 2000 });
+      }
+    } catch (error) {
+      console.error("Error updating like status:", error);
+      toast.error("Error updating like status", { duration: 2000 });
+    }
+  };
+  
   return (
     <div style={postComponentContainerStyle}>
       <div style={postInputContainerStyle}>
@@ -114,11 +150,9 @@ const backendBaseUrl='http://localhost:7000'
         </form>
       </div>
   
-      {/* Displaying User Posts */}
       <div style={{ marginTop: '20px' }}>
         {posts.map((post, index) => (
           <div key={index} style={userPostStyle}>
-            {/* Post Header */}
             <div style={postHeaderStyle}>
               <img
                 src={post.user.profilePic === '/images/default_profile.jpeg' ? '/images/default_profile.jpeg' : `${backendBaseUrl}${post.user.profilePic}`}
@@ -128,15 +162,11 @@ const backendBaseUrl='http://localhost:7000'
               <span style={usernameStyle}>{post.user?.username || "Anonymous"}</span>
               <button style={toggleButtonStyle}>⋮</button>
             </div>
-  
-            {console.log(`profilepicurl-${backendBaseUrl}${post.user.profilePic}`)}
-  
-            {/* Post Content */}
+
             <p>{post.caption}</p>
   
-            {/* Render media based on type */}
             {post.content && post.content.mediaUrl && (
-              post.content.mediaType === 'video' ? (
+              post.postType === 'video' ? (
                 <video
                   src={`${backendBaseUrl}/${post.content.mediaUrl}`}
                   controls
@@ -151,14 +181,17 @@ const backendBaseUrl='http://localhost:7000'
               )
             )}
   
-            {/* Interactive Buttons */}
             <div style={postFooterStyle}>
-              <button style={postButtonStyle}>👍 {post.likesCount}</button>
+              <button
+                style={postButtonStyle}
+                onClick={() => handleLikeToggle(post.postId)} // Fix: Access correct property for post ID
+              >
+                {post.liked ? '👎 Dislike' : '👍 Like'} {post.likesCount}
+              </button>
               <button style={postButtonStyle}>💬 comments</button>
               <button style={postButtonStyle}>🔗 Share</button>
             </div>
   
-            {/* Comments Section */}
             <div style={commentsSectionStyle}>
               {post.comments.map((comment, idx) => (
                 <div key={idx} style={commentStyle}>
@@ -171,7 +204,9 @@ const backendBaseUrl='http://localhost:7000'
       </div>
     </div>
   );
-}  
+};
+
+
 
 // ... (CSS styles remain the same)
 const postComponentContainerStyle = {
