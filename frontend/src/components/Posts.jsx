@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
+import { useNavigate } from "react-router-dom";
+
 
 // Define all styles at the top
 const postComponentContainerStyle = {
@@ -174,6 +176,7 @@ const menuStyle = {
 
 
 const PostComponent = () => {
+  const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
   const [postContent, setPostContent] = useState("");
   const [mediaContent, setMediaContent] = useState(null);
@@ -305,6 +308,35 @@ const PostComponent = () => {
     }));
   };
 
+
+  const reportPost = (postId) => {
+    const token = localStorage.getItem("token");
+
+    // Decode the JWT token to get the userId
+    const payload = parseJwt(token);
+    if (!payload || !payload.userId) {
+        alert("User not authenticated. Please log in again.");
+        return;
+    }
+
+    const userId = payload.userId;
+
+    // Redirect to the report page with query parameters
+    navigate(`/report?postId=${postId}&userId=${userId}`);
+};
+
+const parseJwt = (token) => {
+    try {
+        const base64Url = token.split(".")[1];
+        const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+        return JSON.parse(window.atob(base64));
+    } catch (error) {
+        console.error("Invalid token format");
+        return null;
+    }
+};
+
+
   return (
     <div style={postComponentContainerStyle}>
       <div style={postInputContainerStyle}>
@@ -340,7 +372,7 @@ const PostComponent = () => {
               {showMenus[post.postId] && (
                 <div style={dropdownMenuStyle}>
                   <div style={menuItemStyle}>Edit</div>
-                  <div style={menuItemStyle}>Delete</div>
+                  <div style={menuItemStyle} onClick={()=>{reportPost(post.postId)}}>Report</div>
                 </div>
               )}
             </div>

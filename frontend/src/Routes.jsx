@@ -7,6 +7,7 @@ import Navbar from './components/Navbar';
 import Dashboard from './components/Dashboard';
 import SuggestionSidebar from './components/Suggestions';
 import PostComponent from './components/Posts';
+import ReportPost from './components/Report';
 import Home from "./components/Home"
 
 const RoutesComponent = () => {
@@ -20,6 +21,7 @@ const RoutesComponent = () => {
                 <Route path="/suggestions" element={<SuggestionSidebar/>} />
                 <Route path="/posts" element={<PostComponent />} />
                 <Route path="/home" element={<Home />} />
+                <Route path="/report" element={<ReportPost />} />
             </Routes>
         </Router>
     );
