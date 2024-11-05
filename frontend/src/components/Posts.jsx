@@ -144,6 +144,7 @@ const PostComponent = () => {
   const [showMenus, setShowMenus] = useState({}); // Track which post's menu is open
   const [newComment, setNewComment] = useState('');
   const [replyingTo, setReplyingTo] = useState(null);
+  const [openComments, setOpenComments] = useState({}); 
 
   const backendBaseUrl = 'http://localhost:7000';
 
@@ -167,6 +168,7 @@ const PostComponent = () => {
 
   useEffect(() => {
     fetchPosts();
+    
   }, []);
 
   const handleSubmit = async (e) => {
@@ -404,83 +406,89 @@ const handleAddReply = async (commentId) => {
   }
 };
 
-  return (
-    <div style={postComponentContainerStyle}>
-      <div style={postInputContainerStyle}>
-        <form onSubmit={handleSubmit}>
-          <textarea
-            placeholder="What are you thinking?"
-            value={postContent}
-            onChange={(e) => setPostContent(e.target.value)}
-            style={textareaStyle}
-          />
-          <input
-            type="file"
-            accept="image/*,video/*"
-            onChange={(e) => setMediaContent(e.target.files[0])}
-            style={{ marginTop: '10px' }}
-          />
-          <button type="submit" style={submitButtonStyle}>Post</button>
-        </form>
-      </div>
+const toggleComments = (postId) => {
+  setOpenComments((prev) => ({
+    ...prev,
+    [postId]: !prev[postId] // Toggle the visibility for this specific post
+  }));
+};
 
-      <div style={{ marginTop: '20px' }}>
-        {posts.map((post, index) => (
-          <div key={index} style={userPostStyle}>
-            <div style={postHeaderStyle}>
-              <img
-                src={post.user.profilePic === '/images/default_profile.jpeg' ? '/images/default_profile.jpeg' : `${backendBaseUrl}${post.user.profilePic}`}
-                alt="User Profile"
-                style={profilePicStyle}
-              />
-              <span style={usernameStyle}>{post.user?.username || "Anonymous"}</span>
-              <button style={toggleButtonStyle} onClick={() => handleToggleMenu(post.postId)}>⋮</button>
-              
-              {showMenus[post.postId] && (
-                <div style={dropdownMenuStyle}>
-                  <div style={menuItemStyle} onClick={()=>{savePost(post.postId)}}>Save Post</div>
-                  <div style={menuItemStyle} onClick={()=>{reportPost(post.postId)}}>Report</div>
-                </div>
-              )}
-            </div>
+return (
+  <div style={postComponentContainerStyle}>
+    <div style={postInputContainerStyle}>
+      <form onSubmit={handleSubmit}>
+        <textarea
+          placeholder="What are you thinking?"
+          value={postContent}
+          onChange={(e) => setPostContent(e.target.value)}
+          style={textareaStyle}
+        />
+        <input
+          type="file"
+          accept="image/*,video/*"
+          onChange={(e) => setMediaContent(e.target.files[0])}
+          style={{ marginTop: '10px' }}
+        />
+        <button type="submit" style={submitButtonStyle}>Post</button>
+      </form>
+    </div>
 
-            <p>{post.caption}</p>
-
-            {post.content && post.content.mediaUrl && (
-              post.postType === 'video' ? (
-                <video
-                  src={`${backendBaseUrl}/${post.content.mediaUrl}`}
-                  controls
-                  style={postMediaStyle}
-                />
-              ) : (
-                <img
-                  src={`${backendBaseUrl}/${post.content.mediaUrl}`}
-                  alt="Post Media"
-                  style={postMediaStyle}
-                />
-              )
+    <div style={{ marginTop: '20px' }}>
+      {posts.map((post, index) => (
+        <div key={index} style={userPostStyle}>
+          <div style={postHeaderStyle}>
+            <img
+              src={post.user.profilePic === '/images/default_profile.jpeg' ? '/images/default_profile.jpeg' : `${backendBaseUrl}${post.user.profilePic}`}
+              alt="User Profile"
+              style={profilePicStyle}
+            />
+            <span style={usernameStyle}>{post.user?.username || "Anonymous"}</span>
+            <button style={toggleButtonStyle} onClick={() => handleToggleMenu(post.postId)}>⋮</button>
+            
+            {showMenus[post.postId] && (
+              <div style={dropdownMenuStyle}>
+                <div style={menuItemStyle} onClick={() => savePost(post.postId)}>Save Post</div>
+                <div style={menuItemStyle} onClick={() => reportPost(post.postId)}>Report</div>
+              </div>
             )}
+          </div>
 
-            <div style={postFooterStyle}>
-              <button
-                style={postButtonStyle}
-                onClick={() => handleLikeToggle(post.postId)}
-              >
-                {post.liked ? '👎 Dislike' : '👍 Like'} {post.likesCount}
-              </button>
-              {/* <button style={postButtonStyle}>💬 Comment</button> */}
-              <button style={postButtonStyle} onClick={() => setReplyingTo({ postId: post.postId, commentId: null })}>💬 Comment</button>
-              <button style={postButtonStyle} onClick={() => copyPostIdToClipboard(post.postId)}>
-                🔗 Share
-              </button>
-            </div>
+          <p>{post.caption}</p>
 
+          {post.content && post.content.mediaUrl && (
+            post.postType === 'video' ? (
+              <video
+                src={`${backendBaseUrl}/${post.content.mediaUrl}`}
+                controls
+                style={postMediaStyle}
+              />
+            ) : (
+              <img
+                src={`${backendBaseUrl}/${post.content.mediaUrl}`}
+                alt="Post Media"
+                style={postMediaStyle}
+              />
+            )
+          )}
+
+          <div style={postFooterStyle}>
+            <button
+              style={postButtonStyle}
+              onClick={() => handleLikeToggle(post.postId)}
+            >
+              {post.liked ? '👎 Dislike' : '👍 Like'} {post.likesCount}
+            </button>
+            <button style={postButtonStyle} onClick={() => toggleComments(post.postId)}>{`💬 Comment ${post.comments.length}`}</button>
+            <button style={postButtonStyle} onClick={() => copyPostIdToClipboard(post.postId)}>
+              🔗 Share
+            </button>
+          </div>
+
+          {openComments[post.postId] && (
             <div style={commentsSectionStyle}>
               {post.comments.map((comment, i) => (
                 <div key={i} style={commentStyle}>
                   <strong>{comment.user?.username || "Anonymous"}:</strong> {comment.text}
-                  {/* <div style={commentActionsStyle}> */}
                   <div>
                     <button onClick={() => toggleCommentLike(comment._id)}>
                       {/* {comment.liked ? '👎 Unlike' : '👍 Like'} {comment.likes.length} */}
@@ -504,30 +512,40 @@ const handleAddReply = async (commentId) => {
                 </div>
               ))}
 
-              {/* Comment/Reply Input */}
-              {replyingTo && replyingTo.postId === post.postId && (
-                // <div style={commentInputContainerStyle}>
-                <div>
-                  <textarea
-                    placeholder={replyingTo.commentId ? "Write a reply..." : "Write a comment..."}
-                    value={newComment}
-                    onChange={(e) => setNewComment(e.target.value)}
-                    // style={commentInputStyle}
-                  />
-                  <button
-                    onClick={() => replyingTo.commentId ? handleAddReply(replyingTo.commentId) : handleAddComment(post.postId)}
-                    // style={submitCommentButtonStyle}
-                  >
-                    {replyingTo.commentId ? "Reply" : "Comment"}
-                  </button>
-                </div>
-              )}
+              {/* Always show the Comment Input when comments are toggled open */}
+              <div>
+                <textarea
+                  placeholder="Write a comment..."
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                />
+                <button onClick={() => handleAddComment(post.postId)}>
+                  Comment
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          )}
+
+          {/* Comment/Reply Input */}
+          {replyingTo && replyingTo.postId === post.postId && (
+            <div>
+              <textarea
+                placeholder={replyingTo.commentId ? "Write a reply..." : "Write a comment..."}
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+              />
+              <button
+                onClick={() => replyingTo.commentId ? handleAddReply(replyingTo.commentId) : handleAddComment(post.postId)}
+              >
+                {replyingTo.commentId ? "Reply" : "Comment"}
+              </button>
+            </div>
+          )}
+        </div>
+      ))}
     </div>
-  );
+  </div>
+);
 };
 
 export default PostComponent;
