@@ -8,7 +8,8 @@ import Dashboard from './components/Dashboard';
 import SuggestionSidebar from './components/Suggestions';
 import PostComponent from './components/Posts';
 import ReportPost from './components/Report';
-import Home from "./components/Home"
+import SinglePost from './components/SinglePost';
+import Home from "./components/Home";
 
 const RoutesComponent = () => {
     return (
@@ -22,6 +23,7 @@ const RoutesComponent = () => {
                 <Route path="/posts" element={<PostComponent />} />
                 <Route path="/home" element={<Home />} />
                 <Route path="/report" element={<ReportPost />} />
+                <Route path="/posts/:postId" element={<SinglePost />} />
             </Routes>
         </Router>
     );

@@ -337,6 +337,56 @@ const parseJwt = (token) => {
 };
 
 
+function savePost(postId) {
+
+const token = localStorage.getItem("token");
+
+// Decode the JWT token to get the userId
+const payload = parseJwt(token);
+if (!payload || !payload.userId) {
+  toast.error("User not authenticated. Please log in again.",{duration:2500});
+  return;
+}
+
+const userId = payload.userId;
+
+
+  const saveData = { userId, postId };
+
+  console.log(saveData);
+
+  fetch(`${backendBaseUrl}/posts/save`, {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(saveData)
+  })
+  .then(response => response.json())
+  .then(data => {
+      if (data.success) {
+          toast.success("Post saved successfully!",{duration:2500});
+      } else {
+          toast.error("Failed to save post. " + data.message,{duration:2500});
+      }
+  })
+  .catch(error => {
+      console.error("Error:", error);
+      toast.error("An error occurred. Please try again.",{duration:2500});
+  });
+}
+
+const copyPostIdToClipboard = (postId) => {
+  const postUrl = `http://localhost:5174/posts/${postId}`; // Adjust URL structure
+  navigator.clipboard.writeText(postUrl)
+    .then(() => alert("Post link copied to clipboard! Share it anywhere."))
+    .catch(err => console.error('Failed to copy:', err));
+};
+
+
+
+
+
   return (
     <div style={postComponentContainerStyle}>
       <div style={postInputContainerStyle}>
@@ -371,7 +421,7 @@ const parseJwt = (token) => {
               
               {showMenus[post.postId] && (
                 <div style={dropdownMenuStyle}>
-                  <div style={menuItemStyle}>Edit</div>
+                  <div style={menuItemStyle} onClick={()=>{savePost(post.postId)}}>Save Post</div>
                   <div style={menuItemStyle} onClick={()=>{reportPost(post.postId)}}>Report</div>
                 </div>
               )}
@@ -403,7 +453,9 @@ const parseJwt = (token) => {
                 {post.liked ? '👎 Dislike' : '👍 Like'} {post.likesCount}
               </button>
               <button style={postButtonStyle}>💬 Comment</button>
-              <button style={postButtonStyle}>🔗 Share</button>
+              <button style={postButtonStyle} onClick={() => copyPostIdToClipboard(post.postId)}>
+                🔗 Share
+              </button>
             </div>
 
             <div style={commentsSectionStyle}>

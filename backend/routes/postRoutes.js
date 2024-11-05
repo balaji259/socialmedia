@@ -368,7 +368,9 @@ router.get('/getsaved/:userId', async (req, res) => {
 
 
 router.get('/:postId', async (req, res) => {
+    console.log(req.params);
     const { postId } = req.params;
+    console.log(postId);
 
     try {
         const post = await Post.findById(postId)
