@@ -11,18 +11,20 @@
     display: flex;
     align-items: center;
     margin-bottom: 10px;
+    position: relative; /* Needed for dropdown positioning */
   }
   
   .profile-pic {
-    width: 40px;
-    height: 40px;
+    width: 50px; /* Adjusted to match new JSX */
+    height: 50px; /* Adjusted to match new JSX */
     border-radius: 50%;
-    margin-right: 8px;
+    margin-right: 10px; /* Adjusted to match new JSX */
   }
   
   .post-user-info {
     display: flex;
     flex-direction: column;
+    flex-grow: 1; /* Allow to take available space */
   }
   
   .username {
@@ -61,5 +63,35 @@
     border: none;
     color: #007bff;
     cursor: pointer;
+    padding: 10px 15px; /* Added padding for buttons */
+    border-radius: 5px; /* Added border radius for buttons */
+  }
+  
+  .dropdown-menu {
+    position: absolute; /* For dropdown positioning */
+    background: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    border-radius: 5px; /* For rounded dropdown corners */
+  }
+  
+  .menu-item {
+    padding: 10px;
+    cursor: pointer;
+    color: #007bff; /* Menu item color */
+  }
+  
+  .menu-item:hover {
+    background: #f0f0f0; /* Change on hover */
+  }
+  
+  .comments-section {
+    margin-top: 10px;
+    border-top: 1px solid #ddd; /* Separator line */
+    padding-top: 10px;
+  }
+  
+  .comment {
+    margin-bottom: 5px;
   }
   

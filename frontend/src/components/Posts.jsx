@@ -133,45 +133,6 @@ const menuStyle = {
   zIndex: 1,
 };
 
-// const menuItemStyle = {
-//   display: 'block',
-//   padding: '8px 12px',
-//   cursor: 'pointer',
-//   color: '#007bff',
-//   backgroundColor: 'white',
-//   border: 'none',
-//   width: '100%',
-//   textAlign: 'left',
-// };
-
-// const toggleButtonStyle = {
-//   background: 'none',
-//   border: 'none',
-//   fontSize: '24px',
-//   cursor: 'pointer'
-// };
-
-// const dropdownMenuStyle = {
-//   position: 'absolute',
-//   right: '10px',
-//   top: '30px',
-//   backgroundColor: '#333',
-//   color: '#fff',
-//   borderRadius: '4px',
-//   padding: '8px 0',
-//   boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-//   zIndex: 1
-// };
-
-// const menuItemStyle = {
-//   padding: '8px 16px',
-//   cursor: 'pointer',
-// };
-
-// menuItemStyle[':hover'] = { backgroundColor: '#444' }; // Inline pseudo-selector
-
-// Existing inline CSS styles...
-// Add postComponentContainerStyle, postInputContainerStyle, textareaStyle, submitButtonStyle, userPostStyle, postHeaderStyle, profilePicStyle, usernameStyle, postFooterStyle, postButtonStyle, commentsSectionStyle, commentStyle, etc., here.
 
 
 
@@ -181,6 +142,8 @@ const PostComponent = () => {
   const [postContent, setPostContent] = useState("");
   const [mediaContent, setMediaContent] = useState(null);
   const [showMenus, setShowMenus] = useState({}); // Track which post's menu is open
+  const [newComment, setNewComment] = useState('');
+  const [replyingTo, setReplyingTo] = useState(null);
 
   const backendBaseUrl = 'http://localhost:7000';
 
@@ -384,8 +347,62 @@ const copyPostIdToClipboard = (postId) => {
 };
 
 
+const handleAddComment = async (postId) => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    alert("No token found. Please log in again.");
+    return;
+  }
 
+  try {
+    const response = await fetch(`${backendBaseUrl}/posts/comment/${postId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ text: newComment }),
+    });
 
+    if (response.ok) {
+      await fetchPosts(); // Refresh posts to show new comment
+      setNewComment('');
+    } else {
+      alert("Failed to add comment");
+    }
+  } catch (error) {
+    console.error("Error adding comment:", error);
+  }
+};
+
+const handleAddReply = async (commentId) => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    alert("No token found. Please log in again.");
+    return;
+  }
+
+  try {
+    const response = await fetch(`${backendBaseUrl}/comments/reply/${commentId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ text: newComment }),
+    });
+
+    if (response.ok) {
+      await fetchPosts(); // Refresh posts to show new reply
+      setNewComment('');
+      setReplyingTo(null);
+    } else {
+      alert("Failed to add reply");
+    }
+  } catch (error) {
+    console.error("Error adding reply:", error);
+  }
+};
 
   return (
     <div style={postComponentContainerStyle}>
@@ -452,7 +469,8 @@ const copyPostIdToClipboard = (postId) => {
               >
                 {post.liked ? '👎 Dislike' : '👍 Like'} {post.likesCount}
               </button>
-              <button style={postButtonStyle}>💬 Comment</button>
+              {/* <button style={postButtonStyle}>💬 Comment</button> */}
+              <button style={postButtonStyle} onClick={() => setReplyingTo({ postId: post.postId, commentId: null })}>💬 Comment</button>
               <button style={postButtonStyle} onClick={() => copyPostIdToClipboard(post.postId)}>
                 🔗 Share
               </button>
@@ -462,8 +480,48 @@ const copyPostIdToClipboard = (postId) => {
               {post.comments.map((comment, i) => (
                 <div key={i} style={commentStyle}>
                   <strong>{comment.user?.username || "Anonymous"}:</strong> {comment.text}
+                  {/* <div style={commentActionsStyle}> */}
+                  <div>
+                    <button onClick={() => toggleCommentLike(comment._id)}>
+                      {/* {comment.liked ? '👎 Unlike' : '👍 Like'} {comment.likes.length} */}
+                    </button>
+                    <button onClick={() => setReplyingTo({ postId: post.postId, commentId: comment._id })}>Reply</button>
+                  </div>
+
+                  {/* Display Replies */}
+                  <div>
+                    {comment.replies.map((reply, j) => (
+                      <div key={j} style={replyStyle}>
+                        <strong>{reply.user?.username || "Anonymous"}:</strong> {reply.text}
+                        <div>
+                          <button onClick={() => toggleCommentLike(reply._id)}>
+                            {reply.liked ? '👎 Unlike' : '👍 Like'} {reply.likes.length}
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               ))}
+
+              {/* Comment/Reply Input */}
+              {replyingTo && replyingTo.postId === post.postId && (
+                // <div style={commentInputContainerStyle}>
+                <div>
+                  <textarea
+                    placeholder={replyingTo.commentId ? "Write a reply..." : "Write a comment..."}
+                    value={newComment}
+                    onChange={(e) => setNewComment(e.target.value)}
+                    // style={commentInputStyle}
+                  />
+                  <button
+                    onClick={() => replyingTo.commentId ? handleAddReply(replyingTo.commentId) : handleAddComment(post.postId)}
+                    // style={submitCommentButtonStyle}
+                  >
+                    {replyingTo.commentId ? "Reply" : "Comment"}
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         ))}
