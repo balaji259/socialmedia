@@ -5,6 +5,8 @@ function UserDetails() {
     const [sectionData, setSectionData] = useState([]);
     const [activeSection, setActiveSection] = useState('posts');
     const [error, setError] = useState(null);
+    const [isEditing, setIsEditing] = useState(false);
+    const [editableData, setEditableData] = useState({});
 
     const backendBaseUrl = 'http://localhost:7000';
 
@@ -42,6 +44,44 @@ function UserDetails() {
         }
     };
 
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setEditableData(prevData => ({
+            ...prevData,
+            [name]: value
+        }));
+    };
+
+    const toggleEditMode = () => {
+        setIsEditing(!isEditing);
+    };
+
+    const saveChanges = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${backendBaseUrl}/profile/me`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(editableData),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error: ${response.status} ${response.statusText}`);
+            }
+
+            const updatedData = await response.json();
+            setUserData(updatedData);
+            setIsEditing(false);
+        } catch (error) {
+            console.error('Failed to save user data:', error);
+            setError('Error saving user data. Please try again later.');
+        }
+    };
+
+
     const fetchUserPosts = async () => {
         setSectionData(['Post 1', 'Post 2', 'Post 3']); // Sample data, replace with actual fetch logic
     };
@@ -69,17 +109,82 @@ function UserDetails() {
         return <div>Loading...</div>;
     }
 
+    
     return (
-        <div style={styles.container}>
-            <div style={styles.profileCard}>
-                <div style={styles.profilePicContainer}>
-                    <img
-                        src={userData.profilePic === '/images/default_profile.jpeg' ? '/images/default_profile.jpeg' : `${backendBaseUrl}${userData.profilePic}`}
-                        alt="Profile Pic"
-                        style={styles.profilePic}
+       <div style={styles.container}>
+    <div style={styles.profileCard}>
+        <div style={styles.profilePicContainer}>
+            {isEditing ? (
+                <div>
+                    <label htmlFor="profilePicUpload">
+                        <img
+                            src={editableData.profilePic || '/images/default_profile.jpeg'}
+                            alt="Profile Pic"
+                            style={styles.profilePic}
+                        />
+                    </label>
+                    <input
+                        type="file"
+                        id="profilePicUpload"
+                        name="profilePic"
+                        accept="image/*"
+                        style={{ display: 'none' }}
+                        // onChange={handleImageUpload}
                     />
                 </div>
-                <div style={styles.profileInfo}>
+            ) : (
+                <img
+                    src={userData.profilePic === '/images/default_profile.jpeg' ? '/images/default_profile.jpeg' : `${backendBaseUrl}${userData.profilePic}`}
+                    alt="Profile Pic"
+                    style={styles.profilePic}
+                />
+            )}
+        </div>
+        
+        <div style={styles.profileInfo}>
+            {isEditing ? (
+                <>
+                    <input
+                        type="text"
+                        name="username"
+                        value={editableData.username}
+                        onChange={handleInputChange}
+                        style={styles.input}
+                        placeholder="Username"
+                    />
+                    <input
+                        type="text"
+                        name="fullname"
+                        value={editableData.fullname}
+                        onChange={handleInputChange}
+                        style={styles.input}
+                        placeholder="Full Name"
+                    />
+                    <select
+                        id="edit-relationship-status"
+                        name="relationshipStatus"
+                        value={editableData.relationshipStatus}
+                        onChange={handleInputChange}
+                        style={styles.input}
+                    >
+                        <option value="single">Single</option>
+                        <option value="in a relationship">In a Relationship</option>
+                        <option value="married">Married</option>
+                        <option value="complicated">Complicated</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <textarea
+                        name="bio"
+                        value={editableData.bio}
+                        onChange={handleInputChange}
+                        style={styles.textarea}
+                        placeholder="Bio"
+                    />
+                    <button style={styles.saveButton} onClick={saveChanges}>Save Changes</button>
+                    <button style={styles.cancelButton} onClick={toggleEditMode}>Cancel</button>
+                </>
+            ) : (
+                <>
                     <h2 style={styles.username}>{userData.username || "User's Name"}</h2>
                     <p style={styles.fullname}>{userData.fullname || 'Full Name'}</p>
                     <div style={styles.statsContainer}>
@@ -90,20 +195,25 @@ function UserDetails() {
                     <p style={styles.additionalInfo}>Relationship Status: {userData.relationshipStatus || 'Single'}</p>
                     <p style={styles.additionalInfo}>Bio: {userData.bio || 'User bio goes here...'}</p>
                     <p style={styles.additionalInfo}>Streak: {userData.streak?.count || 0}</p>
-                    <button style={styles.editButton}>Edit Profile</button>
-                </div>
-            </div>
-            <div style={styles.buttonContainer}>
-                <button style={activeSection === 'posts' ? styles.activeButton : styles.inactiveButton} onClick={() => handleSectionChange('posts')}>Posts</button>
-                <button style={activeSection === 'saved' ? styles.activeButton : styles.inactiveButton} onClick={() => handleSectionChange('saved')}>Saved</button>
-                <button style={activeSection === 'liked' ? styles.activeButton : styles.inactiveButton} onClick={() => handleSectionChange('liked')}>Liked</button>
-            </div>
-            <div style={styles.sectionContent}>
-                {sectionData.map((item, index) => (
-                    <div key={index} style={styles.post}>{item}</div>
-                ))}
-            </div>
+                    <button style={styles.editButton} onClick={toggleEditMode}>Edit Profile</button>
+                </>
+            )}
         </div>
+    </div>
+
+    <div style={styles.buttonContainer}>
+        <button style={activeSection === 'posts' ? styles.activeButton : styles.inactiveButton} onClick={() => handleSectionChange('posts')}>Posts</button>
+        <button style={activeSection === 'saved' ? styles.activeButton : styles.inactiveButton} onClick={() => handleSectionChange('saved')}>Saved</button>
+        <button style={activeSection === 'liked' ? styles.activeButton : styles.inactiveButton} onClick={() => handleSectionChange('liked')}>Liked</button>
+    </div>
+    <div style={styles.sectionContent}>
+        {sectionData.map((item, index) => (
+            <div key={index} style={styles.post}>{item}</div>
+        ))}
+    </div>
+</div>
+
+
     );
 }
 
@@ -218,6 +328,41 @@ const styles = {
         boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
         fontSize: '1em',
     },
+    input: {
+        marginBottom: '10px',
+        padding: '10px',
+        width: '100%',
+        fontSize: '1em',
+    },
+    textarea: {
+        marginBottom: '10px',
+        padding: '10px',
+        width: '100%',
+        height: '80px',
+        fontSize: '1em',
+    },
+    saveButton: {
+        marginTop: '10px',
+        padding: '12px 24px',
+        backgroundColor: 'green',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '5px',
+        cursor: 'pointer',
+        fontSize: '1em',
+    },
+    cancelButton: {
+        marginTop: '10px',
+        padding: '12px 24px',
+        backgroundColor: '#ccc',
+        color: '#333',
+        border: 'none',
+        borderRadius: '5px',
+        cursor: 'pointer',
+        fontSize: '1em',
+    },
 };
+
+
 
 export default UserDetails;
