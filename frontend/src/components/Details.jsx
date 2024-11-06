@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
 function UserDetails() {
     const [userData, setUserData] = useState(null);
@@ -7,12 +8,25 @@ function UserDetails() {
     const [error, setError] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const [editableData, setEditableData] = useState({});
+    const [previewImage, setPreviewImage] = useState(null);
 
     const backendBaseUrl = 'http://localhost:7000';
 
     useEffect(() => {
         fetchUserData();
     }, []);
+
+    useEffect(() => {
+        if (userData) {
+            setEditableData({
+                username: userData.username,
+                fullname: userData.fullname,
+                relationshipStatus: userData.relationshipStatus,
+                bio: userData.bio,
+                profilePic: userData.profilePic,
+            });
+        }
+    }, [userData]);
 
     const fetchUserData = async () => {
         try {
@@ -46,7 +60,7 @@ function UserDetails() {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setEditableData(prevData => ({
+        setEditableData((prevData) => ({
             ...prevData,
             [name]: value
         }));
@@ -56,34 +70,47 @@ function UserDetails() {
         setIsEditing(!isEditing);
     };
 
-    const saveChanges = async () => {
-        try {
-            const token = localStorage.getItem('token');
-            const response = await fetch(`${backendBaseUrl}/profile/me`, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(editableData),
-            });
-
-            if (!response.ok) {
-                throw new Error(`Error: ${response.status} ${response.statusText}`);
-            }
-
-            const updatedData = await response.json();
-            setUserData(updatedData);
-            setIsEditing(false);
-        } catch (error) {
-            console.error('Failed to save user data:', error);
-            setError('Error saving user data. Please try again later.');
+    const handleImageUpload = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setPreviewImage(reader.result);
+                setEditableData((prevData) => ({ ...prevData, profilePic: file }));
+            };
+            reader.readAsDataURL(file);
         }
     };
 
+    const saveChanges = async () => {
+        const formData = new FormData();
+        formData.append('username', editableData.username);
+        formData.append('fullname', editableData.fullname);
+        formData.append('relationshipStatus', editableData.relationshipStatus);
+        formData.append('bio', editableData.bio);
+        if (editableData.profilePic instanceof File) {
+            formData.append('profilePic', editableData.profilePic);
+        }
+
+        try {
+            
+            const response = await axios.patch(`${backendBaseUrl}/profile/update`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    Authorization: `Bearer ${localStorage.getItem('token')}`,
+                },
+            });
+
+            setUserData(response.data.updatedUser);
+            toggleEditMode();
+        } catch (error) {
+            console.error('Error updating profile:', error);
+            setError('Failed to update profile. Please try again later.');
+        }
+    };
 
     const fetchUserPosts = async () => {
-        setSectionData(['Post 1', 'Post 2', 'Post 3']); // Sample data, replace with actual fetch logic
+        setSectionData(['Post 1', 'Post 2', 'Post 3']);
     };
 
     const fetchUserLiked = async () => {
@@ -109,113 +136,111 @@ function UserDetails() {
         return <div>Loading...</div>;
     }
 
-    
     return (
-       <div style={styles.container}>
-    <div style={styles.profileCard}>
-        <div style={styles.profilePicContainer}>
-            {isEditing ? (
-                <div>
-                    <label htmlFor="profilePicUpload">
+        <div style={styles.container}>
+            <div style={styles.profileCard}>
+                <div style={styles.profilePicContainer}>
+                    {isEditing ? (
+                        <div>
+                            <label htmlFor="profilePicUpload">
+                                <img
+                                    src={previewImage || editableData.profilePic || '/images/default_profile.jpeg'}
+                                    alt="Profile Pic"
+                                    style={styles.profilePic}
+                                />
+                            </label>
+                            <input
+                                type="file"
+                                id="profilePicUpload"
+                                name="profilePic"
+                                accept="image/*"
+                                style={{ display: 'none' }}
+                                onChange={handleImageUpload}
+                            />
+                        </div>
+                    ) : (
                         <img
-                            src={editableData.profilePic || '/images/default_profile.jpeg'}
+                            src={userData.profilePic === '/images/default_profile.jpeg' ? '/images/default_profile.jpeg' : `${backendBaseUrl}${userData.profilePic}`}
                             alt="Profile Pic"
                             style={styles.profilePic}
                         />
-                    </label>
-                    <input
-                        type="file"
-                        id="profilePicUpload"
-                        name="profilePic"
-                        accept="image/*"
-                        style={{ display: 'none' }}
-                        // onChange={handleImageUpload}
-                    />
+                    )}
                 </div>
-            ) : (
-                <img
-                    src={userData.profilePic === '/images/default_profile.jpeg' ? '/images/default_profile.jpeg' : `${backendBaseUrl}${userData.profilePic}`}
-                    alt="Profile Pic"
-                    style={styles.profilePic}
-                />
-            )}
+                
+                <div style={styles.profileInfo}>
+                    {isEditing ? (
+                        <>
+                            <input
+                                type="text"
+                                name="username"
+                                value={editableData.username}
+                                onChange={handleInputChange}
+                                style={styles.input}
+                                placeholder="Username"
+                            />
+                            <input
+                                type="text"
+                                name="fullname"
+                                value={editableData.fullname}
+                                onChange={handleInputChange}
+                                style={styles.input}
+                                placeholder="Full Name"
+                            />
+                            <select
+                                id="edit-relationship-status"
+                                name="relationshipStatus"
+                                value={editableData.relationshipStatus}
+                                onChange={handleInputChange}
+                                style={styles.input}
+                            >
+                                <option value="single">Single</option>
+                                <option value="in a relationship">In a Relationship</option>
+                                <option value="married">Married</option>
+                                <option value="complicated">Complicated</option>
+                                <option value="other">Other</option>
+                            </select>
+                            <textarea
+                                name="bio"
+                                value={editableData.bio}
+                                onChange={handleInputChange}
+                                style={styles.textarea}
+                                placeholder="Bio"
+                            />
+                            <button style={styles.saveButton} onClick={saveChanges}>Save Changes</button>
+                            <button style={styles.cancelButton} onClick={toggleEditMode}>Cancel</button>
+                        </>
+                    ) : (
+                        <>
+                            <h2 style={styles.username}>{userData.username || "User's Name"}</h2>
+                            <p style={styles.fullname}>{userData.fullname || 'Full Name'}</p>
+                            <div style={styles.statsContainer}>
+                                <p style={styles.stat}>{`${userData.postsCount || 0} Posts`}</p>
+                                <p style={styles.stat}>{`${(userData.followers && userData.followers.length) || 0} Followers`}</p>
+                                <p style={styles.stat}>{`${(userData.following && userData.following.length) || 0} Following`}</p>
+                            </div>
+                            <p style={styles.additionalInfo}>Relationship Status: {userData.relationshipStatus || 'Single'}</p>
+                            <p style={styles.additionalInfo}>Bio: {userData.bio || 'User bio goes here...'}</p>
+                            <p style={styles.additionalInfo}>Streak: {userData.streak?.count || 0}</p>
+                            <button style={styles.editButton} onClick={toggleEditMode}>Edit Profile</button>
+                        </>
+                    )}
+                </div>
+            </div>
+
+            <div style={styles.buttonContainer}>
+                <button style={activeSection === 'posts' ? styles.activeButton : styles.inactiveButton} onClick={() => handleSectionChange('posts')}>Posts</button>
+                <button style={activeSection === 'saved' ? styles.activeButton : styles.inactiveButton} onClick={() => handleSectionChange('saved')}>Saved</button>
+                <button style={activeSection === 'liked' ? styles.activeButton : styles.inactiveButton} onClick={() => handleSectionChange('liked')}>Liked</button>
+            </div>
+            <div style={styles.sectionContent}>
+                {sectionData.map((item, index) => (
+                    <div key={index} style={styles.post}>{item}</div>
+                ))}
+            </div>
         </div>
-        
-        <div style={styles.profileInfo}>
-            {isEditing ? (
-                <>
-                    <input
-                        type="text"
-                        name="username"
-                        value={editableData.username}
-                        onChange={handleInputChange}
-                        style={styles.input}
-                        placeholder="Username"
-                    />
-                    <input
-                        type="text"
-                        name="fullname"
-                        value={editableData.fullname}
-                        onChange={handleInputChange}
-                        style={styles.input}
-                        placeholder="Full Name"
-                    />
-                    <select
-                        id="edit-relationship-status"
-                        name="relationshipStatus"
-                        value={editableData.relationshipStatus}
-                        onChange={handleInputChange}
-                        style={styles.input}
-                    >
-                        <option value="single">Single</option>
-                        <option value="in a relationship">In a Relationship</option>
-                        <option value="married">Married</option>
-                        <option value="complicated">Complicated</option>
-                        <option value="other">Other</option>
-                    </select>
-                    <textarea
-                        name="bio"
-                        value={editableData.bio}
-                        onChange={handleInputChange}
-                        style={styles.textarea}
-                        placeholder="Bio"
-                    />
-                    <button style={styles.saveButton} onClick={saveChanges}>Save Changes</button>
-                    <button style={styles.cancelButton} onClick={toggleEditMode}>Cancel</button>
-                </>
-            ) : (
-                <>
-                    <h2 style={styles.username}>{userData.username || "User's Name"}</h2>
-                    <p style={styles.fullname}>{userData.fullname || 'Full Name'}</p>
-                    <div style={styles.statsContainer}>
-                        <p style={styles.stat}>{`${userData.postsCount || 0} Posts`}</p>
-                        <p style={styles.stat}>{`${(userData.followers && userData.followers.length) || 0} Followers`}</p>
-                        <p style={styles.stat}>{`${(userData.following && userData.following.length) || 0} Following`}</p>
-                    </div>
-                    <p style={styles.additionalInfo}>Relationship Status: {userData.relationshipStatus || 'Single'}</p>
-                    <p style={styles.additionalInfo}>Bio: {userData.bio || 'User bio goes here...'}</p>
-                    <p style={styles.additionalInfo}>Streak: {userData.streak?.count || 0}</p>
-                    <button style={styles.editButton} onClick={toggleEditMode}>Edit Profile</button>
-                </>
-            )}
-        </div>
-    </div>
-
-    <div style={styles.buttonContainer}>
-        <button style={activeSection === 'posts' ? styles.activeButton : styles.inactiveButton} onClick={() => handleSectionChange('posts')}>Posts</button>
-        <button style={activeSection === 'saved' ? styles.activeButton : styles.inactiveButton} onClick={() => handleSectionChange('saved')}>Saved</button>
-        <button style={activeSection === 'liked' ? styles.activeButton : styles.inactiveButton} onClick={() => handleSectionChange('liked')}>Liked</button>
-    </div>
-    <div style={styles.sectionContent}>
-        {sectionData.map((item, index) => (
-            <div key={index} style={styles.post}>{item}</div>
-        ))}
-    </div>
-</div>
-
-
     );
 }
+
 
 const styles = {
     container: {
