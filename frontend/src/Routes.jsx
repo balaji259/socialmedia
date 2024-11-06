@@ -10,6 +10,7 @@ import PostComponent from './components/Posts';
 import ReportPost from './components/Report';
 import SinglePost from './components/SinglePost';
 import Home from "./components/Home";
+import UserDetails from "./components/Details";
 
 const RoutesComponent = () => {
     return (
@@ -24,6 +25,7 @@ const RoutesComponent = () => {
                 <Route path="/home" element={<Home />} />
                 <Route path="/report" element={<ReportPost />} />
                 <Route path="/posts/:postId" element={<SinglePost />} />
+                <Route path="/details" element={<UserDetails />} />
             </Routes>
         </Router>
     );

@@ -143,7 +143,13 @@ const PostComponent = () => {
   const [mediaContent, setMediaContent] = useState(null);
   const [showMenus, setShowMenus] = useState({}); // Track which post's menu is open
   const [newComment, setNewComment] = useState('');
+  // const [openComments, setOpenComments] = useState({});
+  // const [replyTexts, setReplyTexts] = useState({});
   const [replyingTo, setReplyingTo] = useState(null);
+  const [replyTexts, setReplyTexts] = useState({});
+
+
+  // const [replyingTo, setReplyingTo] = useState(null);
   const [openComments, setOpenComments] = useState({}); 
 
   const backendBaseUrl = 'http://localhost:7000';
@@ -413,6 +419,23 @@ const toggleComments = (postId) => {
   }));
 };
 
+const handleReplyChange = (commentId, text) => {
+  setReplyTexts((prevReplies) => ({
+    ...prevReplies,
+    [commentId]: text,
+  }));
+};
+
+const clearReplyText = (commentId) => {
+  setReplyTexts((prevReplies) => ({
+    ...prevReplies,
+    [commentId]: "",
+  }));
+};
+
+
+
+
 return (
   <div style={postComponentContainerStyle}>
     <div style={postInputContainerStyle}>
@@ -478,7 +501,9 @@ return (
             >
               {post.liked ? '👎 Dislike' : '👍 Like'} {post.likesCount}
             </button>
-            <button style={postButtonStyle} onClick={() => toggleComments(post.postId)}>{`💬 Comment ${post.comments.length}`}</button>
+            <button style={postButtonStyle} onClick={() => toggleComments(post.postId)}>
+              {`💬 Comment ${post.comments.length}`}
+            </button>
             <button style={postButtonStyle} onClick={() => copyPostIdToClipboard(post.postId)}>
               🔗 Share
             </button>
@@ -509,15 +534,34 @@ return (
                       </div>
                     ))}
                   </div>
+
+                  {/* Reply Input for a Specific Comment */}
+                  {replyingTo && replyingTo.commentId === comment._id && (
+                    <div style={{ marginLeft: "20px" }}>
+                      <textarea
+                        placeholder="Write a reply..."
+                        value={replyTexts[comment._id] || ""}
+                        onChange={(e) => handleReplyChange(comment._id, e.target.value)}
+                        style={{ width: "90%", margin: "5px 0" }}
+                      />
+                      <button onClick={() => {
+                        handleAddReply(comment._id);
+                        clearReplyText(comment._id);
+                      }}>
+                        Reply
+                      </button>
+                    </div>
+                  )}
                 </div>
               ))}
 
-              {/* Always show the Comment Input when comments are toggled open */}
+              {/* Main Comment Input */}
               <div>
                 <textarea
                   placeholder="Write a comment..."
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
+                  style={{ width: "100%", margin: "5px 0" }}
                 />
                 <button onClick={() => handleAddComment(post.postId)}>
                   Comment
@@ -525,27 +569,12 @@ return (
               </div>
             </div>
           )}
-
-          {/* Comment/Reply Input */}
-          {replyingTo && replyingTo.postId === post.postId && (
-            <div>
-              <textarea
-                placeholder={replyingTo.commentId ? "Write a reply..." : "Write a comment..."}
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-              />
-              <button
-                onClick={() => replyingTo.commentId ? handleAddReply(replyingTo.commentId) : handleAddComment(post.postId)}
-              >
-                {replyingTo.commentId ? "Reply" : "Comment"}
-              </button>
-            </div>
-          )}
         </div>
       ))}
     </div>
   </div>
 );
-};
-
+}        
+          
+       
 export default PostComponent;
