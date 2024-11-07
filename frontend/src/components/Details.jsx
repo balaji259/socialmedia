@@ -50,13 +50,23 @@ function UserDetails() {
             }
 
             const data = await response.json();
+            console.log("data");
+            console.log(data);
+            // console.log(userData._id);
             setUserData(data);
+           
             
         } catch (error) {
             console.error('Failed to fetch user data:', error);
             setError('Error fetching user data. Please try again later.');
         }
     };
+
+    useEffect(() => {
+        if (userData) {
+            console.log("User ID:", userData._id); // Access userData._id here after it’s updated
+        }
+    }, [userData]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -110,15 +120,49 @@ function UserDetails() {
     };
 
     const fetchUserPosts = async () => {
-        setSectionData(['Post 1', 'Post 2', 'Post 3']);
+        try {
+            const userId = userData._id;
+            console.log(userId);
+    
+            if (userData) {
+                const response = await axios.get(`${backendBaseUrl}/profile/userPosts/${userId}`);
+                
+    
+                console.log(response);
+                
+                setSectionData(response.data.posts || []);
+            } else {
+                console.log("No user data!");
+            }
+        } catch (error) {
+            console.error('Error fetching user posts:', error);
+            setSectionData([]);
+        }
     };
+    
+    // Log sectionData when it updates
+    useEffect(() => {
+        console.log("Updated sectionData:", sectionData);
+    }, [sectionData]);
 
     const fetchUserLiked = async () => {
-        setSectionData(['Liked Post 1', 'Liked Post 2']);
+        try {
+            const response = await axios.get(`${backendBaseUrl}/posts/liked`, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            console.log(response);
+            setSectionData(response.data);
+        } catch (error) {
+            console.error('Error fetching liked posts:', error);
+            setSectionData([]);
+        }
     };
 
+
     const fetchUserSaved = async () => {
-        setSectionData(['Saved Post 1']);
+        
     };
 
     const handleSectionChange = (section) => {
@@ -233,9 +277,53 @@ function UserDetails() {
                 <button style={activeSection === 'liked' ? styles.activeButton : styles.inactiveButton} onClick={() => handleSectionChange('liked')}>Liked</button>
             </div>
             <div style={styles.sectionContent}>
-                {sectionData.map((item, index) => (
-                    <div key={index} style={styles.post}>{item}</div>
-                ))}
+                {/* {sectionData.map((item, index) => (
+                    <div key={index} style={styles.post}>{item.caption}</div>
+                ))} */}
+                 {sectionData.map((post, index) => (
+                <div key={post._id} style={styles.post}>
+                    {/* Profile picture and username */}
+                    <div style={styles.header}>
+                        <img
+                            src={`${backendBaseUrl}${userData.profilePic}`} // Add profile picture URL here
+                            alt="Profile"
+                            style={styles.profilePic}
+                        />
+                        <strong>{post.user.username}</strong>
+                    </div>
+
+                    {/* Post caption */}
+                    {post.caption && <p style={styles.caption}>{post.caption}</p>}
+
+                    {/* Image or video media */}
+                    {console.log(post.content.mediaUrl)};
+                    {post.content.mediaUrl && post.postType === 'image' && (
+                        <img
+                            src={`${backendBaseUrl}/${post.content.mediaUrl}`}
+                            alt="Post content"
+                            style={styles.media}
+                        />
+                    )}
+                    {post.content.mediaUrl && post.postType === 'video' && (
+                        <video controls style={styles.media}>
+                            <source type="video/mp4" src={`${backendBaseUrl}/${post.content.mediaUrl}`}  />
+                            Your browser does not support the video tag.
+                        </video>
+                    )}
+
+                    {/* Likes count */}
+                    <p>{post.likes.length} Likes</p>
+
+                    {/* Comments */}
+                    <div className="comments">
+                        {post.comments.map((comment, index) => (
+                            <p key={index}>
+                                <strong>{comment.username}:</strong> {comment.text}
+                            </p>
+                        ))}
+                    </div>
+                </div>
+            ))}
             </div>
         </div>
     );

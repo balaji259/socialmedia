@@ -39,7 +39,8 @@ router.post('/create', upload.single('mediaContent'), async (req, res) => {
         if (req.file) {
             const mediaType = req.file.mimetype.split('/')[0];
             postType = mediaType === 'image' ? 'image' : 'video';
-            mediaUrl = `../uploads/${req.file.filename}`; // Correct media URL
+            // mediaUrl = `../uploads/${req.file.filename}`; // Correct media URL
+            mediaUrl = `../uploads/${req.file.filename}`;
         }
 
         // Create a new post
