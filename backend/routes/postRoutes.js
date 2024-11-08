@@ -23,6 +23,11 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
+const getISTDate = () => {
+    const options = { timeZone: 'Asia/Kolkata' };
+    return new Date(new Date().toLocaleString('en-US', options));
+};
+
 
 
 router.post('/create', upload.single('mediaContent'), async (req, res) => {
@@ -58,6 +63,49 @@ router.post('/create', upload.single('mediaContent'), async (req, res) => {
 
         // Increment the user's postsCount by 1
         await User.findByIdAndUpdate(userId, { $inc: { postsCount: 1 } });
+
+
+        //streak logic
+
+          // Fetch the user to check and update streak
+          const user = await User.findById(userId);
+
+          if (!user) {
+              return res.status(404).json({ error: 'User not found' });
+          }
+  
+          const currentDate = getISTDate();
+          const lastPostDate = user.streak.lastPostTime;
+  
+          // If there's a last post time, check the difference from today
+          if (lastPostDate) {
+              const lastPostDateIST = new Date(lastPostDate);
+              const diffInDays = Math.floor((currentDate - lastPostDateIST) / (24 * 60 * 60 * 1000)); // Difference in days
+  
+              if (diffInDays === 0) {
+                  // User already posted today, no streak increment
+                  await User.findByIdAndUpdate(userId, { 'streak.lastPostTime': currentDate });
+              } else if (diffInDays === 1) {
+                  // User's first post today, increment streak
+                  await User.findByIdAndUpdate(userId, {
+                      'streak.count': user.streak.count + 1, // Increment streak
+                      'streak.lastPostTime': currentDate, // Update last post time
+                  });
+              } else {
+                  // User missed posting for 1 or more days, reset streak to 1
+                  await User.findByIdAndUpdate(userId, {
+                      'streak.count': 1, // Reset streak to 1
+                      'streak.lastPostTime': currentDate, // Update last post time
+                  });
+              }
+          } else {
+              // No previous post time, user is starting fresh, set streak to 1
+              await User.findByIdAndUpdate(userId, {
+                  'streak.count': 1, // Start streak from 1
+                  'streak.lastPostTime': currentDate, // Set last post time
+              });
+          }
+
 
         res.status(201).json({ message: 'Post created successfully', post });
     } catch (error) {

@@ -1,5 +1,51 @@
 import React, { useEffect, useState } from 'react';
 
+
+const SuggestionsSidebar = () => {
+
+  // const [userData,setUserData]=useState([]);
+  const [suggestions, setSuggestions] = useState([]);
+  const [streakCount,setStreakCount]=useState(0);
+  
+
+const fetchUserData = async () => {
+  try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+          alert('You are not logged in. Please log in to view your profile.');
+          // window.location.href = 'index.html';
+          return;
+      }
+
+      const response = await fetch(`http://localhost:7000/profile/me`, {
+          method: 'GET',
+          headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json',
+          },
+      });
+
+      if (!response.ok) {
+          throw new Error(`Error: ${response.status} ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log("data");
+      console.log(data.streak.count);
+      // streakCount=data.streak.count;
+      setStreakCount(data.streak.count);
+      // setUserData(data);
+      // console.log();
+      // console.log(userData.streak.count);
+     
+      
+  } catch (error) {
+      console.error('Failed to fetch user data:', error);
+      // setError('Error fetching user data. Please try again later.');
+  }
+};
+
+
 async function fetchUserSuggestions(setSuggestions) {
     try {
         const token = localStorage.getItem('token');
@@ -29,12 +75,16 @@ async function fetchUserSuggestions(setSuggestions) {
     }
 }
 
-const SuggestionsSidebar = () => {
-  const [suggestions, setSuggestions] = useState([]);
 
   useEffect(() => {
     fetchUserSuggestions(setSuggestions);
   }, []);
+
+  useEffect(()=>{
+    fetchUserData();
+    console.log("useeffetcs");
+    // console.log(userData);
+  },[]);
 
   return (
     <div
@@ -72,7 +122,8 @@ const SuggestionsSidebar = () => {
           alignItems: 'center',
         }}
       >
-        Streak = 0
+        {/* Streak- { streakCount} */}
+        {`Streak- ${streakCount}`}
       </div>
 
       <div

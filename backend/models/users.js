@@ -62,6 +62,10 @@ const userSchema = new mongoose.Schema(
         type: Date,
         default: null, // Last date of activity to maintain the streak
       },
+      lastPostTime: {
+        type: Date,
+        default: null, // Store the last time the user posted
+      },
     },
   },
   { timestamps: true }
