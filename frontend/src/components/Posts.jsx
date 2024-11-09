@@ -54,15 +54,21 @@ const postHeaderStyle = {
   position: 'relative'
 };
 
+const userInfoStyle = {
+  display: 'flex',
+  alignItems: 'center',
+};
+
 const profilePicStyle = {
   width: '40px',
   height: '40px',
   borderRadius: '50%',
-  marginRight: '10px',
+  marginRight: '8px',
 };
 
 const usernameStyle = {
   fontWeight: 'bold',
+  marginLeft:'4px'
 };
 
 const toggleButtonStyle = {
@@ -460,12 +466,14 @@ return (
       {posts.map((post, index) => (
         <div key={index} style={userPostStyle}>
           <div style={postHeaderStyle}>
+          <div style={userInfoStyle}>
             <img
               src={post.user.profilePic === '/images/default_profile.jpeg' ? '/images/default_profile.jpeg' : `${backendBaseUrl}${post.user.profilePic}`}
               alt="User Profile"
               style={profilePicStyle}
             />
             <span style={usernameStyle}>{post.user?.username || "Anonymous"}</span>
+            </div>
             <button style={toggleButtonStyle} onClick={() => handleToggleMenu(post.postId)}>⋮</button>
             
             {showMenus[post.postId] && (
@@ -572,9 +580,12 @@ return (
         </div>
       ))}
     </div>
+    
   </div>
 );
 }        
-          
+
+
+
        
 export default PostComponent;

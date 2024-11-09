@@ -75,13 +75,25 @@ router.post('/create', upload.single('mediaContent'), async (req, res) => {
           }
   
           const currentDate = getISTDate();
+
+          console.log(`current:${currentDate}`);
+
           const lastPostDate = user.streak.lastPostTime;
   
           // If there's a last post time, check the difference from today
           if (lastPostDate) {
-              const lastPostDateIST = new Date(lastPostDate);
-              const diffInDays = Math.floor((currentDate - lastPostDateIST) / (24 * 60 * 60 * 1000)); // Difference in days
+            //   const lastPostDateIST = new Date(lastPostDate);
+            //   const diffInDays = Math.floor((currentDate - lastPostDateIST) / (24 * 60 * 60 * 1000)); // Difference in days
   
+           
+            const lastPostDateIST = new Date(lastPostDate).toLocaleString("en-US", { timeZone: "Asia/Kolkata" });
+            const lastPostDateInIST = new Date(lastPostDateIST);            
+            console.log(`lastpost:${lastPostDateInIST}`)
+            
+            const diffInDays = Math.floor((currentDate - lastPostDateInIST) / (24 * 60 * 60 * 1000)); // Difference in days
+
+            console.log(  `  difference: ${diffInDays}`)
+
               if (diffInDays === 0) {
                   // User already posted today, no streak increment
                   await User.findByIdAndUpdate(userId, { 'streak.lastPostTime': currentDate });

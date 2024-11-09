@@ -14,14 +14,14 @@ const Dashboard = () => {
       {/* Top Section */}
       <div className="flex flex-col space-y-10 pt-20">
         
-          <button className="sec-left-button">Home</button>
+          <button className="sec-left-button" onClick={()=>{navigate('/home')}}>Home</button>
     
         <button className="sec-left-button">Search</button>
         <button className="sec-left-button">Friends</button>
         <button className="sec-left-button">Chats</button>
         <button className="sec-left-button">Notifications</button>
         
-          <button className="sec-left-button">Profile</button>
+          <button className="sec-left-button" onClick={()=>{navigate('/profile')}}>Profile</button>
         
       </div>
 

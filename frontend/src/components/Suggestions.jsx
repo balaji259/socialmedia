@@ -6,7 +6,7 @@ const SuggestionsSidebar = () => {
   // const [userData,setUserData]=useState([]);
   const [suggestions, setSuggestions] = useState([]);
   const [streakCount,setStreakCount]=useState(0);
-  
+
 
 const fetchUserData = async () => {
   try {
@@ -143,12 +143,14 @@ async function fetchUserSuggestions(setSuggestions) {
           <div key={user.username} style={suggestionStyle}>
             <div style={suggestionTopStyle}>
               <img
-                src={user.profilePic || 'https://via.placeholder.com/35'}
+                // src={user.profilePic || 'https://via.placeholder.com/35'}
+                src={user.profilePic === '/images/default_profile.jpeg' ? '/images/default_profile.jpeg' : `http://localhost:7000${user.profilePic}`}
+
                 alt={user.username}
                 style={profilePicStyle}
               />
               <p style={usernameStyle}>@{user.username}</p>
-              <p style={bioStyle}>{user.bio || 'No bio available'}</p>
+              <p style={bioStyle}>{user.bio || 'No Bio'}</p>
             </div>
             <button style={buttonStyle}>Follow</button>
           </div>
