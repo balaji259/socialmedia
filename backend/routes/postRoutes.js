@@ -76,7 +76,8 @@ router.post('/create', upload.single('mediaContent'), async (req, res) => {
   
           const currentDate = getISTDate();
 
-          console.log(`current:${currentDate}`);
+          const currentDateOnly = new Date(currentDate.setHours(0, 0, 0, 0));
+            console.log(`current (IST, day-only): ${currentDateOnly}`);
 
           const lastPostDate = user.streak.lastPostTime;
   
@@ -88,9 +89,12 @@ router.post('/create', upload.single('mediaContent'), async (req, res) => {
            
             const lastPostDateIST = new Date(lastPostDate).toLocaleString("en-US", { timeZone: "Asia/Kolkata" });
             const lastPostDateInIST = new Date(lastPostDateIST);            
-            console.log(`lastpost:${lastPostDateInIST}`)
+
+            const lastPostDateOnly = new Date(lastPostDateInIST.setHours(0, 0, 0, 0));
+            console.log(`lastPost (IST, day-only): ${lastPostDateOnly}`);
+                    
             
-            const diffInDays = Math.floor((currentDate - lastPostDateInIST) / (24 * 60 * 60 * 1000)); // Difference in days
+            const diffInDays = Math.floor((currentDateOnly - lastPostDateOnly) / (24 * 60 * 60 * 1000)); // Difference in days
 
             console.log(  `  difference: ${diffInDays}`)
 

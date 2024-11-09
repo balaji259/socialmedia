@@ -6,6 +6,7 @@ const SuggestionsSidebar = () => {
   // const [userData,setUserData]=useState([]);
   const [suggestions, setSuggestions] = useState([]);
   const [streakCount,setStreakCount]=useState(0);
+  
 
 
 const fetchUserData = async () => {
@@ -123,7 +124,7 @@ async function fetchUserSuggestions(setSuggestions) {
         }}
       >
         {/* Streak- { streakCount} */}
-        {`Streak- ${streakCount}`}
+        <img src={streakCount===0?`images/fireoff.svg`:`images/fireon.svg`} style={{height:'20px',width:'20px'}} />  &nbsp;  {streakCount}
       </div>
 
       <div
