@@ -65,9 +65,12 @@ router.post('/login', async (req, res) => {
         }
 
         // Verify the password
+        if(password){
         const isPasswordCorrect = await bcrypt.compare(password, user.password);
         if (!isPasswordCorrect) {
-            return res.status(401).json({ error: 'Invalid password' });
+            return re
+            s.status(401).json({ error: 'Invalid password' });
+        }
         }
 
         // Define token payload (you can include more user info if needed)

@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
+import { GoogleLogin } from "@react-oauth/google";
+import { jwtDecode } from "jwt-decode";
 const Login = ({ onSwitch }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -24,6 +26,30 @@ const Login = ({ onSwitch }) => {
                 toast.error(errorMessage,{duration:2000});
             });
     };
+
+
+    const handleGoogleLogin=async (x)=>{
+        try{
+            console.log(x.email);
+            axios.post("http://localhost:7000/user/login", { email:x.email })
+            .then((response) => {
+                const token = response.data.token;
+                localStorage.setItem('token', token);
+                toast.success('Login Successful',{duration:2000});
+                setTimeout(() => {
+                    navigate('/home');
+                }, 1000)
+                .catch((error) => {
+                    const errorMessage = error.response?.data?.error || 'Login failed: Server error.';
+                    toast.error(errorMessage,{duration:2000});
+                });
+            })
+
+        }
+        catch(e){
+            console.log(e);
+        }
+    }
 
     // const showToast = (message) => {
     //     setToast(message);
@@ -62,9 +88,32 @@ const Login = ({ onSwitch }) => {
                 <div className="mt-4 text-sm">
                     Don't have an account? <span onClick={onSwitch} className="text-purple-600 cursor-pointer">Register here</span>
                 </div>
-                {/* {toast && <div className="mt-4 text-red-600">{toast}</div>} */}
+            
+            {/* //google */}
+
+            <div className="flex items-center justify-center mt-5">
+                <div>
+              <GoogleLogin
+                onSuccess={(res) => {
+                  console.log("called");
+                  let x = jwtDecode(res?.credential);
+                  handleGoogleLogin(x);
+                }}
+                onError={(err) => {
+                  console.log(err, "Login Failed");
+                }}
+              />
+              <p className="text-white mt-4">Sign in with Google</p>
+              </div>
             </div>
+
+
+        
+        </div>    
+
         </div>
+
+
     );
 };
 
