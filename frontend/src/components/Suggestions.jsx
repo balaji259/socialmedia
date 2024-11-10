@@ -73,18 +73,13 @@ const SuggestionsSidebar = () => {
       })
       .catch(error => console.error('Error fetching top streak users:', error));
   }, []);
-
   return (
     <div style={sidebarStyle}>
-
-<div style={streakTableStyle}>
+      <div style={streakTableStyle}>
         <h3 style={streakTableHeaderStyle}>Popular Streaker</h3>
-        {topStreakUsers.map(user => (
+        {topStreakUsers.map((user, index) => (
           <div key={user._id} style={streakUserStyle}>
-            {/* <img src={`${backendBaseUrl}user.profilePic`} alt="Profile" style={profilePicStyle} /> */}
-            
-            <img src={user.profilePic==='/images/default_profile.jpeg'?'/images/default_profile.jpeg':`${backendBaseUrl}${user.profilePic}`} alt = 'profilePic' style={profilePicStyle} />
-
+            <img src={user.profilePic === '/images/default_profile.jpeg' ? '/images/default_profile.jpeg' : `${backendBaseUrl}${user.profilePic}`} alt='profilePic' style={profilePicStyle} />
             <div style={userInfoStyle}>
               <span style={usernameStyle}>{user.username}</span>
               <div style={streakInfoStyle}>
@@ -94,23 +89,16 @@ const SuggestionsSidebar = () => {
             </div>
           </div>
         ))}
-        <button style={continueButtonStyle}>Continue</button>
+        {/* <button style={continueButtonStyle}>Continue</button> */}
       </div>
 
-
-
-     
       <div style={headingSuggestionsStyle}>User Suggestions</div>
 
       <div style={suggestionsContainerStyle}>
         {suggestions.map((user) => (
           <div key={user.username} style={suggestionStyle}>
             <div style={suggestionTopStyle}>
-              <img
-                src={user.profilePic === '/images/default_profile.jpeg' ? '/images/default_profile.jpeg' : `http://localhost:7000${user.profilePic}`}
-                alt={user.username}
-                style={profilePicStyle}
-              />
+              <img src={user.profilePic === '/images/default_profile.jpeg' ? '/images/default_profile.jpeg' : `${backendBaseUrl}${user.profilePic}`} alt={user.username} style={profilePicStyle} />
               <p style={usernameTextStyle}>@{user.username}</p>
               <p style={bioTextStyle}>{user.bio || 'No Bio'}</p>
             </div>
@@ -120,6 +108,7 @@ const SuggestionsSidebar = () => {
       </div>
     </div>
   );
+
 };
 
 // Inline Styles
@@ -136,13 +125,15 @@ const sidebarStyle = {
   display: 'flex',
   flexDirection: 'column',
   borderLeft: '1px solid #e1e1e1',
-  overflowY: 'auto',
+  overflowY: 'auto',  // Enable scrolling for the whole sidebar
 };
 
 const streakTableStyle = {
   width: '100%',
   backgroundColor: '#f1f1f1',
   padding: '10px',
+  maxHeight: '250px', // Adjust this as needed for scrollable height
+  overflowY: 'auto',  // Enable vertical scrolling if content exceeds maxHeight
 };
 
 const streakTableHeaderStyle = {
