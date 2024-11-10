@@ -489,7 +489,7 @@ const styles = {
         padding: '5px', // Padding around profile picture
     },
     profilePic: {
-        width: '70%',  // Narrower width for taller aspect ratio
+        width: '90%',  // Narrower width for taller aspect ratio
         height: '90%', // Taller height for profile picture
         borderRadius: '8px',
         objectFit: 'cover',

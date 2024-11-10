@@ -154,7 +154,7 @@ const streakUserStyle = {
 const profilePicStyle = {
   width: '40px',
   height: '40px',
-  borderRadius: '50%',
+  borderRadius: '5px',
   marginRight: '10px',
 };
 

@@ -60,10 +60,11 @@ const userInfoStyle = {
 };
 
 const profilePicStyle = {
-  width: '40px',
-  height: '40px',
-  borderRadius: '50%',
+  width: '50px',
+  height: '50px',
+  borderRadius: '5px',
   marginRight: '8px',
+  // border:'4px solid grey'
 };
 
 const usernameStyle = {

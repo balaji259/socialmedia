@@ -26,7 +26,7 @@ const Navbar = ({ username, profilePic }) => {
           id="profilePic"
           src={profilePicUrl}
           alt="Profile Picture"
-          className="w-12 h-12 rounded-full mr-2"
+          className="w-12 h-12 rounded-md mr-2  "
         />
         {console.log(`in nav ${profilePicUrl}-${username}`)}
         <p id="username" className="font-bold text-lg">
