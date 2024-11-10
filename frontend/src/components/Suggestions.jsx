@@ -114,26 +114,25 @@ const SuggestionsSidebar = () => {
 // Inline Styles
 const sidebarStyle = {
   position: 'fixed',
-  right: 0,
+  right: '10px',
   top: '60px',
-  height: 'calc(100vh - 60px)',
-  maxWidth: '350px',
+  height: 'calc(100vh - 60px)', // Full height minus top offset
   backgroundColor: '#f1f3f5',
   padding: '15px',
-  marginTop: '20px',
   paddingTop: '40px',
   display: 'flex',
   flexDirection: 'column',
   borderLeft: '1px solid #e1e1e1',
-  overflowY: 'auto',  // Enable scrolling for the whole sidebar
+  overflowY: 'auto', // Enable scrolling for the entire sidebar
 };
 
+
+// Streak Table Style - Remove scrolling and let content display fully
 const streakTableStyle = {
   width: '100%',
   backgroundColor: '#f1f1f1',
   padding: '10px',
-  maxHeight: '250px', // Adjust this as needed for scrollable height
-  overflowY: 'auto',  // Enable vertical scrolling if content exceeds maxHeight
+  marginBottom: '20px', // Add space between streak table and suggestions
 };
 
 const streakTableHeaderStyle = {
@@ -145,9 +144,11 @@ const streakTableHeaderStyle = {
 const streakUserStyle = {
   display: 'flex',
   alignItems: 'center',
-  backgroundColor: '#d3d3d3',
+  backgroundColor: '#f5f5f5',
+  // border:'1px solid grey',
+  // borderRadius:'10px',
   padding: '10px',
-  margin: '5px 0',
+  margin: '8px 0',
 };
 
 const profilePicStyle = {
@@ -201,15 +202,14 @@ const headingSuggestionsStyle = {
 };
 
 const suggestionsContainerStyle = {
-  overflowY: 'auto',
   color: '#333',
   fontSize: '1.1em',
   display: 'flex',
   flexDirection: 'column',
   gap: '10px',
-  flex: 1,
   alignItems: 'center',
 };
+
 
 const suggestionStyle = {
   display: 'flex',
