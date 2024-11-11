@@ -441,6 +441,7 @@ const toggleReplyInput = (commentId) => {
     [commentId]: !prev[commentId],
   }));
 };
+
 return (
   <div style={postComponentContainerStyle}>
     <div style={postInputContainerStyle}>
@@ -462,8 +463,8 @@ return (
     </div>
 
     <div style={{ marginTop: '20px' }}>
-      {posts.map((post, index) => (
-        <div key={index} style={userPostStyle}>
+      {posts.map((post) => (
+        <div key={post.postId} style={userPostStyle}>
           <div style={postHeaderStyle}>
             <div style={userInfoStyle}>
               <img
@@ -517,51 +518,61 @@ return (
           {/* Comment Section */}
           {openComments[post.postId] && (
             <div style={commentsSectionStyle}>
-              {post.comments.map((comment, i) => {
-                console.log("Rendering comment with id:", comment.commentId);  // Debugging log
-
-                return (
-                  <div key={i} style={commentStyle}>
-                    <strong>{comment.user?.username || "Anonymous"}:</strong> {comment.text}
-                    <div>
-                      <button onClick={() => toggleCommentLike(comment.commentId)}>
-                        {/* Like button content */}
-                      </button>
-                      <button onClick={() => toggleReplyInput(comment.commentId)}>Reply</button>
-                    </div>
-
-                    {/* Display replies */}
-                    <div>
-                      {comment.replies.map((reply, j) => (
-                        // <div key={j} style={replyStyle}>
-                        <div key={j}>
-                          <strong>{reply.user?.username || "Anonymous"}:</strong> {reply.text}
-                          <div>
-                            <button onClick={() => toggleCommentLike(reply._id)}>
-                              {/* {reply.liked ? '👎 Unlike' : '👍 Like'} {reply.likes.length} */}
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Reply input */}
-                    {replyingTo[comment.commentId] && (
-                      <div style={{ marginLeft: "20px" }}>
-                        <textarea
-                          placeholder="Write a reply..."
-                          value={replyTexts[comment.commentId] || ""}
-                          onChange={(e) => handleReplyChange(comment.commentId, e.target.value)}
-                          style={{ width: "90%", margin: "5px 0" }}
-                        />
-                        <button onClick={() => handleAddReply(comment.commentId)}>
-                          Reply
-                        </button>
-                      </div>
-                    )}
+              {post.comments.map((comment) => (
+                <div key={comment.commentId} style={commentStyle}>
+                  <strong>{comment.user?.username || "Anonymous"}:</strong> {comment.text}
+                  <div>
+                    <button onClick={() => toggleCommentLike(comment.commentId)}>
+                      {/* Like button content */}
+                    </button>
+                    <button onClick={() => toggleReplyInput(comment.commentId)}>Reply</button>
                   </div>
-                );
-              })}
+
+                  {/* Display replies */}
+                  <div style={{ marginLeft: "20px" }}>
+                    {comment.replies.map((reply) => (
+                      <div key={reply.replyId} >
+                        {console.log("reply")};
+                        {console.log(reply)};
+                        <strong>{reply.user?.username || "Anonymous"}:</strong> {reply.text}
+                        <div>
+                          <button onClick={() => toggleCommentLike(reply.replyId)}>
+                            {/* Like button content */}
+                          </button>
+                          <button onClick={() => toggleReplyInput(reply.replyId)}>Reply</button>
+                        </div>
+
+                        {/* Reply input for each reply */}
+                      
+                        {replyingTo[reply.replyId] && (
+                          <div style={{ marginLeft: "20px" }}>
+                            <textarea
+                              placeholder="Write a reply..."
+                              value={replyTexts[reply.replyId] || ""}
+                              onChange={(e) => handleReplyChange(reply.replyId, e.target.value)}
+                              style={{ width: "90%", margin: "5px 0" }}
+                            />
+                            <button onClick={() => handleAddReply(reply.replyId)}>Reply</button>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Reply input for each comment */}
+                  {replyingTo[comment.commentId] && (
+                    <div style={{ marginLeft: "20px" }}>
+                      <textarea
+                        placeholder="Write a reply..."
+                        value={replyTexts[comment.commentId] || ""}
+                        onChange={(e) => handleReplyChange(comment.commentId, e.target.value)}
+                        style={{ width: "90%", margin: "5px 0" }}
+                      />
+                      <button onClick={() => handleAddReply(comment.commentId)}>Reply</button>
+                    </div>
+                  )}
+                </div>
+              ))}
 
               {/* New comment input */}
               <div>
@@ -571,9 +582,7 @@ return (
                   onChange={(e) => setNewComment(e.target.value)}
                   style={{ width: "100%", margin: "5px 0" }}
                 />
-                <button onClick={() => handleAddComment(post.postId)}>
-                  Comment
-                </button>
+                <button onClick={() => handleAddComment(post.postId)}>Comment</button>
               </div>
             </div>
           )}
