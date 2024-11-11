@@ -16,7 +16,7 @@ const Dashboard = () => {
         
           <button className="sec-left-button" onClick={()=>{navigate('/home')}}>Home</button>
     
-        <button className="sec-left-button">Search</button>
+        <button className="sec-left-button" onClick={()=>{navigate('/search')}}>Search</button>
         <button className="sec-left-button">Friends</button>
         <button className="sec-left-button">Chats</button>
         <button className="sec-left-button">Notifications</button>

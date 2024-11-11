@@ -508,7 +508,7 @@ return (
               style={postButtonStyle}
               onClick={() => handleLikeToggle(post.postId)}
             >
-              {post.liked ? '👎 Dislike' : '👍 Like'} {post.likesCount}
+              {post.liked ? '👎' : '👍'} {post.likesCount}
             </button>
             <button style={postButtonStyle} onClick={() => toggleComments(post.postId)}>
               {`💬 Comment ${post.comments.length}`}

@@ -54,6 +54,7 @@ const styles = {
       display: 'flex',
       flexDirection: 'column',
       height: '100vh',
+      backgroundColor:'#d3d3d3'
     },
     content: {
       display: 'flex',
@@ -82,5 +83,5 @@ const styles = {
   styles.details['::-webkit-scrollbar'] = {
     display: 'none',
   };
-  
+
   export default Search;
