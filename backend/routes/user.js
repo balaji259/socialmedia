@@ -52,10 +52,40 @@ const getUserDetails = async (req, res) => {
   }
 };
 
+
+ async function followUser(req, res){
+    const { userId, followId } = req.body;
+    try {
+        const user = await User.findById(userId);
+        const followUser = await User.findById(followId);
+
+        if (!user || !followUser) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Check if already followed
+        if (user.following.includes(followId)) {
+            return res.status(400).json({ message: 'Already following' });
+        }
+
+        // Update the follower lists
+        user.following.push(followId);
+        followUser.followers.push(userId);
+
+        await user.save();
+        await followUser.save();
+
+        res.status(200).json({ message: 'Followed successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error });
+    }
+};
+
 // Define the route
 router.get('/getdetails', getUserDetails);
 router.get('/suggestions',authenticateUser,getRandomUserSuggestions);
 router.get('/search/suggestions',authenticateUser,getSearchSuggestions);
+router.post('/search/follow',followUser);
 
 //follow
 router.post('/follow/:userId', authenticateUser, async (req, res) => {

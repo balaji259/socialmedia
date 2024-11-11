@@ -1,95 +1,86 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import Navbar from './Navbar';
+import Dashboard from './Dashboard';
+import SearchSuggestions from './SearchSuggestions';
 
-const Search = () => {
-    const [query, setQuery] = useState('');
-    const [suggestedUsers, setSuggestedUsers] = useState([]);
-    const [page, setPage] = useState(1);
-    const [hasMore, setHasMore] = useState(true);
-    const backendBaseUrl='http://localhost:7000';
+import { fetchUserDetails } from './userPosts.js';
 
-    // Fetch users based on the query and page
-    const fetchUsers = async () => {
-        try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get('http://localhost:7000/user/search/suggestions', {
-                params: { query, page },
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-            console.log(response);
+const Search =()=>{
 
-            if (response.data.users.length > 0) {
-                setSuggestedUsers(prev => {
-                    const newUsers = response.data.users.filter(
-                        user => !prev.some(prevUser => prevUser._id === user._id)
-                    );
-                    return [...prev, ...newUsers];
-                });
-            } else {
-                setHasMore(false); // No more users to load
-            }
-        } catch (error) {
-            console.error('Error fetching users:', error);
-        }
+    const [user, setUser] = useState({ username: "", profilePic: "" });
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    
+    const getUserDetails = async () => {
+      const userDetails = await fetchUserDetails(token);
+      console.log("userDetails");
+      console.log(userDetails);
+      if (userDetails) {
+        setUser({ username: userDetails.username, profilePic: userDetails.profilePic });
+      }
+      console.log(user);
+      //added fior checkong streaks
+      // await checkAndResetStreakOnLogin(userDetails.userId);
     };
 
-    // Fetch initial users or search when query changes
-    useEffect(() => {
-        setSuggestedUsers([]);
-        setPage(1);
-        setHasMore(true);
-        fetchUsers();
-    }, [query]);
+    getUserDetails();
+  }, []);
 
-    // Infinite scroll functionality
-    useEffect(() => {
-        if (!hasMore) return;
 
-        const handleScroll = () => {
-            if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
-                setPage(prev => prev + 1);
-            }
-        };
 
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, [hasMore]);
 
-    // Fetch more users when page changes
-    useEffect(() => {
-        if (page > 1) fetchUsers();
-    }, [page]);
 
     return (
-        <div className="w-full max-w-5xl mx-auto p-6 bg-gray-200">
-            <div className="relative mb-6">
-                <input
-                    type="text"
-                    placeholder="Search"
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    className="w-full p-3 rounded-lg border border-gray-300"
-                />
+        <div style={styles.container}>
+          <Navbar username={user.username} profilePic={user.profilePic} />
+          <section style={styles.content}>
+            <div style={styles.dashboard}>
+              <Dashboard />
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                {suggestedUsers.map((user) => (
-                    <div key={user._id} className="p-4 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow">
-                        <img src={user.profilePic==='/images/default_profile.jpeg'?'/images/default_profile.jpeg':`${backendBaseUrl}${user.profilePic}`} alt={user.username} className="w-20 h-20 mx-auto rounded-full" />
-                        <div className="text-center mt-3">
-                            <h3 className="text-lg font-semibold">{user.username}</h3>
-                            <p className="text-sm text-gray-500">{user.bio}</p>
-                        </div>
-                        <div className="flex justify-between mt-4">
-                            <button className="bg-blue-500 text-white px-5 py-1 rounded-lg hover:bg-blue-600">Follow</button>
-                            <button className="bg-yellow-400 text-white px-5 py-1 rounded-lg hover:bg-yellow-500">Chat</button>
-                        </div>
-                    </div>
-                ))}
+            <div style={styles.details}>
+              <SearchSuggestions />
             </div>
+           
+          </section>
         </div>
-    );
-};
+      );
 
-export default Search;
+
+}
+
+const styles = {
+    container: {
+      display: 'flex',
+      flexDirection: 'column',
+      height: '100vh',
+    },
+    content: {
+      display: 'flex',
+      flex: 1,
+      padding: '20px',
+      marginTop: '60px', // Adjust this to match the navbar height
+      overflow: 'hidden', // Remove scrolling
+    },
+    dashboard: {
+      width: '20%',
+      padding: '10px',
+    //   borderRight: '1px solid #ddd',
+    },
+    details: {
+        width: '80%', // Occupy more space
+        padding: '20px',
+        // border:'none',
+        margin: '0 auto', // Center the details section
+        overflowY: 'auto', // Enable vertical scrolling
+        scrollbarWidth: 'none', // Hide scrollbar in Firefox
+        msOverflowStyle: 'none', // Hide scrollbar in IE/Edge
+    },
+    
+  };
+
+  styles.details['::-webkit-scrollbar'] = {
+    display: 'none',
+  };
+  
+  export default Search;
