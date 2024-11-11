@@ -148,16 +148,11 @@ const PostComponent = () => {
   const [posts, setPosts] = useState([]);
   const [postContent, setPostContent] = useState("");
   const [mediaContent, setMediaContent] = useState(null);
-  const [showMenus, setShowMenus] = useState({}); // Track which post's menu is open
+  const [showMenus, setShowMenus] = useState({});
   const [newComment, setNewComment] = useState('');
-  // const [openComments, setOpenComments] = useState({});
-  // const [replyTexts, setReplyTexts] = useState({});
-  const [replyingTo, setReplyingTo] = useState(null);
-  const [replyTexts, setReplyTexts] = useState({});
-
-
-  // const [replyingTo, setReplyingTo] = useState(null);
-  const [openComments, setOpenComments] = useState({}); 
+  const [openComments, setOpenComments] = useState({});
+  const [replyingTo, setReplyingTo] = useState({}); // Tracks which comment's reply input is open
+  const [replyTexts, setReplyTexts] = useState({}); // Stores reply text for each comment
 
   const backendBaseUrl = 'http://localhost:7000';
 
@@ -380,7 +375,7 @@ const handleAddComment = async (postId) => {
     });
 
     if (response.ok) {
-      await fetchPosts(); // Refresh posts to show new comment
+      await fetchPosts();
       setNewComment('');
     } else {
       alert("Failed to add comment");
@@ -398,19 +393,19 @@ const handleAddReply = async (commentId) => {
   }
 
   try {
-    const response = await fetch(`${backendBaseUrl}/comments/reply/${commentId}`, {
+    const response = await fetch(`${backendBaseUrl}/posts/comment/reply/${commentId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ text: newComment }),
+      body: JSON.stringify({ text: replyTexts[commentId] || "" }),
     });
 
     if (response.ok) {
-      await fetchPosts(); // Refresh posts to show new reply
-      setNewComment('');
-      setReplyingTo(null);
+      await fetchPosts();
+      clearReplyText(commentId);
+      setReplyingTo((prev) => ({ ...prev, [commentId]: false }));
     } else {
       alert("Failed to add reply");
     }
@@ -422,7 +417,7 @@ const handleAddReply = async (commentId) => {
 const toggleComments = (postId) => {
   setOpenComments((prev) => ({
     ...prev,
-    [postId]: !prev[postId] // Toggle the visibility for this specific post
+    [postId]: !prev[postId]
   }));
 };
 
@@ -440,9 +435,12 @@ const clearReplyText = (commentId) => {
   }));
 };
 
-
-
-
+const toggleReplyInput = (commentId) => {
+  setReplyingTo((prev) => ({
+    ...prev,
+    [commentId]: !prev[commentId],
+  }));
+};
 return (
   <div style={postComponentContainerStyle}>
     <div style={postInputContainerStyle}>
@@ -467,16 +465,15 @@ return (
       {posts.map((post, index) => (
         <div key={index} style={userPostStyle}>
           <div style={postHeaderStyle}>
-          <div style={userInfoStyle}>
-            <img
-              src={post.user.profilePic === '/images/default_profile.jpeg' ? '/images/default_profile.jpeg' : `${backendBaseUrl}${post.user.profilePic}`}
-              alt="User Profile"
-              style={profilePicStyle}
-            />
-            <span style={usernameStyle}>{post.user?.username || "Anonymous"}</span>
+            <div style={userInfoStyle}>
+              <img
+                src={post.user.profilePic === '/images/default_profile.jpeg' ? '/images/default_profile.jpeg' : `${backendBaseUrl}${post.user.profilePic}`}
+                alt="User Profile"
+                style={profilePicStyle}
+              />
+              <span style={usernameStyle}>{post.user?.username || "Anonymous"}</span>
             </div>
             <button style={toggleButtonStyle} onClick={() => handleToggleMenu(post.postId)}>⋮</button>
-            
             {showMenus[post.postId] && (
               <div style={dropdownMenuStyle}>
                 <div style={menuItemStyle} onClick={() => savePost(post.postId)}>Save Post</div>
@@ -486,7 +483,6 @@ return (
           </div>
 
           <p>{post.caption}</p>
-
           {post.content && post.content.mediaUrl && (
             post.postType === 'video' ? (
               <video
@@ -518,53 +514,56 @@ return (
             </button>
           </div>
 
+          {/* Comment Section */}
           {openComments[post.postId] && (
             <div style={commentsSectionStyle}>
-              {post.comments.map((comment, i) => (
-                <div key={i} style={commentStyle}>
-                  <strong>{comment.user?.username || "Anonymous"}:</strong> {comment.text}
-                  <div>
-                    <button onClick={() => toggleCommentLike(comment._id)}>
-                      {/* {comment.liked ? '👎 Unlike' : '👍 Like'} {comment.likes.length} */}
-                    </button>
-                    <button onClick={() => setReplyingTo({ postId: post.postId, commentId: comment._id })}>Reply</button>
-                  </div>
+              {post.comments.map((comment, i) => {
+                console.log("Rendering comment with id:", comment.commentId);  // Debugging log
 
-                  {/* Display Replies */}
-                  <div>
-                    {comment.replies.map((reply, j) => (
-                      <div key={j} style={replyStyle}>
-                        <strong>{reply.user?.username || "Anonymous"}:</strong> {reply.text}
-                        <div>
-                          <button onClick={() => toggleCommentLike(reply._id)}>
-                            {reply.liked ? '👎 Unlike' : '👍 Like'} {reply.likes.length}
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Reply Input for a Specific Comment */}
-                  {replyingTo && replyingTo.commentId === comment._id && (
-                    <div style={{ marginLeft: "20px" }}>
-                      <textarea
-                        placeholder="Write a reply..."
-                        value={replyTexts[comment._id] || ""}
-                        onChange={(e) => handleReplyChange(comment._id, e.target.value)}
-                        style={{ width: "90%", margin: "5px 0" }}
-                      />
-                      <button onClick={() => {
-                        handleAddReply(comment._id);
-                        clearReplyText(comment._id);
-                      }}>
-                        Reply
+                return (
+                  <div key={i} style={commentStyle}>
+                    <strong>{comment.user?.username || "Anonymous"}:</strong> {comment.text}
+                    <div>
+                      <button onClick={() => toggleCommentLike(comment.commentId)}>
+                        {/* Like button content */}
                       </button>
+                      <button onClick={() => toggleReplyInput(comment.commentId)}>Reply</button>
                     </div>
-                  )}
-                </div>
-              ))}
 
-              {/* Main Comment Input */}
+                    {/* Display replies */}
+                    <div>
+                      {comment.replies.map((reply, j) => (
+                        // <div key={j} style={replyStyle}>
+                        <div key={j}>
+                          <strong>{reply.user?.username || "Anonymous"}:</strong> {reply.text}
+                          <div>
+                            <button onClick={() => toggleCommentLike(reply._id)}>
+                              {/* {reply.liked ? '👎 Unlike' : '👍 Like'} {reply.likes.length} */}
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Reply input */}
+                    {replyingTo[comment.commentId] && (
+                      <div style={{ marginLeft: "20px" }}>
+                        <textarea
+                          placeholder="Write a reply..."
+                          value={replyTexts[comment.commentId] || ""}
+                          onChange={(e) => handleReplyChange(comment.commentId, e.target.value)}
+                          style={{ width: "90%", margin: "5px 0" }}
+                        />
+                        <button onClick={() => handleAddReply(comment.commentId)}>
+                          Reply
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+
+              {/* New comment input */}
               <div>
                 <textarea
                   placeholder="Write a comment..."
@@ -581,12 +580,9 @@ return (
         </div>
       ))}
     </div>
-    
   </div>
 );
-}        
 
-
-
-       
+}
+   
 export default PostComponent;

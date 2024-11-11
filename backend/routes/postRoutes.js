@@ -311,9 +311,12 @@ router.post('/comment/:postId', authenticateUser, async (req, res) => {
 
 
 // Route to add a reply to a comment
-router.post('/comment/:commentId/reply', async (req, res) => {
+router.post('/comment/reply/:commentId',authenticateUser, async (req, res) => {
     const { commentId } = req.params;
-    const { text, userId, username } = req.body;
+    const { text } = req.body;
+    const {userId,username}=req.user;
+
+    console.log(`${userId}-${username}`);
 
     console.log("Request Body:", req.body); // Check what is being sent in the request body
 
@@ -339,6 +342,8 @@ router.post('/comment/:commentId/reply', async (req, res) => {
         await Comment.findByIdAndUpdate(commentId, {
             $push: { replies: savedReply._id }
         });
+
+        console.log("reply done saved !");
 
         res.status(201).json({ message: "Reply added successfully", reply: savedReply });
     } catch (error) {
