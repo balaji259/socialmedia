@@ -12,6 +12,7 @@ import SinglePost from './components/SinglePost';
 import Home from "./components/Home";
 import UserDetails from "./components/Details";
 import Profile from "./components/Profile";
+import Search from "./components/Search";
 
 const RoutesComponent = () => {
     return (
@@ -28,6 +29,7 @@ const RoutesComponent = () => {
                 <Route path="/posts/:postId" element={<SinglePost />} />
                 <Route path="/details" element={<UserDetails />} />
                 <Route path="/profile" element={<Profile />} />
+                <Route path="/search" element={<Search />} />
             </Routes>
         </Router>
     );

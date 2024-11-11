@@ -69,5 +69,42 @@ async function getRandomUserSuggestions(req, res) {
     }
 }
 
+async function getSearchSuggestions(req, res) {
+    try {
+        const loggedInUserId = req.user.userId;
+        console.log(loggedInUserId);
+        const { query = '', page = 1, limit = 9 } = req.query; // Default limit is 9 for 3 rows
 
-module.exports = { getRandomUserSuggestions };
+        if (!loggedInUserId) {
+            return res.status(400).json({ message: 'User not authenticated' });
+        }
+
+        const loggedInUser = await User.findById(loggedInUserId).populate('following');
+        if (!loggedInUser) {
+            return res.status(404).json({ message: 'Logged-in user not found' });
+        }
+
+        const excludeIds = loggedInUser.following.map(user => user._id);
+        excludeIds.push(loggedInUser._id);
+
+        const matchQuery = {
+            _id: { $nin: excludeIds },
+            username: { $regex: query, $options: 'i' } // Case-insensitive search by username
+        };
+
+        const users = await User.find(matchQuery)
+            .skip((page - 1) * limit)
+            .limit(limit)
+            .select('-password');
+
+        console.log(users);
+
+        res.status(200).json({ users });
+    } catch (error) {
+        console.error('Error fetching user suggestions:', error);
+        res.status(500).json({ message: 'Something went wrong', error: error.message });
+    }
+}
+
+
+module.exports = { getRandomUserSuggestions,getSearchSuggestions };

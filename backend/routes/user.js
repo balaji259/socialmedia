@@ -1,7 +1,7 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const User = require('../models/users'); // Make sure this points to your User model
-const { getRandomUserSuggestions } = require('./suggestions');
+const { getRandomUserSuggestions,getSearchSuggestions } = require('./suggestions');
 const authenticateUser=require("./authenticate_user");
 const { checkStreakOnLoad, updateStreakOnPost } =require("./streak");
 
@@ -55,6 +55,7 @@ const getUserDetails = async (req, res) => {
 // Define the route
 router.get('/getdetails', getUserDetails);
 router.get('/suggestions',authenticateUser,getRandomUserSuggestions);
+router.get('/search/suggestions',authenticateUser,getSearchSuggestions);
 
 //follow
 router.post('/follow/:userId', authenticateUser, async (req, res) => {
