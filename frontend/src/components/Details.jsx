@@ -366,13 +366,15 @@ function UserDetails() {
                         </>
                     ) : (
                         <>
+                            {console.log("userData")}
+                            {console.log(userData)}
                             <h2 style={styles.username}>{userData.username || "User's Name"}</h2>
                             <p style={styles.fullname}>{userData.fullname || 'Full Name'}</p>
                             <p style={styles.additionalInfo}>Relationship Status: {userData.relationshipStatus || 'Single'}</p>
                             <p style={styles.additionalInfo}>Bio: {userData.bio || 'User bio goes here...'}</p>
                             <p style={styles.additionalInfo}>Date of Birth: {userData.dateOfBirth || 'Not specified'}</p>
                             <p style={styles.additionalInfo}>College: {userData.collegeName || 'Not specified'}</p>
-                            <p style={styles.additionalInfo}>Best Friend: {userData.bestFriend || 'Not specified'}</p>
+                            <p style={styles.additionalInfo}>Best Friend: {userData.bestFriend?.username || 'Not specified'}</p>
                             <p style={styles.additionalInfo}>Interests: {userData.interests || 'Not specified'}</p>
                             <p style={styles.additionalInfo}>Favorite Sports: {userData.favoriteSports || 'Not specified'}</p>
                             <p style={styles.additionalInfo}>Favorite Game: {userData.favoriteGame || 'Not specified'}</p>
@@ -554,13 +556,15 @@ const styles = {
     profileCard: {
         display: 'flex',
         flexDirection: 'row',
+        alignItems: 'flex-start',
         width: '700px',
+        maxWidth: '90%',
         backgroundColor: '#fff',
         borderRadius: '12px',
-        boxShadow: '0 6px 15px rgba(0, 0, 0, 0.15)',
+        boxShadow: '0 8px 16px rgba(0, 0, 0, 0.1)',
+        padding: '20px',
+        gap: '20px',
         marginBottom: '25px',
-        padding: '30px',
-        gap: '15px',
     },
     profilePicContainer: {
         flex: '1',
@@ -570,13 +574,12 @@ const styles = {
         padding: '10px',
     },
     profilePic: {
-        width: '100%',
-        height: '100%',
-        maxWidth: '120px',
-        maxHeight: '120px',
+        width: '150px',
+        height: '150px',
         borderRadius: '12px',
         objectFit: 'cover',
         backgroundColor: '#e0e0e0',
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
     },
     profileInfo: {
         flex: '2',
@@ -585,17 +588,25 @@ const styles = {
         justifyContent: 'space-between',
         paddingLeft: '20px',
         textAlign: 'left',
-        lineHeight: '1.7',
+        lineHeight: '1.6',
     },
     username: {
-        fontSize: '2.2em',
+        fontSize: '1.8em',
         fontWeight: 'bold',
         color: '#333',
+        marginBottom: '5px',
     },
     fullname: {
-        fontSize: '1.5em',
-        color: '#888',
+        fontSize: '1.3em',
+        color: '#555',
+        marginBottom: '15px',
     },
+    additionalInfo: {
+        fontSize: '1em',
+        color: '#666',
+        marginTop: '8px',
+    },
+
     statsContainer: {
         display: 'flex',
         justifyContent: 'space-around',
@@ -606,27 +617,24 @@ const styles = {
         fontWeight: '600',
         color: '#444',
     },
-    additionalInfo: {
-        fontSize: '1.1em',
-        color: '#666',
-        marginTop: '8px',
-    },
+   
     editButton: {
         marginTop: '20px',
-        padding: '12px 26px',
+        padding: '10px 20px',
         backgroundColor: '#6C63FF',
         color: '#fff',
         border: 'none',
         borderRadius: '6px',
         cursor: 'pointer',
-        fontSize: '1.1em',
+        fontSize: '1em',
         transition: 'background-color 0.3s',
+        boxShadow: '0 4px 12px rgba(108, 99, 255, 0.2)',
     },
     buttonContainer: {
         display: 'flex',
         justifyContent: 'center',
         gap: '15px',
-        marginBottom: '25px',
+        marginTop: '20px',
     },
     activeButton: {
         padding: '12px 25px',
@@ -664,42 +672,45 @@ const styles = {
         fontSize: '1em',
     },
     input: {
-        marginBottom: '15px',
-        padding: '12px',
+        marginBottom: '12px',
+        padding: '10px',
         width: '100%',
         fontSize: '1em',
         borderRadius: '5px',
         border: '1px solid #ddd',
     },
     textarea: {
-        marginBottom: '15px',
-        padding: '12px',
+        marginBottom: '12px',
+        padding: '10px',
         width: '100%',
-        height: '100px',
+        height: '80px',
         fontSize: '1em',
         borderRadius: '5px',
         border: '1px solid #ddd',
     },
     saveButton: {
-        marginTop: '12px',
-        padding: '12px 26px',
+        padding: '10px 20px',
         backgroundColor: '#28a745',
         color: '#fff',
         border: 'none',
         borderRadius: '6px',
         cursor: 'pointer',
         fontSize: '1em',
+        transition: 'background-color 0.3s',
+        boxShadow: '0 4px 12px rgba(40, 167, 69, 0.2)',
     },
     cancelButton: {
-        marginTop: '12px',
-        padding: '12px 26px',
-        backgroundColor: '#bbb',
-        color: '#333',
+        padding: '10px 20px',
+        backgroundColor: '#dc3545',
+        color: '#fff',
         border: 'none',
         borderRadius: '6px',
         cursor: 'pointer',
         fontSize: '1em',
+        transition: 'background-color 0.3s',
+        boxShadow: '0 4px 12px rgba(220, 53, 69, 0.2)',
     },
+
 };
 
 

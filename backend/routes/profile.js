@@ -13,7 +13,11 @@ router.get('/me', authenticateToken, async (req, res) => {
   try {
     console.log("req.user");
     console.log(req.user);
-    const user = await User.findById(req.user.userId).select('-password');
+    const user = await User.findById(req.user.userId).select('-password').populate({
+      path: 'bestFriend',   // Populate the bestFriend field
+      select: 'username',   // Only fetch the username of the bestFriend
+    });
+
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -113,6 +117,56 @@ const upload = multer({ storage });
 
 
 
+// router.patch('/update', authenticateToken, upload.single('profilePic'), async (req, res) => {
+//   try {
+//       let mediaUrl = null;
+
+//       // Check if a new profile picture is uploaded
+//       if (req.file) {
+//           mediaUrl = `/uploads/${req.file.filename}`; // Set media URL to new file path
+//       } else {
+//           // Retrieve the current user profile to get the existing profilePic
+//           const currentUser = await User.findById(req.user.userId);
+//           mediaUrl = currentUser.profilePic; // Retain the existing profile picture URL if none is uploaded
+//       }
+
+//       console.log("reqbody");
+//       console.log(req.body);
+
+//       // Update the user's profile in the database
+//       const updatedUser = await User.findByIdAndUpdate(
+//           req.user.userId,
+//           {
+//               profilePic: mediaUrl,
+//               username: req.body.username,
+//               fullname: req.body.fullname,
+//               relationshipStatus: req.body.relationshipStatus,
+//               bio: req.body.bio,
+//               bestFriend: req.body.bestFriend,
+//               dateOfBirth: req.body.dateOfBirth,
+//               collegeName: req.body.collegeName,
+//               interests: req.body.interests,
+//               favoriteSports: req.body.favoriteSports,
+//               favoriteGame: req.body.favoriteGame,
+//               favoriteMusic: req.body.favoriteMusic,
+//               favoriteMovie: req.body.favoriteMovie,
+//               favoriteAnime: req.body.favoriteAnime,
+//               favoriteActor: req.body.favoriteActor
+//           },
+//           { new: true }
+//         );
+        
+//       console.log("updatedUser", updatedUser);
+//       res.json({ message: 'Profile updated successfully', updatedUser });
+//   } catch (error) {
+//       console.error('Error updating profile:', error);
+//       res.status(500).send('Failed to update profile');
+//   }
+// });
+
+
+const mongoose = require('mongoose');
+
 router.patch('/update', authenticateToken, upload.single('profilePic'), async (req, res) => {
   try {
       let mediaUrl = null;
@@ -129,26 +183,33 @@ router.patch('/update', authenticateToken, upload.single('profilePic'), async (r
       console.log("reqbody");
       console.log(req.body);
 
+      // Prepare update data
+      const updateData = {
+          profilePic: mediaUrl,
+          username: req.body.username,
+          fullname: req.body.fullname,
+          relationshipStatus: req.body.relationshipStatus,
+          bio: req.body.bio,
+          dateOfBirth: req.body.dateOfBirth,
+          collegeName: req.body.collegeName,
+          interests: req.body.interests,
+          favoriteSports: req.body.favoriteSports,
+          favoriteGame: req.body.favoriteGame,
+          favoriteMusic: req.body.favoriteMusic,
+          favoriteMovie: req.body.favoriteMovie,
+          favoriteAnime: req.body.favoriteAnime,
+          favoriteActor: req.body.favoriteActor,
+      };
+
+      // Only add bestFriend if it's a valid MongoDB ObjectId
+      if (mongoose.Types.ObjectId.isValid(req.body.bestFriend)) {
+          updateData.bestFriend = req.body.bestFriend;
+      }
+
       // Update the user's profile in the database
       const updatedUser = await User.findByIdAndUpdate(
           req.user.userId,
-          {
-              profilePic: mediaUrl,
-              username: req.body.username,
-              fullname: req.body.fullname,
-              relationshipStatus: req.body.relationshipStatus,
-              bio: req.body.bio,
-              dateOfBirth: req.body.dateOfBirth,
-              collegeName: req.body.collegeName,
-              bestFriend: req.body.bestFriend,
-              interests: req.body.interests,
-              favoriteSports: req.body.favoriteSports,
-              favoriteGame: req.body.favoriteGame,
-              favoriteMusic: req.body.favoriteMusic,
-              favoriteMovie: req.body.favoriteMovie,
-              favoriteAnime: req.body.favoriteAnime,
-              favoriteActor: req.body.favoriteActor
-          },
+          updateData,
           { new: true }
       );
 
@@ -159,6 +220,7 @@ router.patch('/update', authenticateToken, upload.single('profilePic'), async (r
       res.status(500).send('Failed to update profile');
   }
 });
+
 
 
 const searchUsers = async (req, res) => {
