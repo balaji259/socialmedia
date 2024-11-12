@@ -8,9 +8,14 @@ function UserDetails() {
     const [likedData,setLikedData]=useState([]);
     const [activeSection, setActiveSection] = useState('posts');
     const [error, setError] = useState(null);
+    const [friendSuggestions, setFriendSuggestions] = useState([]);
+
     const [isEditing, setIsEditing] = useState(false);
     const [editableData, setEditableData] = useState({});
     const [previewImage, setPreviewImage] = useState(null);
+
+    const [suggestions, setSuggestions] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
 
     const backendBaseUrl = 'http://localhost:7000';
 
@@ -26,6 +31,16 @@ function UserDetails() {
                 relationshipStatus: userData.relationshipStatus,
                 bio: userData.bio,
                 profilePic: userData.profilePic,
+                dateOfBirth: userData.dateOfBirth || '', // New fields
+                collegeName: userData.collegeName || '',
+                bestFriend: userData.bestFriend || '',
+                interests: userData.interests || '',
+                favoriteSports: userData.favoriteSports || '',
+                favoriteGame: userData.favoriteGame || '',
+                favoriteMusic: userData.favoriteMusic || '',
+                favoriteMovie: userData.favoriteMovie || '',
+                favoriteAnime: userData.favoriteAnime || '',
+                favoriteActor: userData.favoriteActor || '',
             });
         }
     }, [userData]);
@@ -78,6 +93,40 @@ function UserDetails() {
         }));
     };
 
+
+
+    const fetchSuggestions = async (query) => {
+        if (query.length >= 2) {
+            try {
+                const response = await fetch(`${backendBaseUrl}/profile/bestfriend/search?username=${query}`);
+                const data = await response.json();
+                setSuggestions(data.length ? data : []); // Clear suggestions if no data
+            } catch (error) {
+                console.error('Error fetching user suggestions:', error);
+            }
+        } else {
+            setSuggestions([]);
+        }
+    };
+
+    const handleBestFriendChange = (e) => {
+        const value = e.target.value;
+        setSearchQuery(value);
+        fetchSuggestions(value);
+        handleInputChange(e); // Update the form data with the new value
+    };
+
+    const handleSuggestionClick = (user) => {
+        setEditableData((prevData) => ({
+            ...prevData,
+            bestFriend: user._id // Correctly updating the state
+        }));
+        setSearchQuery(user.username); // Show the selected username
+        setSuggestions([]); // Hide suggestions
+    };
+    
+    
+
     const toggleEditMode = () => {
         setIsEditing(!isEditing);
     };
@@ -96,23 +145,45 @@ function UserDetails() {
 
     const saveChanges = async () => {
         const formData = new FormData();
+       
+        // Object.keys(editableData).forEach((key) => {
+        //     // Skip appending 'bestFriend' if it's an empty string
+        //     if (key === 'bestFriend' && editableData[key] === '') {
+        //         formData.append(key, null); // Set it as null
+        //     } else {
+        //         formData.append(key, editableData[key]);
+        //     }
+        // });
         formData.append('username', editableData.username);
         formData.append('fullname', editableData.fullname);
         formData.append('relationshipStatus', editableData.relationshipStatus);
         formData.append('bio', editableData.bio);
+        formData.append('dateOfBirth', editableData.dateOfBirth);
+        formData.append('collegeName', editableData.collegeName);
+        formData.append('bestFriend', editableData.bestFriend); // ID of selected friend
+        formData.append('interests', editableData.interests);
+        formData.append('favoriteSports', editableData.favoriteSports);
+        formData.append('favoriteGame', editableData.favoriteGame);
+        formData.append('favoriteMusic', editableData.favoriteMusic);
+        formData.append('favoriteMovie', editableData.favoriteMovie);
+        formData.append('favoriteAnime', editableData.favoriteAnime);
+        formData.append('favoriteActor', editableData.favoriteActor);
+
         if (editableData.profilePic instanceof File) {
             formData.append('profilePic', editableData.profilePic);
         }
 
+        console.log("formData");
+        console.log(formData);
+
         try {
-            
+            console.log(formData);
             const response = await axios.patch(`${backendBaseUrl}/profile/update`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     Authorization: `Bearer ${localStorage.getItem('token')}`,
                 },
             });
-
             setUserData(response.data.updatedUser);
             toggleEditMode();
         } catch (error) {
@@ -216,6 +287,7 @@ function UserDetails() {
         return <div>Loading...</div>;
     }
 
+    
     return (
         <div style={styles.container}>
             <div style={styles.profileCard}>
@@ -250,42 +322,45 @@ function UserDetails() {
                 <div style={styles.profileInfo}>
                     {isEditing ? (
                         <>
-                            <input
-                                type="text"
-                                name="username"
-                                value={editableData.username}
-                                onChange={handleInputChange}
-                                style={styles.input}
-                                placeholder="Username"
-                            />
-                            <input
-                                type="text"
-                                name="fullname"
-                                value={editableData.fullname}
-                                onChange={handleInputChange}
-                                style={styles.input}
-                                placeholder="Full Name"
-                            />
-                            <select
-                                id="edit-relationship-status"
-                                name="relationshipStatus"
-                                value={editableData.relationshipStatus}
-                                onChange={handleInputChange}
-                                style={styles.input}
-                            >
+                            <input type="text" name="username" value={editableData.username} onChange={handleInputChange} style={styles.input} placeholder="Username" />
+                            <input type="text" name="fullname" value={editableData.fullname} onChange={handleInputChange} style={styles.input} placeholder="Full Name" />
+                            <input type="date" name="dateOfBirth" value={editableData.dateOfBirth} onChange={handleInputChange} style={styles.input} placeholder="Date of Birth" />
+                            <input type="text" name="collegeName" value={editableData.collegeName} onChange={handleInputChange} style={styles.input} placeholder="College Name" />
+                            {/* <input type="text" name="bestFriend" value={editableData.bestFriend} onChange={handleInputChange} style={styles.input} placeholder="Best Friend" /> */}
+                            <div>
+                                    <input
+                                        type="text"
+                                        name="bestFriend"
+                                        value={searchQuery}
+                                        onChange={handleBestFriendChange}
+                                        placeholder="Type username of your best friend"
+                                    />
+                                    {suggestions.length > 0 && (
+                                        <ul>
+                                        {suggestions.map((user) => (
+                                            <li key={user._id} onClick={() => handleSuggestionClick(user)}>
+                                            {user.username}
+                                            </li>
+                                        ))}
+                                        </ul>
+                                    )}
+                                    </div>
+
+                            <input type="text" name="interests" value={editableData.interests} onChange={handleInputChange} style={styles.input} placeholder="Interests" />
+                            <input type="text" name="favoriteSports" value={editableData.favoriteSports} onChange={handleInputChange} style={styles.input} placeholder="Favorite Sports" />
+                            <input type="text" name="favoriteGame" value={editableData.favoriteGame} onChange={handleInputChange} style={styles.input} placeholder="Favorite Game" />
+                            <input type="text" name="favoriteMusic" value={editableData.favoriteMusic} onChange={handleInputChange} style={styles.input} placeholder="Favorite Music" />
+                            <input type="text" name="favoriteMovie" value={editableData.favoriteMovie} onChange={handleInputChange} style={styles.input} placeholder="Favorite Movie" />
+                            <input type="text" name="favoriteAnime" value={editableData.favoriteAnime} onChange={handleInputChange} style={styles.input} placeholder="Favorite Anime" />
+                            <input type="text" name="favoriteActor" value={editableData.favoriteActor} onChange={handleInputChange} style={styles.input} placeholder="Favorite Actor" />
+                            <select id="edit-relationship-status" name="relationshipStatus" value={editableData.relationshipStatus} onChange={handleInputChange} style={styles.input}>
                                 <option value="single">Single</option>
                                 <option value="in a relationship">In a Relationship</option>
                                 <option value="married">Married</option>
                                 <option value="complicated">Complicated</option>
                                 <option value="other">Other</option>
                             </select>
-                            <textarea
-                                name="bio"
-                                value={editableData.bio}
-                                onChange={handleInputChange}
-                                style={styles.textarea}
-                                placeholder="Bio"
-                            />
+                            <textarea name="bio" value={editableData.bio} onChange={handleInputChange} style={styles.textarea} placeholder="Bio" />
                             <button style={styles.saveButton} onClick={saveChanges}>Save Changes</button>
                             <button style={styles.cancelButton} onClick={toggleEditMode}>Cancel</button>
                         </>
@@ -293,14 +368,18 @@ function UserDetails() {
                         <>
                             <h2 style={styles.username}>{userData.username || "User's Name"}</h2>
                             <p style={styles.fullname}>{userData.fullname || 'Full Name'}</p>
-                            <div style={styles.statsContainer}>
-                                <p style={styles.stat}>{`${userData.postsCount || 0} Posts`}</p>
-                                <p style={styles.stat}>{`${(userData.followers && userData.followers.length) || 0} Followers`}</p>
-                                <p style={styles.stat}>{`${(userData.following && userData.following.length) || 0} Following`}</p>
-                            </div>
                             <p style={styles.additionalInfo}>Relationship Status: {userData.relationshipStatus || 'Single'}</p>
                             <p style={styles.additionalInfo}>Bio: {userData.bio || 'User bio goes here...'}</p>
-                            <p style={styles.additionalInfo}>Streak: {userData.streak?.count || 0}</p>
+                            <p style={styles.additionalInfo}>Date of Birth: {userData.dateOfBirth || 'Not specified'}</p>
+                            <p style={styles.additionalInfo}>College: {userData.collegeName || 'Not specified'}</p>
+                            <p style={styles.additionalInfo}>Best Friend: {userData.bestFriend || 'Not specified'}</p>
+                            <p style={styles.additionalInfo}>Interests: {userData.interests || 'Not specified'}</p>
+                            <p style={styles.additionalInfo}>Favorite Sports: {userData.favoriteSports || 'Not specified'}</p>
+                            <p style={styles.additionalInfo}>Favorite Game: {userData.favoriteGame || 'Not specified'}</p>
+                            <p style={styles.additionalInfo}>Favorite Music: {userData.favoriteMusic || 'Not specified'}</p>
+                            <p style={styles.additionalInfo}>Favorite Movie: {userData.favoriteMovie || 'Not specified'}</p>
+                            <p style={styles.additionalInfo}>Favorite Anime: {userData.favoriteAnime || 'Not specified'}</p>
+                            <p style={styles.additionalInfo}>Favorite Actor: {userData.favoriteActor || 'Not specified'}</p>
                             <button style={styles.editButton} onClick={toggleEditMode}>Edit Profile</button>
                         </>
                     )}
@@ -470,145 +549,159 @@ const styles = {
         flexDirection: 'column',
         alignItems: 'center',
         padding: '20px',
+        backgroundColor: '#f5f5f5',
     },
     profileCard: {
         display: 'flex',
         flexDirection: 'row',
-        width: '700px', // Wider profile card
+        width: '700px',
         backgroundColor: '#fff',
         borderRadius: '12px',
-        boxShadow: '0 6px 12px rgba(0, 0, 0, 0.1)',
-        marginBottom: '20px',
-        padding: '25px',
+        boxShadow: '0 6px 15px rgba(0, 0, 0, 0.15)',
+        marginBottom: '25px',
+        padding: '30px',
+        gap: '15px',
     },
     profilePicContainer: {
         flex: '1',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        padding: '5px', // Padding around profile picture
+        padding: '10px',
     },
     profilePic: {
-        width: '90%',  // Narrower width for taller aspect ratio
-        height: '90%', // Taller height for profile picture
-        borderRadius: '8px',
+        width: '100%',
+        height: '100%',
+        maxWidth: '120px',
+        maxHeight: '120px',
+        borderRadius: '12px',
         objectFit: 'cover',
-        backgroundColor: '#f0f0f0'
+        backgroundColor: '#e0e0e0',
     },
     profileInfo: {
         flex: '2',
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'space-around',
-        paddingLeft: '15px', // More padding for professional look
+        justifyContent: 'space-between',
+        paddingLeft: '20px',
         textAlign: 'left',
-        lineHeight: '1.8', // Increased line height for better spacing
+        lineHeight: '1.7',
     },
     username: {
-        fontSize: '2em', // Increased font size
+        fontSize: '2.2em',
         fontWeight: 'bold',
+        color: '#333',
     },
     fullname: {
-        fontSize: '1.4em', // Larger font size for full name
-        color: '#666',
+        fontSize: '1.5em',
+        color: '#888',
     },
     statsContainer: {
         display: 'flex',
-        justifyContent: 'space-between',
-        marginBottom: '15px',
+        justifyContent: 'space-around',
+        marginBottom: '20px',
     },
     stat: {
-        fontSize: '1.1em', // Increased font size for stats
-        fontWeight: 'bold',
+        fontSize: '1.2em',
+        fontWeight: '600',
+        color: '#444',
     },
     additionalInfo: {
-        fontSize: '1.1em', // Larger font size for bio and status
-        color: '#555',
+        fontSize: '1.1em',
+        color: '#666',
+        marginTop: '8px',
     },
     editButton: {
-        marginTop: '15px',
-        padding: '12px 24px', // Larger button size
+        marginTop: '20px',
+        padding: '12px 26px',
         backgroundColor: '#6C63FF',
         color: '#fff',
         border: 'none',
-        borderRadius: '5px',
+        borderRadius: '6px',
         cursor: 'pointer',
-        fontSize: '1em', // Increased font size for button
+        fontSize: '1.1em',
+        transition: 'background-color 0.3s',
     },
     buttonContainer: {
         display: 'flex',
         justifyContent: 'center',
         gap: '15px',
-        marginBottom: '20px',
+        marginBottom: '25px',
     },
     activeButton: {
         padding: '12px 25px',
-        backgroundColor: 'green',
+        backgroundColor: '#28a745',
         color: '#fff',
         border: 'none',
-        borderRadius: '5px',
+        borderRadius: '6px',
         cursor: 'pointer',
         fontSize: '1em',
     },
     inactiveButton: {
         padding: '12px 25px',
-        backgroundColor: '#ccc',
+        backgroundColor: '#bbb',
         color: '#333',
         border: 'none',
-        borderRadius: '5px',
+        borderRadius: '6px',
         cursor: 'pointer',
         fontSize: '1em',
     },
     sectionContent: {
-        width: '700px', // Matches profile card width
+        width: '700px',
         backgroundColor: '#f9f9f9',
-        padding: '20px',
+        padding: '25px',
         borderRadius: '10px',
         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
         textAlign: 'left',
+        lineHeight: '1.6',
     },
     post: {
-        marginBottom: '15px',
-        padding: '12px',
+        marginBottom: '20px',
+        padding: '15px',
         backgroundColor: '#fff',
-        borderRadius: '5px',
-        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+        borderRadius: '8px',
+        boxShadow: '0 3px 6px rgba(0, 0, 0, 0.1)',
         fontSize: '1em',
     },
     input: {
-        marginBottom: '10px',
-        padding: '10px',
+        marginBottom: '15px',
+        padding: '12px',
         width: '100%',
         fontSize: '1em',
+        borderRadius: '5px',
+        border: '1px solid #ddd',
     },
     textarea: {
-        marginBottom: '10px',
-        padding: '10px',
+        marginBottom: '15px',
+        padding: '12px',
         width: '100%',
-        height: '80px',
+        height: '100px',
         fontSize: '1em',
+        borderRadius: '5px',
+        border: '1px solid #ddd',
     },
     saveButton: {
-        marginTop: '10px',
-        padding: '12px 24px',
-        backgroundColor: 'green',
+        marginTop: '12px',
+        padding: '12px 26px',
+        backgroundColor: '#28a745',
         color: '#fff',
         border: 'none',
-        borderRadius: '5px',
+        borderRadius: '6px',
         cursor: 'pointer',
         fontSize: '1em',
     },
     cancelButton: {
-        marginTop: '10px',
-        padding: '12px 24px',
-        backgroundColor: '#ccc',
+        marginTop: '12px',
+        padding: '12px 26px',
+        backgroundColor: '#bbb',
         color: '#333',
         border: 'none',
-        borderRadius: '5px',
+        borderRadius: '6px',
         cursor: 'pointer',
         fontSize: '1em',
     },
 };
+
 
 
 

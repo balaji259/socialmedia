@@ -126,15 +126,28 @@ router.patch('/update', authenticateToken, upload.single('profilePic'), async (r
           mediaUrl = currentUser.profilePic; // Retain the existing profile picture URL if none is uploaded
       }
 
+      console.log("reqbody");
+      console.log(req.body);
+
       // Update the user's profile in the database
       const updatedUser = await User.findByIdAndUpdate(
           req.user.userId,
           {
               profilePic: mediaUrl,
-              fullname: req.body.fullname,
               username: req.body.username,
+              fullname: req.body.fullname,
+              relationshipStatus: req.body.relationshipStatus,
               bio: req.body.bio,
-              relationshipStatus: req.body.relationshipStatus
+              dateOfBirth: req.body.dateOfBirth,
+              collegeName: req.body.collegeName,
+              bestFriend: req.body.bestFriend,
+              interests: req.body.interests,
+              favoriteSports: req.body.favoriteSports,
+              favoriteGame: req.body.favoriteGame,
+              favoriteMusic: req.body.favoriteMusic,
+              favoriteMovie: req.body.favoriteMovie,
+              favoriteAnime: req.body.favoriteAnime,
+              favoriteActor: req.body.favoriteActor
           },
           { new: true }
       );
@@ -147,6 +160,18 @@ router.patch('/update', authenticateToken, upload.single('profilePic'), async (r
   }
 });
 
+
+const searchUsers = async (req, res) => {
+  try {
+      const { username } = req.query;
+      const users = await User.find({ username: { $regex: username, $options: 'i' } }).limit(5);
+      res.json(users.length ? users : []);
+  } catch (err) {
+      console.error("Error fetching users:", err);
+      res.status(500).json({ message: 'Error fetching users' });
+  }
+};
+router.get('/bestfriend/search',searchUsers)
 
 router.get('/userPosts/:userId', async (req, res) => {
   const userId = req.params.userId;

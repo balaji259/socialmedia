@@ -25,47 +25,97 @@ const userSchema = new mongoose.Schema(
     },
     profilePic: {
       type: String,
-      default: '/images/default_profile.jpeg', // URL of the user's profile picture
+      default: '/images/default_profile.jpeg',
     },
     bio: {
       type: String,
       trim: true,
-      default: '', // A short bio for the user
+      default: '',
     },
-    postsCount: {   
+    postsCount: {
       type: Number,
-      default: 0, // Number of posts created by the user
+      default: 0,
     },
     followers: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User', // Reference to the User model for followers
+        ref: 'User',
       },
     ],
     following: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User', // Reference to the User model for following
+        ref: 'User',
       },
     ],
     relationshipStatus: {
       type: String,
       enum: ['single', 'in a relationship', 'married', 'complicated', 'other'],
-      default: 'single', // Relationship status of the user
+      default: 'single',
     },
     streak: {
       count: {
         type: Number,
-        default: 0, // Number of consecutive active days (similar to Snapstreak)
+        default: 0,
       },
       lastActive: {
         type: Date,
-        default: null, // Last date of activity to maintain the streak
+        default: null,
       },
       lastPostTime: {
         type: Date,
-        default: null, // Store the last time the user posted
+        default: null,
       },
+    },
+    // New Fields
+    dateOfBirth: {
+      type: Date,
+      default: null,
+    },
+    collegeName: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    bestFriend: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User', // Reference to another user as the best friend
+      default: null,
+    },
+    interests: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    favoriteSports: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    favoriteGame: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    favoriteMusic: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    favoriteMovie: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    favoriteAnime: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    favoriteActor: {
+      type: String,
+      trim: true,
+      default: '',
     },
   },
   { timestamps: true }
