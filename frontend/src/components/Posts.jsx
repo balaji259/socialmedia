@@ -532,14 +532,14 @@ return (
                   <div style={{ marginLeft: "20px" }}>
                     {comment.replies.map((reply) => (
                       <div key={reply.replyId} >
-                        {console.log("reply")};
-                        {console.log(reply)};
+                        {console.log("reply")}
+                        {console.log(reply)}
                         <strong>{reply.user?.username || "Anonymous"}:</strong> {reply.text}
                         <div>
                           <button onClick={() => toggleCommentLike(reply.replyId)}>
                             {/* Like button content */}
                           </button>
-                          <button onClick={() => toggleReplyInput(reply.replyId)}>Reply</button>
+                          {/* <button onClick={() => toggleReplyInput(reply.replyId)}>Reply</button> */}
                         </div>
 
                         {/* Reply input for each reply */}

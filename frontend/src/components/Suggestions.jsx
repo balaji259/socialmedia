@@ -7,6 +7,42 @@ const SuggestionsSidebar = () => {
   const [topStreakUsers, setTopStreakUsers] = useState([]);
   const backendBaseUrl='http://localhost:7000';
 
+
+
+  const getUserIdFromToken = () => {
+    const token = localStorage.getItem('token');
+    if (!token) return null;
+
+    try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        return payload.userId;
+    } catch (error) {
+        console.error('Error decoding token:', error);
+        return null;
+    }
+};
+
+    const currentUserId = getUserIdFromToken();
+
+    const handleFollow = async (followId) => {
+      try {
+          const token = localStorage.getItem('token');
+          console.log(currentUserId);
+          console.log(followId);
+          await axios.post(
+              `${backendBaseUrl}/user/search/follow`,
+              { userId: currentUserId, followId },
+              { headers: { Authorization: `Bearer ${token}` } }
+          );
+
+          // Update the suggestedUsers list by removing the followed user
+          setSuggestions(prev => prev.filter(user => user._id !== followId));
+      } catch (error) {
+          console.error('Error following user:', error);
+      }
+  };
+
+
   const fetchUserData = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -97,12 +133,14 @@ const SuggestionsSidebar = () => {
       <div style={suggestionsContainerStyle}>
         {suggestions.map((user) => (
           <div key={user.username} style={suggestionStyle}>
+            {console.log("userid")}
+            {console.log(user._id)}
             <div style={suggestionTopStyle}>
               <img src={user.profilePic === '/images/default_profile.jpeg' ? '/images/default_profile.jpeg' : `${backendBaseUrl}${user.profilePic}`} alt={user.username} style={profilePicStyle} />
               <p style={usernameTextStyle}>@{user.username}</p>
               <p style={bioTextStyle}>{user.bio || 'No Bio'}</p>
             </div>
-            <button style={followButtonStyle}>Follow</button>
+            <button style={followButtonStyle} onClick={() => handleFollow(user._id)}>Follow</button>
           </div>
         ))}
       </div>
