@@ -142,6 +142,55 @@ const menuStyle = {
 
 
 
+const RecursiveReplies = ({
+  replies,
+  toggleCommentLike,
+  toggleReplyInput,
+  replyingTo,
+  handleReplyChange,
+  handleAddReply,
+  replyTexts,
+}) => {
+  return replies.map((reply) => (
+    <div key={reply.replyId} style={{ marginLeft: "20px", borderLeft: "1px solid #ddd", paddingLeft: "10px" }}>
+      <strong>{reply.user?.username || "Anonymous"}:</strong> {reply.text}
+      <div>
+        <button onClick={() => toggleCommentLike(reply.replyId)}>Like</button>
+        <button onClick={() => toggleReplyInput(reply.replyId)}>Reply</button>
+      </div>
+
+      {/* Reply input for each reply */}
+      {replyingTo[reply.replyId] && (
+        <div style={{ marginLeft: "20px" }}>
+          <textarea
+            placeholder="Write a reply..."
+            value={replyTexts[reply.replyId] || ""}
+            onChange={(e) => handleReplyChange(reply.replyId, e.target.value)}
+            style={{ width: "90%", margin: "5px 0" }}
+          />
+          <button onClick={() => handleAddReply(reply.replyId)}>Reply</button>
+        </div>
+      )}
+
+      {/* Recursive rendering of replies */}
+      {reply.replies && reply.replies.length > 0 && (
+        <RecursiveReplies
+          replies={reply.replies}
+          toggleCommentLike={toggleCommentLike}
+          toggleReplyInput={toggleReplyInput}
+          replyingTo={replyingTo}
+          handleReplyChange={handleReplyChange}
+          handleAddReply={handleAddReply}
+          replyTexts={replyTexts}
+        />
+      )}
+    </div>
+  ));
+};
+
+
+
+
 
 const PostComponent = () => {
   const navigate = useNavigate();
@@ -357,7 +406,11 @@ const copyPostIdToClipboard = (postId) => {
 };
 
 
-const handleAddComment = async (postId) => {
+
+  
+
+
+  const handleAddComment = async (postId) => {
   const token = localStorage.getItem("token");
   if (!token) {
     alert("No token found. Please log in again.");
@@ -385,7 +438,36 @@ const handleAddComment = async (postId) => {
   }
 };
 
-const handleAddReply = async (commentId) => {
+// const handleAddReply = async (commentId) => {
+//   const token = localStorage.getItem("token");
+//   if (!token) {
+//     alert("No token found. Please log in again.");
+//     return;
+//   }
+
+//   try {
+//     const response = await fetch(`${backendBaseUrl}/posts/comment/reply/${commentId}`, {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//         Authorization: `Bearer ${token}`,
+//       },
+//       body: JSON.stringify({ text: replyTexts[commentId] || "" }),
+//     });
+
+//     if (response.ok) {
+//       await fetchPosts();
+//       clearReplyText(commentId);
+//       setReplyingTo((prev) => ({ ...prev, [commentId]: false }));
+//     } else {
+//       alert("Failed to add reply");
+//     }
+//   } catch (error) {
+//     console.error("Error adding reply:", error);
+//   }
+// };
+
+const handleAddReply = async (replyId) => {
   const token = localStorage.getItem("token");
   if (!token) {
     alert("No token found. Please log in again.");
@@ -393,19 +475,19 @@ const handleAddReply = async (commentId) => {
   }
 
   try {
-    const response = await fetch(`${backendBaseUrl}/posts/comment/reply/${commentId}`, {
+    const response = await fetch(`${backendBaseUrl}/posts/comment/reply/${replyId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ text: replyTexts[commentId] || "" }),
+      body: JSON.stringify({ text: replyTexts[replyId] || "" }),
     });
 
     if (response.ok) {
-      await fetchPosts();
-      clearReplyText(commentId);
-      setReplyingTo((prev) => ({ ...prev, [commentId]: false }));
+      await fetchPosts(); // Reload posts after reply is added
+      clearReplyText(replyId);
+      setReplyingTo((prev) => ({ ...prev, [replyId]: false }));
     } else {
       alert("Failed to add reply");
     }
@@ -421,24 +503,47 @@ const toggleComments = (postId) => {
   }));
 };
 
-const handleReplyChange = (commentId, text) => {
-  setReplyTexts((prevReplies) => ({
-    ...prevReplies,
-    [commentId]: text,
+// const handleReplyChange = (commentId, text) => {
+//   setReplyTexts((prevReplies) => ({
+//     ...prevReplies,
+//     [commentId]: text,
+//   }));
+// };
+
+const handleReplyChange = (replyId, text) => {
+  setReplyTexts((prev) => ({
+    ...prev,
+    [replyId]: text,
   }));
 };
 
-const clearReplyText = (commentId) => {
-  setReplyTexts((prevReplies) => ({
-    ...prevReplies,
-    [commentId]: "",
+
+// const clearReplyText = (commentId) => {
+//   setReplyTexts((prevReplies) => ({
+//     ...prevReplies,
+//     [commentId]: "",
+//   }));
+// };
+
+const clearReplyText = (replyId) => {
+  setReplyTexts((prev) => ({
+    ...prev,
+    [replyId]: "",
   }));
 };
 
-const toggleReplyInput = (commentId) => {
+
+// const toggleReplyInput = (commentId) => {
+//   setReplyingTo((prev) => ({
+//     ...prev,
+//     [commentId]: !prev[commentId],
+//   }));
+// };
+
+const toggleReplyInput = (replyId) => {
   setReplyingTo((prev) => ({
     ...prev,
-    [commentId]: !prev[commentId],
+    [replyId]: !prev[replyId],
   }));
 };
 
@@ -517,49 +622,24 @@ return (
 
           {/* Comment Section */}
           {openComments[post.postId] && (
-            <div style={commentsSectionStyle}>
+            <div style={{ padding: "10px", border: "1px solid #ccc" }}>
               {post.comments.map((comment) => (
-                <div key={comment.commentId} style={commentStyle}>
+                <div key={comment.commentId} style={{ margin: "10px 0" }}>
                   <strong>{comment.user?.username || "Anonymous"}:</strong> {comment.text}
-                  <div>
-                    <button onClick={() => toggleCommentLike(comment.commentId)}>
-                      {/* Like button content */}
-                    </button>
-                    <button onClick={() => toggleReplyInput(comment.commentId)}>Reply</button>
-                  </div>
+                  <button onClick={() => toggleReplyInput(comment.commentId)}>Reply</button>
 
-                  {/* Display replies */}
-                  <div style={{ marginLeft: "20px" }}>
-                    {comment.replies.map((reply) => (
-                      <div key={reply.replyId} >
-                        {console.log("reply")};
-                        {console.log(reply)};
-                        <strong>{reply.user?.username || "Anonymous"}:</strong> {reply.text}
-                        <div>
-                          <button onClick={() => toggleCommentLike(reply.replyId)}>
-                            {/* Like button content */}
-                          </button>
-                          <button onClick={() => toggleReplyInput(reply.replyId)}>Reply</button>
-                        </div>
+                  {/* Render replies recursively */}
+                  <RecursiveReplies
+                    replies={comment.replies || []}
+                    toggleCommentLike={() => {}}
+                    toggleReplyInput={toggleReplyInput}
+                    replyingTo={replyingTo}
+                    handleReplyChange={handleReplyChange}
+                    handleAddReply={handleAddReply}
+                    replyTexts={replyTexts}
+                  />
 
-                        {/* Reply input for each reply */}
-                      
-                        {replyingTo[reply.replyId] && (
-                          <div style={{ marginLeft: "20px" }}>
-                            <textarea
-                              placeholder="Write a reply..."
-                              value={replyTexts[reply.replyId] || ""}
-                              onChange={(e) => handleReplyChange(reply.replyId, e.target.value)}
-                              style={{ width: "90%", margin: "5px 0" }}
-                            />
-                            <button onClick={() => handleAddReply(reply.replyId)}>Reply</button>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Reply input for each comment */}
+                  {/* Reply input for comment */}
                   {replyingTo[comment.commentId] && (
                     <div style={{ marginLeft: "20px" }}>
                       <textarea
@@ -575,15 +655,13 @@ return (
               ))}
 
               {/* New comment input */}
-              <div>
-                <textarea
-                  placeholder="Write a comment..."
-                  value={newComment}
-                  onChange={(e) => setNewComment(e.target.value)}
-                  style={{ width: "100%", margin: "5px 0" }}
-                />
-                <button onClick={() => handleAddComment(post.postId)}>Comment</button>
-              </div>
+              <textarea
+                placeholder="Write a comment..."
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                style={{ width: "100%", margin: "5px 0" }}
+              />
+              <button onClick={() => handleAddComment(post.postId)}>Comment</button>
             </div>
           )}
         </div>
@@ -591,6 +669,7 @@ return (
     </div>
   </div>
 );
+
 
 }
    
