@@ -372,7 +372,7 @@ function UserDetails() {
                             <p style={styles.fullname}>{userData.fullname || 'Full Name'}</p>
                             <p style={styles.additionalInfo}>Relationship Status: {userData.relationshipStatus || 'Single'}</p>
                             <p style={styles.additionalInfo}>Bio: {userData.bio || 'User bio goes here...'}</p>
-                            <p style={styles.additionalInfo}>Date of Birth: {userData.dateOfBirth || 'Not specified'}</p>
+                            <p style={styles.additionalInfo}>Date of Birth: {userData.dateOfBirth ? userData.dateOfBirth.split('T')[0] : 'Not specified'}</p>
                             <p style={styles.additionalInfo}>College: {userData.collegeName || 'Not specified'}</p>
                             <p style={styles.additionalInfo}>Best Friend: {userData.bestFriend?.username || 'Not specified'}</p>
                             <p style={styles.additionalInfo}>Interests: {userData.interests || 'Not specified'}</p>
@@ -413,7 +413,7 @@ function UserDetails() {
                     {post.caption && <p style={styles.caption}>{post.caption}</p>}
 
                     {/* Image or video media */}
-                    {console.log(post.content.mediaUrl)};
+                    {console.log(post.content.mediaUrl)}
                     {post.content.mediaUrl && post.postType === 'image' && (
                         <img
                             src={`${backendBaseUrl}/${post.content.mediaUrl}`}
@@ -428,17 +428,7 @@ function UserDetails() {
                         </video>
                     )}
 
-                    {/* Likes count */}
-                    <p>{post.likes.length} Likes</p>
-
-                    {/* Comments */}
-                    <div className="comments">
-                        {post.comments.map((comment, index) => (
-                            <p key={index}>
-                                <strong>{comment.username}:</strong> {comment.text}
-                            </p>
-                        ))}
-                    </div>
+                  
                 </div>
             ))}
 
@@ -459,7 +449,7 @@ function UserDetails() {
                     {post.postId.caption && <p style={styles.caption}>{post.postId.caption}</p>}
 
                     {/* Image or video media */}
-                    {console.log(post.postId.content.mediaUrl)};
+                    
                     {post.postId.content.mediaUrl && post.postId.postType === 'image' && (
                         <img
                             src={`${backendBaseUrl}/${post.postId.content.mediaUrl}`}
@@ -474,17 +464,7 @@ function UserDetails() {
                         </video>
                     )}
 
-                    {/* Likes count */}
-                    <p>{post.postId.likes.length} Likes</p>
-
-                    {/* Comments */}
-                    <div className="comments">
-                        {post.postId.comments.map((comment, index) => (
-                            <p key={index}>
-                                <strong>{comment.username}:</strong> {comment.text}
-                            </p>
-                        ))}
-                    </div>
+                  
                 </div>
             ))}
 
@@ -505,7 +485,7 @@ function UserDetails() {
                     {post.caption && <p style={styles.caption}>{post.caption}</p>}
 
                     {/* Image or video media */}
-                    {console.log(post.content.mediaUrl)};
+                  
                     {post.content.mediaUrl && post.postType === 'image' && (
                         <img
                             src={`${backendBaseUrl}/${post.content.mediaUrl}`}
@@ -520,17 +500,7 @@ function UserDetails() {
                         </video>
                     )}
 
-                    {/* Likes count */}
-                    <p>{post.likes.length} Likes</p>
-
-                    {/* Comments */}
-                    <div className="comments">
-                        {post.comments.map((comment, index) => (
-                            <p key={index}>
-                                <strong>{comment.username}:</strong> {comment.text}
-                            </p>
-                        ))}
-                    </div>
+                    
                 </div>
             ))}
 

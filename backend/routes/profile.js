@@ -202,9 +202,12 @@ router.patch('/update', authenticateToken, upload.single('profilePic'), async (r
       };
 
       // Only add bestFriend if it's a valid MongoDB ObjectId
-      if (mongoose.Types.ObjectId.isValid(req.body.bestFriend)) {
-          updateData.bestFriend = req.body.bestFriend;
-      }
+      if (req.body.bestFriend === "") {
+        updateData.bestFriend = null; // Set to null if empty string
+    } else if (mongoose.Types.ObjectId.isValid(req.body.bestFriend)) {
+        updateData.bestFriend = req.body.bestFriend; // Set to the valid ObjectId
+    }
+
 
       // Update the user's profile in the database
       const updatedUser = await User.findByIdAndUpdate(
@@ -235,22 +238,43 @@ const searchUsers = async (req, res) => {
 };
 router.get('/bestfriend/search',searchUsers)
 
+// router.get('/userPosts/:userId', async (req, res) => {
+//   const userId = req.params.userId;
+//   console.log("entered route");
+//   console.log(userId);
+
+//   try {
+//       // Find all posts by the given userId
+//       const posts = await Post.find({ user: userId })
+//           .populate('user', 'username')  // Populate the user details (like username)
+//           .populate({
+//               path: 'comments',
+//               populate: { path: 'user', select: 'username' } // Populate comments and commenter usernames
+//           })
+//           .exec();
+//         console.log("posts"); 
+//         console.log(posts);
+//       res.status(200).json({ posts });
+//   } catch (error) {
+//       console.error(error);
+//       res.status(500).json({ message: 'Error fetching posts' });
+//   }
+// });
+
 router.get('/userPosts/:userId', async (req, res) => {
   const userId = req.params.userId;
   console.log("entered route");
   console.log(userId);
 
   try {
-      // Find all posts by the given userId
+      // Find all posts by the given userId, selecting only specific fields
       const posts = await Post.find({ user: userId })
-          .populate('user', 'username')  // Populate the user details (like username)
-          .populate({
-              path: 'comments',
-              populate: { path: 'user', select: 'username' } // Populate comments and commenter usernames
-          })
+          .select('postType caption content') // Select only postType, caption, and content fields of the post
+          .populate('user', 'username profilePic')  // Populate only the username and profilePic of the user
           .exec();
-        console.log("posts"); 
-        console.log(posts);
+
+      console.log("posts"); 
+      console.log(posts);
       res.status(200).json({ posts });
   } catch (error) {
       console.error(error);
@@ -259,27 +283,55 @@ router.get('/userPosts/:userId', async (req, res) => {
 });
 
 
+
 //fetchsavedposts
+// router.get('/savedPosts/:userId', async (req, res) => {
+//   try {
+//     const { userId } = req.params;
+
+//     // Fetch saved posts for the user and populate the post details
+//     const savedPosts = await SavedPost.find({ userId })
+//       .populate({
+//         path: 'postId', // Populate post details
+//         model: Post,
+//         populate: [
+//           { path: 'user', select: 'username' }, // Populate user details
+//           {
+//             path: 'comments',
+//             model: Comment,
+//             populate: { path: 'user', select: 'username' } // Populate commenter details
+//           }
+//         ]
+//       })
+//       .exec();
+
+//     res.json(savedPosts);
+//   } catch (error) {
+//     console.error('Error fetching saved posts with details:', error);
+//     res.status(500).json({ error: 'Failed to fetch saved posts with details' });
+//   }
+// });
+
 router.get('/savedPosts/:userId', async (req, res) => {
   try {
+    console.log("fetchd saved oposts");
     const { userId } = req.params;
 
-    // Fetch saved posts for the user and populate the post details
+    // Fetch saved posts for the user and populate only the necessary post details
     const savedPosts = await SavedPost.find({ userId })
       .populate({
         path: 'postId', // Populate post details
         model: Post,
-        populate: [
-          { path: 'user', select: 'username' }, // Populate user details
-          {
-            path: 'comments',
-            model: Comment,
-            populate: { path: 'user', select: 'username' } // Populate commenter details
-          }
-        ]
+        select: 'postType caption content', // Select only specific post fields
+        populate: {
+          path: 'user', // Populate user field inside the post
+          model: User,
+          select: 'username profilePic', // Select only the username and profilePic of the user
+        },
       })
       .exec();
 
+    console.log(savedPosts);
     res.json(savedPosts);
   } catch (error) {
     console.error('Error fetching saved posts with details:', error);
@@ -287,18 +339,33 @@ router.get('/savedPosts/:userId', async (req, res) => {
   }
 });
 
+// router.get('/likedPosts/:userId', async (req, res) => {
+//   try {
+//       const {userId} = req.params; // Adjust based on your auth implementation
+
+//       // Find posts where the logged-in user's ID is in the likes array
+//       const likedPosts = await Post.find({ likes: userId })
+//           .populate('user', 'username') // Populate username of the user who posted
+//           .populate({
+//               path: 'comments',
+//               populate: { path: 'user', select: 'username' } // Populate comments with usernames
+//           });
+
+//       res.json(likedPosts);
+//   } catch (error) {
+//       console.error(error);
+//       res.status(500).json({ error: 'Server error' });
+//   }
+// });
 
 router.get('/likedPosts/:userId', async (req, res) => {
   try {
-      const {userId} = req.params; // Adjust based on your auth implementation
+      const { userId } = req.params;
 
       // Find posts where the logged-in user's ID is in the likes array
       const likedPosts = await Post.find({ likes: userId })
-          .populate('user', 'username') // Populate username of the user who posted
-          .populate({
-              path: 'comments',
-              populate: { path: 'user', select: 'username' } // Populate comments with usernames
-          });
+          .select('user mediaType caption content mediaUrl postType') // Include postType in selected fields
+          .populate('user', 'username'); // Populate only the username of the user who posted
 
       res.json(likedPosts);
   } catch (error) {
