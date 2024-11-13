@@ -397,113 +397,129 @@ function UserDetails() {
                 {/* {sectionData.map((item, index) => (
                     <div key={index} style={styles.post}>{item.caption}</div>
                 ))} */}
-                 {activeSection==="posts" && sectionData.map((post, index) => (
-                <div key={post._id} style={styles.post}>
-                    {/* Profile picture and username */}
-                    <div style={styles.header}>
-                        <img
-                            src={`${backendBaseUrl}${userData.profilePic}`} // Add profile picture URL here
-                            alt="Profile"
-                            style={styles.profilePic}
-                        />
-                        <strong>{post.user.username}</strong>
-                    </div>
+                 {activeSection === "posts" &&
+  sectionData.map((post, index) => (
+    <div
+      key={post._id}
+      className="bg-white rounded-lg shadow-md p-10 mb-4"
+    >
+      {/* Profile picture and username */}
+      <div className="flex items-center mb-4">
+        <img
+          src={`${backendBaseUrl}${userData.profilePic}`} // Add profile picture URL here
+          alt="Profile"
+          className="w-12 h-12 rounded-md mr-2"
+        />
+        <strong className="text-lg ml-4">{post.user.username}</strong>
+      </div>
 
-                    {/* Post caption */}
-                    {post.caption && <p style={styles.caption}>{post.caption}</p>}
+      {/* Post caption */}
+      {post.caption && (
+        <p className="text-gray-700 mb-4">{post.caption}</p>
+      )}
 
-                    {/* Image or video media */}
-                    {console.log(post.content.mediaUrl)}
-                    {post.content.mediaUrl && post.postType === 'image' && (
-                        <img
-                            src={`${backendBaseUrl}/${post.content.mediaUrl}`}
-                            alt="Post content"
-                            style={styles.media}
-                        />
-                    )}
-                    {post.content.mediaUrl && post.postType === 'video' && (
-                        <video controls style={styles.media}>
-                            <source type="video/mp4" src={`${backendBaseUrl}/${post.content.mediaUrl}`}  />
-                            Your browser does not support the video tag.
-                        </video>
-                    )}
-
-                  
-                </div>
-            ))}
-
+      {/* Image or video media */}
+      {post.content.mediaUrl && post.postType === "image" && (
+        <img
+          src={`${backendBaseUrl}/${post.content.mediaUrl}`}
+          alt="Post content"
+          className="w-full rounded-lg mt-2"
+        />
+      )}
+      {post.content.mediaUrl && post.postType === "video" && (
+        <video controls className="w-full rounded-lg mt-2">
+          <source
+            type="video/mp4"
+            src={`${backendBaseUrl}/${post.content.mediaUrl}`}
+          />
+          Your browser does not support the video tag.
+        </video>
+      )}
+    </div>
+  ))}
             {/* //saved */}
-            {activeSection==="saved" && savedData.map((post, index) => (
-                <div key={post._id} style={styles.post}>
-                    {/* Profile picture and username */}
-                    <div style={styles.header}>
-                        <img
-                            src={`${backendBaseUrl}${userData.profilePic}`} // Add profile picture URL here
-                            alt="Profile"
-                            style={styles.profilePic}
-                        />
-                        <strong>{post.postId.user.username}</strong>
-                    </div>
+            {activeSection === "saved" &&
+  savedData.map((post, index) => (
+    <div
+      key={post._id}
+      className="bg-white rounded-lg shadow-md p-4 mb-4"
+    >
+      {/* Profile picture and username */}
+      <div className="flex items-center mb-4">
+        <img
+          src={`${backendBaseUrl}${userData.profilePic}`} // Add profile picture URL here
+          alt="Profile"
+          className="w-10 h-10 rounded-md mr-2"
+        />
+        <strong className="text-lg ml-4">{post.postId.user.username}</strong>
+      </div>
 
-                    {/* Post caption */}
-                    {post.postId.caption && <p style={styles.caption}>{post.postId.caption}</p>}
+      {/* Post caption */}
+      {post.postId.caption && (
+        <p className="text-gray-700 mb-4">{post.postId.caption}</p>
+      )}
 
-                    {/* Image or video media */}
-                    
-                    {post.postId.content.mediaUrl && post.postId.postType === 'image' && (
-                        <img
-                            src={`${backendBaseUrl}/${post.postId.content.mediaUrl}`}
-                            alt="Post content"
-                            style={styles.media}
-                        />
-                    )}
-                    {post.postId.content.mediaUrl && post.postId.postType === 'video' && (
-                        <video controls style={styles.media}>
-                            <source type="video/mp4" src={`${backendBaseUrl}/${post.postId.content.mediaUrl}`}  />
-                            Your browser does not support the video tag.
-                        </video>
-                    )}
-
-                  
-                </div>
-            ))}
+      {/* Image or video media */}
+      {post.postId.content.mediaUrl && post.postId.postType === "image" && (
+        <img
+          src={`${backendBaseUrl}/${post.postId.content.mediaUrl}`}
+          alt="Post content"
+          className="w-full rounded-lg mt-2"
+        />
+      )}
+      {post.postId.content.mediaUrl && post.postId.postType === "video" && (
+        <video controls className="w-full rounded-lg mt-2">
+          <source
+            type="video/mp4"
+            src={`${backendBaseUrl}/${post.postId.content.mediaUrl}`}
+          />
+          Your browser does not support the video tag.
+        </video>
+      )}
+    </div>
+  ))}
 
             {/* liked */}
-            {activeSection==="liked" && likedData.map((post, index) => (
-                <div key={post._id} style={styles.post}>
-                    {/* Profile picture and username */}
-                    <div style={styles.header}>
-                        <img
-                            src={`${backendBaseUrl}${userData.profilePic}`} // Add profile picture URL here
-                            alt="Profile"
-                            style={styles.profilePic}
-                        />
-                        <strong>{post.user.username}</strong>
-                    </div>
+            {activeSection === "liked" &&
+  likedData.map((post, index) => (
+    <div
+      key={post._id}
+      className="bg-white rounded-lg shadow-md p-4 mb-4"
+    >
+      {/* Profile picture and username */}
+      <div className="flex items-center mb-4">
+        <img
+          src={`${backendBaseUrl}${userData.profilePic}`} // Add profile picture URL here
+          alt="Profile"
+          className="w-10 h-10 rounded-md mr-2"
+        />
+        <strong className="text-lg ml-4">{post.user.username}</strong>
+      </div>
 
-                    {/* Post caption */}
-                    {post.caption && <p style={styles.caption}>{post.caption}</p>}
+      {/* Post caption */}
+      {post.caption && (
+        <p className="text-gray-700 mb-4">{post.caption}</p>
+      )}
 
-                    {/* Image or video media */}
-                  
-                    {post.content.mediaUrl && post.postType === 'image' && (
-                        <img
-                            src={`${backendBaseUrl}/${post.content.mediaUrl}`}
-                            alt="Post content"
-                            style={styles.media}
-                        />
-                    )}
-                    {post.content.mediaUrl && post.postType === 'video' && (
-                        <video controls style={styles.media}>
-                            <source type="video/mp4" src={`${backendBaseUrl}/${post.content.mediaUrl}`}  />
-                            Your browser does not support the video tag.
-                        </video>
-                    )}
-
-                    
-                </div>
-            ))}
-
+      {/* Image or video media */}
+      {post.content.mediaUrl && post.postType === "image" && (
+        <img
+          src={`${backendBaseUrl}/${post.content.mediaUrl}`}
+          alt="Post content"
+          className="w-full rounded-lg mt-2"
+        />
+      )}
+      {post.content.mediaUrl && post.postType === "video" && (
+        <video controls className="w-full rounded-lg mt-2">
+          <source
+            type="video/mp4"
+            src={`${backendBaseUrl}/${post.content.mediaUrl}`}
+          />
+          Your browser does not support the video tag.
+        </video>
+      )}
+    </div>
+  ))}
 
 
 
@@ -521,7 +537,8 @@ const styles = {
         flexDirection: 'column',
         alignItems: 'center',
         padding: '20px',
-        backgroundColor: '#f5f5f5',
+        // backgroundColor: '#f5f5f5',
+        backgroundColor:'#d5d5d5'
     },
     profileCard: {
         display: 'flex',
@@ -625,11 +642,13 @@ const styles = {
         fontSize: '1em',
     },
     sectionContent: {
-        width: '700px',
-        backgroundColor: '#f9f9f9',
+        marginTop:'40px',
+        width: '1000px',
+        backgroundColor: '#d5d5d5',
+        // backgroundColor:'blue',
         padding: '25px',
-        borderRadius: '10px',
-        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+        // borderRadius: '10px',
+        // boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
         textAlign: 'left',
         lineHeight: '1.6',
     },

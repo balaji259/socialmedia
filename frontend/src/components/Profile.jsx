@@ -54,6 +54,7 @@ const styles = {
       display: 'flex',
       flexDirection: 'column',
       height: '100vh',
+      backgroundColor: '#d5d5d5',
     },
     content: {
       display: 'flex',

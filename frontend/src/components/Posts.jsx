@@ -100,7 +100,7 @@ menuItemStyle[':hover'] = { backgroundColor: '#444' };
 
 const postMediaStyle = {
   width: '100%',
-  maxHeight: '400px',
+  // maxHeight: '400px',
   borderRadius: '8px',
   marginTop: '10px',
 };
