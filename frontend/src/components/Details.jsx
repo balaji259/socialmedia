@@ -327,18 +327,23 @@ function UserDetails() {
                             <input type="date" name="dateOfBirth" value={editableData.dateOfBirth} onChange={handleInputChange} style={styles.input} placeholder="Date of Birth" />
                             <input type="text" name="collegeName" value={editableData.collegeName} onChange={handleInputChange} style={styles.input} placeholder="College Name" />
                             {/* <input type="text" name="bestFriend" value={editableData.bestFriend} onChange={handleInputChange} style={styles.input} placeholder="Best Friend" /> */}
-                            <div>
+                            <div style={styles.inputContainer}>
                                     <input
+                                        
                                         type="text"
                                         name="bestFriend"
                                         value={searchQuery}
                                         onChange={handleBestFriendChange}
+                                        style={styles.input}
                                         placeholder="Type username of your best friend"
                                     />
                                     {suggestions.length > 0 && (
                                         <ul>
                                         {suggestions.map((user) => (
-                                            <li key={user._id} onClick={() => handleSuggestionClick(user)}>
+                                            <li key={user._id} onClick={() => handleSuggestionClick(user)} style={{
+                                                ...styles.suggestionItem,
+                                                ':hover': styles.suggestionItemHover,
+                                            }} >
                                             {user.username}
                                             </li>
                                         ))}
@@ -370,10 +375,9 @@ function UserDetails() {
                             {console.log(userData)}
                             <h2 style={styles.username}>{userData.username || "User's Name"}</h2>
                             <p style={styles.fullname}>{userData.fullname || 'Full Name'}</p>
-                            <p style={styles.additionalInfo}>Relationship Status: {userData.relationshipStatus || 'Single'}</p>
-                            <p style={styles.additionalInfo}>Bio: {userData.bio || 'User bio goes here...'}</p>
                             <p style={styles.additionalInfo}>Date of Birth: {userData.dateOfBirth ? userData.dateOfBirth.split('T')[0] : 'Not specified'}</p>
                             <p style={styles.additionalInfo}>College: {userData.collegeName || 'Not specified'}</p>
+                            <p style={styles.additionalInfo}>Relationship Status: {userData.relationshipStatus || 'Single'}</p>
                             <p style={styles.additionalInfo}>Best Friend: {userData.bestFriend?.username || 'Not specified'}</p>
                             <p style={styles.additionalInfo}>Interests: {userData.interests || 'Not specified'}</p>
                             <p style={styles.additionalInfo}>Favorite Sports: {userData.favoriteSports || 'Not specified'}</p>
@@ -382,6 +386,7 @@ function UserDetails() {
                             <p style={styles.additionalInfo}>Favorite Movie: {userData.favoriteMovie || 'Not specified'}</p>
                             <p style={styles.additionalInfo}>Favorite Anime: {userData.favoriteAnime || 'Not specified'}</p>
                             <p style={styles.additionalInfo}>Favorite Actor: {userData.favoriteActor || 'Not specified'}</p>
+                            <p style={styles.additionalInfo}>Bio: {userData.bio || 'User bio goes here...'}</p>
                             <button style={styles.editButton} onClick={toggleEditMode}>Edit Profile</button>
                         </>
                     )}
@@ -537,14 +542,13 @@ const styles = {
         flexDirection: 'column',
         alignItems: 'center',
         padding: '20px',
-        // backgroundColor: '#f5f5f5',
-        backgroundColor:'#d5d5d5'
+        backgroundColor: '#d5d5d5',
     },
     profileCard: {
         display: 'flex',
         flexDirection: 'row',
-        alignItems: 'flex-start',
-        width: '700px',
+        alignItems: 'stretch',  // Makes both sections equal in height
+        width: '800px',
         maxWidth: '90%',
         backgroundColor: '#fff',
         borderRadius: '12px',
@@ -555,14 +559,16 @@ const styles = {
     },
     profilePicContainer: {
         flex: '1',
+        // backgroundColor: 'red',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        padding: '10px',
+        padding: '20px',  // Provides spacing around the image
     },
     profilePic: {
-        width: '150px',
-        height: '150px',
+        width: '100%',  
+        maxWidth: '250px',  // Adjusts the max width to create a vertical rectangle shape
+        height: '350px',  // Sets the height to make it taller than it is wide
         borderRadius: '12px',
         objectFit: 'cover',
         backgroundColor: '#e0e0e0',
@@ -589,22 +595,10 @@ const styles = {
         marginBottom: '15px',
     },
     additionalInfo: {
-        fontSize: '1em',
+        fontSize: '1.1em',
         color: '#666',
         marginTop: '8px',
     },
-
-    statsContainer: {
-        display: 'flex',
-        justifyContent: 'space-around',
-        marginBottom: '20px',
-    },
-    stat: {
-        fontSize: '1.2em',
-        fontWeight: '600',
-        color: '#444',
-    },
-   
     editButton: {
         marginTop: '20px',
         padding: '10px 20px',
@@ -630,16 +624,17 @@ const styles = {
         border: 'none',
         borderRadius: '6px',
         cursor: 'pointer',
-        fontSize: '1em',
+        fontSize: '1.2em',
     },
     inactiveButton: {
         padding: '12px 25px',
-        backgroundColor: '#bbb',
+        // backgroundColor: '#bbb',
+        backgroundColor:'transparent',
         color: '#333',
         border: 'none',
         borderRadius: '6px',
         cursor: 'pointer',
-        fontSize: '1em',
+        fontSize: '1.2em',
     },
     sectionContent: {
         marginTop:'40px',
@@ -660,6 +655,37 @@ const styles = {
         boxShadow: '0 3px 6px rgba(0, 0, 0, 0.1)',
         fontSize: '1em',
     },
+
+    inputContainer: {
+        position: 'relative',  // Required for the absolute positioning of the suggestions dropdown
+        width: '100%',
+    },
+
+    suggestionsList: {
+        position: 'absolute',
+        top: '100%',  // Positions the list right below the input
+        left: 0,
+        width: '100%',
+        backgroundColor: '#fff',
+        border: '1px solid black',
+        borderRadius: '8px',
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+        maxHeight: '200px',  // Limits the height so it doesn't grow indefinitely
+        overflowY: 'auto',  // Adds scroll if suggestions exceed max height
+        zIndex: 10,
+        padding: '0',
+        marginTop: '8px',
+    },
+    suggestionItem: {
+        padding: '10px',
+        cursor: 'pointer',
+        fontSize: '1em',
+        color: '#333',
+    },
+    suggestionItemHover: {
+        backgroundColor: '#f0f0f0',  // Light background when hovering
+    },
+
     input: {
         marginBottom: '12px',
         padding: '10px',
@@ -679,6 +705,8 @@ const styles = {
     },
     saveButton: {
         padding: '10px 20px',
+        marginTop:'5px',
+        marginBottom:'15px',
         backgroundColor: '#28a745',
         color: '#fff',
         border: 'none',
