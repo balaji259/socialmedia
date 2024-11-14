@@ -13,12 +13,14 @@ import Home from "./components/Home";
 import UserDetails from "./components/Details";
 import Profile from "./components/Profile";
 import Search from "./components/Search";
+import WelcomeOverlay from './components/Welcome';
 
 const RoutesComponent = () => {
     return (
         <Router>
             <Routes>
-                <Route path="/" element={<App />} />
+                <Route path="/" element={<WelcomeOverlay />} />
+                <Route path="/auth" element={<App />} />
                 <Route path="/logo" element={<Logo />} />
                 <Route path="/navbar" element={<Navbar />} />
                 <Route path="/dashboard" element={<Dashboard />} />
@@ -30,6 +32,7 @@ const RoutesComponent = () => {
                 <Route path="/details" element={<UserDetails />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/search" element={<Search />} />
+            
             </Routes>
         </Router>
     );
