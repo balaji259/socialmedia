@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-
+import './scroll.css'
 const SuggestionsSidebar = () => {
   const [suggestions, setSuggestions] = useState([]);
   const [streakCount, setStreakCount] = useState(0);
@@ -110,7 +110,7 @@ const SuggestionsSidebar = () => {
       .catch(error => console.error('Error fetching top streak users:', error));
   }, []);
   return (
-    <div style={sidebarStyle}>
+    <div  className="sidebar-container" style={sidebarStyle}>
       <div style={streakTableStyle}>
         <h3 style={streakTableHeaderStyle}>Popular Streaker</h3>
         {topStreakUsers.map((user, index) => (
@@ -152,12 +152,13 @@ const SuggestionsSidebar = () => {
 // Inline Styles
 const sidebarStyle = {
   position: 'fixed',
-  right: '10px',
+  // right: '10px',
+  right:'0px',
   top: '60px',
   height: 'calc(100vh - 60px)', // Full height minus top offset
   backgroundColor: '#f1f3f5',
   padding: '15px',
-  paddingTop: '40px',
+  paddingTop: '50px',
   display: 'flex',
   flexDirection: 'column',
   borderLeft: '1px solid #e1e1e1',

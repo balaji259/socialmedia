@@ -1,22 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from "react-router-dom";
+import './scroll.css';
 
 
 // Define all styles at the top
 const postComponentContainerStyle = {
   marginTop: '15px',
   padding: '20px',
-  backgroundColor: 'transparent',
+  backgroundColor: '#d5d5d5',
   maxHeight: '80vh',
   overflowY: 'scroll',
 };
+
+
 
 const postInputContainerStyle = {
   backgroundColor: '#fff',
   padding: '10px',
   borderRadius: '5px',
   boxShadow: '0 1px 3px rgba(0, 0, 0, 0.2)',
+  border:'2px solid black'
 };
 
 const textareaStyle = {
@@ -24,6 +28,7 @@ const textareaStyle = {
   height: '80px',
   padding: '10px',
   borderRadius: '5px',
+  border:'1px solid grey',
   borderColor: '#ddd',
   resize: 'none',
 };
@@ -43,7 +48,7 @@ const userPostStyle = {
   marginBottom: '20px',
   borderRadius: '8px',
   boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-  border: '2px solid black'
+  // border: '2px solid black'
 };
 
 const postHeaderStyle = {
@@ -548,7 +553,9 @@ const toggleReplyInput = (replyId) => {
 };
 
 return (
-  <div style={postComponentContainerStyle}>
+
+
+  <div className="post-component-container" style={postComponentContainerStyle}>
     <div style={postInputContainerStyle}>
       <form onSubmit={handleSubmit}>
         <textarea
@@ -567,7 +574,7 @@ return (
       </form>
     </div>
 
-    <div style={{ marginTop: '20px' }}>
+    <div   style={{ marginTop: '20px' }}>
       {posts.map((post) => (
         <div key={post.postId} style={userPostStyle}>
           <div style={postHeaderStyle}>
@@ -695,6 +702,7 @@ return (
       ))}
     </div>
   </div>
+  
 );
 
 

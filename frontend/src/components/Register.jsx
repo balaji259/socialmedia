@@ -82,7 +82,7 @@ const Register = ({ onSwitch }) => {
                     </button>
                 </form>
                 <div className="mt-4 text-sm">
-                    Already have an account? <span onClick={onSwitch} className="text-purple-600 cursor-pointer">Login here</span>
+                    Already have an account? <span onClick={()=>navigate('/login')} className="text-purple-600 cursor-pointer">Login here</span>
                 </div>
                 {/* {toast && <div className="mt-4 text-red-600">{toast}</div>} */}
             </div>

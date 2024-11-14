@@ -10,7 +10,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="fixed top-0 left-0 h-full w-60 bg-gray-100 border-r border-gray-300 p-6 flex flex-col justify-between">
+    <div className="fixed top-0 left-0 h-full w-50 bg-gray-100 border-r border-gray-300 p-6 flex flex-col justify-between">
       {/* Top Section */}
       <div className="flex flex-col space-y-10 pt-20">
         

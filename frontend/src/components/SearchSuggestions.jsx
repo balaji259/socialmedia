@@ -112,7 +112,8 @@ const SearchSuggestions = () => {
                         />
                         <div className="text-center mt-4">
                             <h3 className="text-xl font-semibold text-gray-800">{user.username}</h3>
-                            <p className="text-gray-600 mt-1">{user.bio}</p>
+                            {/* <p className="text-gray-600 mt-1">{user.bio}</p> */}
+                            <p className="text-gray-600 mt-1">{user.bio?user.bio:"-"}</p>
                         </div>
                         <div className="flex justify-center mt-6 space-x-4">
                             <button

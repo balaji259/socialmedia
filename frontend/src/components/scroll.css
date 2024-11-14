@@ -1,0 +1,7 @@
+.post-component-container::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, and Edge */
+  }
+
+.sidebar-container::-webkit-scrollbar {
+    display: none;
+  }

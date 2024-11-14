@@ -86,7 +86,7 @@ const Login = ({ onSwitch }) => {
                     </button>
                 </form>
                 <div className="mt-4 text-sm">
-                    Don't have an account? <span onClick={onSwitch} className="text-purple-600 cursor-pointer">Register here</span>
+                    Don't have an account? <span onClick={()=>navigate('/register')} className="text-purple-600 cursor-pointer">Register here</span>
                 </div>
             
             {/* //google */}

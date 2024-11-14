@@ -13,6 +13,8 @@ import Home from "./components/Home";
 import UserDetails from "./components/Details";
 import Profile from "./components/Profile";
 import Search from "./components/Search";
+import Register from './components/Register';
+import Login from './components/Login';
 import WelcomeOverlay from './components/Welcome';
 
 const RoutesComponent = () => {
@@ -20,6 +22,8 @@ const RoutesComponent = () => {
         <Router>
             <Routes>
                 <Route path="/" element={<WelcomeOverlay />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/login" element={<Login />} />
                 <Route path="/auth" element={<App />} />
                 <Route path="/logo" element={<Logo />} />
                 <Route path="/navbar" element={<Navbar />} />

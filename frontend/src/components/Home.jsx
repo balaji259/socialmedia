@@ -67,7 +67,7 @@ const Home = () => {
 
   return (
     <div style={styles.container}>
-      <Navbar username={user.username} profilePic={user.profilePic} />
+      <Navbar  username={user.username} profilePic={user.profilePic} />
       <section style={styles.content}>
         <div style={styles.dashboard}>
           <Dashboard />
@@ -88,28 +88,34 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     height: '100vh',
+    // backgroundColor:'#blue'
   },
   content: {
     display: 'flex',
     flex: 1,
-    padding: '20px',
+    backgroundColor:'#d5d5d5',
+    // padding: '20px',
     marginTop: '60px', // Adjust this to match the navbar height
     overflow: 'hidden', // Remove scrolling
   },
   dashboard: {
-    width: '20%',
+    width: '13%',
     padding: '10px',
-    borderRight: '1px solid #ddd',
+    // borderRight: '1px solid #ddd',
   },
   posts: {
-    width: '80%',
+    width: '85%',
     padding: '10px',
-    margin: '0 20px',
+    // border:'2px solid black',
+    margin: '0 10px',
+    // marginLeft:'20px'
   },
   suggestionsSidebar: {
-    width: '30%',
-    padding: '15px',
-    borderLeft: '1px solid #ddd',
+    width: '20%',
+    padding: '15px 5px',
+    marginRight:'0px',
+    // backgroundColor:'blue'
+    // border: '1px solid red',
   },
 };
 

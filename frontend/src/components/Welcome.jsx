@@ -5,12 +5,12 @@ const WelcomeOverlay = () => {
     const navigate=useNavigate();
     
     function onRegister(){
-        navigate('/auth');
+        navigate('/register');
     }
 
 
     function onLogin(){
-        navigate('/auth');
+        navigate('/login');
     }
 
     return (
