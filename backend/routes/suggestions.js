@@ -37,6 +37,38 @@ const authenticateUser = require('./authenticate_user');
 // }
 
 
+// async function getRandomUserSuggestions(req, res) {
+//     try {
+//         const loggedInUserId = req.user.userId;
+
+//         if (!loggedInUserId) {
+//             return res.status(400).json({ message: 'User not authenticated' });
+//         }
+
+//         // Fetch the logged-in user's following list
+//         const loggedInUser = await User.findById(loggedInUserId).populate('following');
+//         if (!loggedInUser) {
+//             return res.status(404).json({ message: 'Logged-in user not found' });
+//         }
+
+//         // Create an exclusion list with the logged-in user's ID and their following list
+//         const excludeIds = loggedInUser.following.map(user => user._id);
+//         excludeIds.push(loggedInUser._id);
+
+//         // Aggregate to fetch random users excluding those in the excludeIds array
+//         const randomUsers = await User.aggregate([
+//             { $match: { _id: { $nin: excludeIds } } }, // Exclude followed users and self
+//             { $sample: { size: 3 } }, // Directly limit to 3 random users
+//             { $project: { password: 0 } } // Exclude sensitive information
+//         ]);
+
+//         res.status(200).json({ users: randomUsers });
+//     } catch (error) {
+//         console.error('Error fetching user suggestions:', error);
+//         res.status(500).json({ message: 'Something went wrong', error: error.message });
+//     }
+// }
+
 async function getRandomUserSuggestions(req, res) {
     try {
         const loggedInUserId = req.user.userId;
@@ -55,19 +87,19 @@ async function getRandomUserSuggestions(req, res) {
         const excludeIds = loggedInUser.following.map(user => user._id);
         excludeIds.push(loggedInUser._id);
 
-        // Aggregate to fetch random users excluding those in the excludeIds array
-        const randomUsers = await User.aggregate([
+        // Fetch all users excluding those in the excludeIds array
+        const allSuggestions = await User.aggregate([
             { $match: { _id: { $nin: excludeIds } } }, // Exclude followed users and self
-            { $sample: { size: 3 } }, // Directly limit to 3 random users
             { $project: { password: 0 } } // Exclude sensitive information
         ]);
 
-        res.status(200).json({ users: randomUsers });
+        res.status(200).json({ users: allSuggestions });
     } catch (error) {
         console.error('Error fetching user suggestions:', error);
         res.status(500).json({ message: 'Something went wrong', error: error.message });
     }
 }
+
 
 async function getSearchSuggestions(req, res) {
     try {
