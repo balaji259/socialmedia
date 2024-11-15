@@ -35,9 +35,11 @@ const textareaStyle = {
 
 const submitButtonStyle = {
   backgroundColor: '#007bff',
+  // backgroundColor:'#e5e5e5e',
   color: '#fff',
   padding: '8px 15px',
   border: 'none',
+  borderRadius:'5px',
   cursor: 'pointer',
   marginTop: '10px',
 };
@@ -570,7 +572,15 @@ return (
           onChange={(e) => setMediaContent(e.target.files[0])}
           style={{ marginTop: '10px' }}
         />
+
         <button type="submit" style={submitButtonStyle}>Post</button>
+        {/* <button type="submit" style={submitButtonStyle} >
+            <div className="flex items-center justify-center">
+            <img src="/images/send.jpeg" className=" w-6 h-6 mr-4" />
+            <span>Post</span>
+            </div>
+            
+        </button> */}
       </form>
     </div>
 
@@ -617,13 +627,36 @@ return (
               style={postButtonStyle}
               onClick={() => handleLikeToggle(post.postId)}
             >
-              {post.liked ? '👎' : '👍'} {post.likesCount}
+              {/* {post.liked ? '👎' : '👍'} {post.likesCount} */}
+              {post.liked ? (
+  <div className="flex items-center">
+    👎 <span className="ml-2">{post.likesCount}</span>
+  </div>
+) : (
+  <div className="flex items-center justify-center">
+    <img src="/images/like.jpg" className="h-6 w-6 mr-2" alt="Like" />
+    {post.likesCount}
+  </div>
+)}
+
+
             </button>
             <button style={postButtonStyle} onClick={() => toggleComments(post.postId)}>
-              {`💬 Comment ${post.comments.length}`}
+              {/* {`💬 Comment ${post.comments.length}`} */}
+              <div className="flex items-center justify-center"> 
+                <img src="/images/comments.jpeg" className="w-6 h-6 mr-4" />
+                <p>{`Comments ${post.comments.length}`}</p>
+
+              </div>
+
             </button>
             <button style={postButtonStyle} onClick={() => copyPostIdToClipboard(post.postId)}>
-              🔗 Share
+              {/* 🔗 Share */}
+              <div className="flex items-center justify-center">
+              <img src='/images/share.jpeg' className="w-6 h-6 mr-4" />
+              <p>Share</p> 
+              </div>
+               
             </button>
           </div>
 
