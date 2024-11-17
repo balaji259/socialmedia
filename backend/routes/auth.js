@@ -34,7 +34,7 @@ router.post('/send-otp', async (req, res) => {
 
         // Send the OTP via email
         await transporter.sendMail({
-            from: 'your-email@gmail.com', // Replace with your email
+            from: 'getsetotp@gmail.com', // Replace with your email
             to: email,
             subject: 'Your OTP for Registration',
             text: `Your OTP is ${otp}. It will expire in 5 minutes.`,

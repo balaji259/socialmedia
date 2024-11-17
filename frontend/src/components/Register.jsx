@@ -130,7 +130,7 @@ const Register = ({ onSwitch }) => {
                         </button>
                     </form>
                 ) : (
-                    <p>Redirecting to dashboard...</p>
+                    <p>Redirecting to home...</p>
                 )}
 
                 <div className="mt-4 text-sm">
