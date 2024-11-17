@@ -48,6 +48,12 @@ const userSchema = new mongoose.Schema(
         ref: 'User',
       },
     ],
+    friends: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
     relationshipStatus: {
       type: String,
       enum: ['single', 'in a relationship', 'married', 'complicated', 'other'],

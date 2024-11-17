@@ -7,6 +7,8 @@ const { checkStreakOnLoad, updateStreakOnPost } =require("./streak");
 
 const router = express.Router();
 
+
+
 // Middleware to fetch user details
 const getUserDetails = async (req, res) => {
   try {
@@ -53,39 +55,125 @@ const getUserDetails = async (req, res) => {
 };
 
 
- async function followUser(req, res){
-    const { userId, followId } = req.body;
-    try {
-        const user = await User.findById(userId);
-        const followUser = await User.findById(followId);
 
-        if (!user || !followUser) {
-            return res.status(404).json({ message: 'User not found' });
-        }
+async function followUser(req, res) {
+  const { userId } = req.body;
+  const followId=req.body.targetId;
 
-        // Check if already followed
-        if (user.following.includes(followId)) {
-            return res.status(400).json({ message: 'Already following' });
-        }
+  console.log({userId,followId});
 
-        // Update the follower lists
-        user.following.push(followId);
-        followUser.followers.push(userId);
+  try {
+    const user = await User.findById(userId);
+    const followUser = await User.findById(followId);
 
-        await user.save();
-        await followUser.save();
-
-        res.status(200).json({ message: 'Followed successfully' });
-    } catch (error) {
-        res.status(500).json({ message: 'Server error', error });
+    if (!user || !followUser) {
+      return res.status(404).json({ message: 'User not found' });
     }
-};
+
+    // Check if already followed
+    if (user.following.includes(followId)) {
+      return res.status(400).json({ message: 'Already following' });
+    }
+
+    // Update the follower and following lists
+    user.following.push(followId);
+    followUser.followers.push(userId);
+
+    // Check if mutual following exists
+    if (followUser.following.includes(userId)) {
+      // Add to each other's friends list
+      if (!user.friends.includes(followId)) {
+        user.friends.push(followId);
+      }
+      if (!followUser.friends.includes(userId)) {
+        followUser.friends.push(userId);
+      }
+    }
+
+    console.log("implemented friends feature !");
+    await user.save();
+    await followUser.save();
+
+    res.status(200).json({ message: 'Followed successfully and friends list updated if mutual' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+}
+
+async function unfollowUser(req, res) {
+  const { userId } = req.body;
+  const unfollowId=req.body.targetId;
+  console.log({ userId, unfollowId })
+
+  try {
+    console.log("in unfollow")
+    const user = await User.findById(userId);
+    const unfollowUser = await User.findById(unfollowId);
+
+    if (!user || !unfollowUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Check if the user is currently following the unfollowed user
+    if (!user.following.includes(unfollowId)) {
+      return res.status(400).json({ message: 'Not following the user' });
+    }
+
+    // Remove the unfollowed user from the current user's following list
+    user.following = user.following.filter((id) => id.toString() !== unfollowId);
+
+    // Remove the current user from the unfollowed user's followers list
+    unfollowUser.followers = unfollowUser.followers.filter((id) => id.toString() !== userId);
+
+    // If they were friends (mutual followers), remove each other from friends lists
+    if (user.friends.includes(unfollowId)) {
+      user.friends = user.friends.filter((id) => id.toString() !== unfollowId);
+    }
+    if (unfollowUser.friends.includes(userId)) {
+      unfollowUser.friends = unfollowUser.friends.filter((id) => id.toString() !== userId);
+    }
+
+    await user.save();
+    await unfollowUser.save();
+
+    res.status(200).json({ message: 'Unfollowed successfully and friends list updated if necessary' });
+  } catch (error) {
+    console.error('Error during unfollow:', error);
+    res.status(500).json({ message: 'Server error', error });
+  }
+}
+
+
+
+//  async function followUser(req, res){
+//     const { userId, followId } = req.body;
+//     try {
+//         const user = await User.findById(userId);
+//         const followUser = await User.findById(followId);
+
+//         if (!user || !followUser) {
+//             return res.status(404).json({ message: 'User not found' });
+//         }
+
+//         // Check if already followed
+//         if (user.following.includes(followId)) {
+//             return res.status(400).json({ message: 'Already following' });
+//         }
+
+//         // Update the follower lists
+//         user.following.push(followId);
+//         followUser.followers.push(userId);
+
+//         await user.save();
+//         await followUser.save();
+
+//         res.status(200).json({ message: 'Followed successfully' });
+//     } catch (error) {
+//         res.status(500).json({ message: 'Server error', error });
+//     }
+// };
 
 // Define the route
-router.get('/getdetails', getUserDetails);
-router.get('/suggestions',authenticateUser,getRandomUserSuggestions);
-router.get('/search/suggestions',authenticateUser,getSearchSuggestions);
-router.post('/search/follow',followUser);
 
 //follow
 router.post('/follow/:userId', authenticateUser, async (req, res) => {
@@ -123,6 +211,31 @@ router.post('/follow/:userId', authenticateUser, async (req, res) => {
 });
 
 
+//get friends
+router.get('/:userId/friends', async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const user = await User.findById(userId).populate('friends', 'username fullname profilePic');
+    
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.status(200).json({ friends: user.friends });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+});
+
+
+
+
+router.get('/getdetails', getUserDetails);
+router.get('/suggestions',authenticateUser,getRandomUserSuggestions);
+router.get('/search/suggestions',authenticateUser,getSearchSuggestions);
+router.post('/search/follow',followUser);
+router.post('/search/unfollow',unfollowUser);
 
 module.exports = router;
 

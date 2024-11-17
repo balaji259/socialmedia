@@ -101,9 +101,46 @@ async function getRandomUserSuggestions(req, res) {
 }
 
 
+// async function getSearchSuggestions(req, res) {
+//     try {
+//         const loggedInUserId = req.user.userId;
+//         console.log(loggedInUserId);
+//         const { query = '', page = 1, limit = 9 } = req.query; // Default limit is 9 for 3 rows
+
+//         if (!loggedInUserId) {
+//             return res.status(400).json({ message: 'User not authenticated' });
+//         }
+
+//         const loggedInUser = await User.findById(loggedInUserId).populate('following');
+//         if (!loggedInUser) {
+//             return res.status(404).json({ message: 'Logged-in user not found' });
+//         }
+
+//         const excludeIds = loggedInUser.following.map(user => user._id);
+//         excludeIds.push(loggedInUser._id);
+
+//         const matchQuery = {
+//             _id: { $nin: excludeIds },
+//             username: { $regex: query, $options: 'i' } // Case-insensitive search by username
+//         };
+
+//         const users = await User.find(matchQuery)
+//             .skip((page - 1) * limit)
+//             .limit(limit)
+//             .select('-password');
+
+//         console.log(users);
+
+//         res.status(200).json({ users });
+//     } catch (error) {
+//         console.error('Error fetching user suggestions:', error);
+//         res.status(500).json({ message: 'Something went wrong', error: error.message });
+//     }
+// }
+
 async function getSearchSuggestions(req, res) {
     try {
-        const loggedInUserId = req.user.userId;
+        const loggedInUserId = req.user.userId; // Assuming user ID is available in req.user
         console.log(loggedInUserId);
         const { query = '', page = 1, limit = 9 } = req.query; // Default limit is 9 for 3 rows
 
@@ -111,13 +148,12 @@ async function getSearchSuggestions(req, res) {
             return res.status(400).json({ message: 'User not authenticated' });
         }
 
-        const loggedInUser = await User.findById(loggedInUserId).populate('following');
+        const loggedInUser = await User.findById(loggedInUserId);
         if (!loggedInUser) {
             return res.status(404).json({ message: 'Logged-in user not found' });
         }
 
-        const excludeIds = loggedInUser.following.map(user => user._id);
-        excludeIds.push(loggedInUser._id);
+        const excludeIds = [loggedInUser._id]; // Exclude the logged-in user's ID
 
         const matchQuery = {
             _id: { $nin: excludeIds },
@@ -127,16 +163,24 @@ async function getSearchSuggestions(req, res) {
         const users = await User.find(matchQuery)
             .skip((page - 1) * limit)
             .limit(limit)
-            .select('-password');
+            .select('_id username fullname profilePic'); // Fetch only required fields
 
-        console.log(users);
+        // Add followStatus to each user
+        const usersWithFollowStatus = users.map(user => ({
+            _id: user._id,
+            username: user.username,
+            fullname: user.fullname,
+            profilePic: user.profilePic,
+            followStatus: loggedInUser.following.includes(user._id) ? 'unfollow' : 'follow'
+        }));
 
-        res.status(200).json({ users });
+        res.status(200).json({ users: usersWithFollowStatus });
     } catch (error) {
         console.error('Error fetching user suggestions:', error);
         res.status(500).json({ message: 'Something went wrong', error: error.message });
     }
 }
+
 
 
 module.exports = { getRandomUserSuggestions,getSearchSuggestions };
