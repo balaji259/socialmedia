@@ -3,7 +3,81 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/users');
+const nodemailer = require('nodemailer');
+const crypto = require('crypto');
+const Otp = require('../models/otp');
 const router = express.Router();
+
+// Setup Nodemailer transporter
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'getsetotp@gmail.com', // Replace with your email
+        pass: 'cokobcdridsvwjoo', // Replace with your app-specific password
+    },
+});
+
+router.post('/send-otp', async (req, res) => {
+    const { email } = req.body;
+
+    if (!email) {
+        return res.status(400).json({ error: 'Email is required' });
+    }
+
+    // Generate a 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiry = new Date(Date.now() + 5 * 60 * 1000); // OTP expires in 5 minutes
+
+    try {
+        // Save OTP to the database
+        await Otp.create({ email, otp, expiry });
+
+        // Send the OTP via email
+        await transporter.sendMail({
+            from: 'your-email@gmail.com', // Replace with your email
+            to: email,
+            subject: 'Your OTP for Registration',
+            text: `Your OTP is ${otp}. It will expire in 5 minutes.`,
+        });
+
+        res.status(200).json({ message: 'OTP sent to email' });
+    } catch (error) {
+        console.error('Error sending OTP:', error);
+        res.status(500).json({ error: 'Failed to send OTP. Try again later.' });
+    }
+});
+
+router.post('/validate-otp', async (req, res) => {
+    const { email, otp } = req.body;
+
+    if (!email || !otp) {
+        return res.status(400).json({ error: 'Email and OTP are required' });
+    }
+
+    try {
+        // Find OTP record in the database
+        const otpRecord = await Otp.findOne({ email, otp });
+
+        if (!otpRecord) {
+            return res.status(400).json({ error: 'Invalid OTP' });
+        }
+
+        // Check if OTP has expired
+        if (new Date() > otpRecord.expiry) {
+            await Otp.deleteOne({ _id: otpRecord._id }); // Clean up expired OTP
+            return res.status(400).json({ error: 'OTP has expired' });
+        }
+
+        // OTP is valid
+        await Otp.deleteOne({ _id: otpRecord._id }); // Remove OTP after successful validation
+        res.status(200).json({ message: 'OTP validated successfully' });
+    } catch (error) {
+        console.error('Error validating OTP:', error);
+        res.status(500).json({ error: 'Failed to validate OTP. Try again later.' });
+    }
+});
+
+
 
 // Registration Route
 router.post('/register', async (req, res) => {

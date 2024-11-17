@@ -7,6 +7,7 @@ const postRouter=require("./routes/postRoutes");
 const userRouter=require("./routes/user")
 const profileRouter=require("./routes/profile");
 const streakRouter=require('./routes/streak');
+// const otpRoutes = require('./routes/otpRoutes')
 
 const cors = require('cors');
 

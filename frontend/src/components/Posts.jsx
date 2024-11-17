@@ -605,7 +605,19 @@ return (
             )}
           </div>
 
-          <p>{post.caption}</p>
+          <p style={{
+      wordWrap: 'break-word',
+      wordBreak: 'break-word',
+      overflowWrap: 'break-word',
+      overflow: 'hidden', // Hide any text that exceeds the container
+      whiteSpace: 'pre-wrap', // Preserve line breaks while wrapping
+      maxWidth: '100%', // Ensure the text stays within the container width
+      paddingLeft:'20px',
+      paddingRight:'20px'
+    }}>
+      {post.caption}
+    </p>
+
           {post.content && post.content.mediaUrl && (
             post.postType === 'video' ? (
               <video
@@ -629,8 +641,9 @@ return (
             >
               {/* {post.liked ? '👎' : '👍'} {post.likesCount} */}
               {post.liked ? (
-  <div className="flex items-center">
-    👎 <span className="ml-2">{post.likesCount}</span>
+  <div className="flex items-center justify-center">
+    <img src="/images/like.jpg" className="h-6 w-6 mr-2" alt="Like" /> 
+    {post.likesCount}
   </div>
 ) : (
   <div className="flex items-center justify-center">
