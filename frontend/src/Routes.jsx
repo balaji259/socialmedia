@@ -15,6 +15,7 @@ import Profile from "./components/Profile";
 import Search from "./components/Search";
 import Register from './components/Register';
 import Login from './components/Login';
+import SearchSuggestions from './components/SearchSuggestions';
 import WelcomeOverlay from './components/Welcome';
 
 const RoutesComponent = () => {
@@ -36,6 +37,7 @@ const RoutesComponent = () => {
                 <Route path="/details" element={<UserDetails />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/search" element={<Search />} />
+                <Route path="/searchsug" element={<SearchSuggestions />} />
             
             </Routes>
         </Router>

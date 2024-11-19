@@ -1,0 +1,141 @@
+/* Base Styles */
+.dashboard {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+}
+
+.sidebar {
+  background-color: #f3f4f6; /* Light gray */
+  border-right: 1px solid #d1d5db; /* Border color */
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Top Menu */
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.menu-item {
+  font-size: 1rem; /* Default size for large screens */
+  padding: 0.5rem 1rem;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.menu-item:hover {
+  background-color: #e5e7eb;
+  border-radius: 0.5rem;
+}
+
+.logout {
+  margin-top: 2rem;
+}
+
+.logout-btn {
+  width: 100%;
+  background-color: #ef4444;
+  color: white;
+  padding: 0.75rem;
+  font-size: 1rem; /* Default size for large screens */
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.logout-btn:hover {
+  background-color: #dc2626;
+}
+
+/* Responsive Design */
+
+/* Medium Screens (Tablets) */
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 20%;
+  }
+
+  .menu-item {
+    font-size: 0.9rem;
+  }
+
+  .logout-btn {
+    font-size: 0.9rem;
+    padding: 0.6rem;
+  }
+}
+
+/* Small Screens (Mobile Devices) */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 18%;
+    padding: 1rem;
+  }
+
+  .menu-item {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.8rem;
+  }
+
+  .logout-btn {
+    font-size: 0.85rem;
+    padding: 0.5rem;
+  }
+}
+
+/* Very Small Screens (300px Width) */
+@media (max-width: 480px) {
+  .sidebar {
+    width: 15%;
+    padding: 0.5rem; /* Reduced padding */
+  }
+
+  .menu {
+    gap: 0.8rem; /* Reduced gap */
+  }
+
+  .menu-item {
+    font-size: 0.4rem; /* Smaller font for compactness */
+    padding: 0.3rem 0.4rem; /* Compact padding */
+  }
+
+  .logout-btn {
+    font-size: 0.4rem; /* Smaller font for compactness */
+    padding: 0.4rem; /* Compact padding */
+  }
+}
+
+/* Extra Small Screens (Specifically for 300x600) */
+@media (max-width: 320px) {
+  .sidebar {
+    width: 12%; /* Smaller width */
+    padding: 0.4rem;
+  }
+
+  .menu {
+    gap: 0.5rem; /* Even tighter gap */
+  }
+
+  .menu-item {
+    font-size: 0.4rem; /* Further reduce font size */
+    line-height: 1.2; /* Maintain readability */
+    padding: 0.2rem 0.4rem; /* Tight padding */
+    white-space: normal; /* Allow text wrapping instead of overflow */
+    word-break: break-word; /* Break long words if necessary */
+  }
+
+  .logout-btn {
+    font-size: 0.7rem; /* Further reduce font size */
+    padding: 0.3rem 0.5rem; /* Compact padding */
+    margin-top: 0.5rem; /* Reduced margin */
+  }
+}

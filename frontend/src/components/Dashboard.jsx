@@ -1,38 +1,44 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import "./dashboard.css"
 
 const Dashboard = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
     localStorage.clear();
-    navigate('/');
+    navigate("/");
   };
 
   return (
-    <div className="fixed top-0 left-0 h-full w-50 bg-gray-100 border-r border-gray-300 p-6 flex flex-col justify-between">
-      {/* Top Section */}
-      <div className="flex flex-col space-y-10 pt-20">
-        
-          <button className="sec-left-button" onClick={()=>{navigate('/home')}}>Home</button>
-    
-        <button className="sec-left-button" onClick={()=>{navigate('/search')}}>Search</button>
-        <button className="sec-left-button">Friends</button>
-        <button className="sec-left-button">Chats</button>
-        <button className="sec-left-button">Notifications</button>
-        
-          <button className="sec-left-button" onClick={()=>{navigate('/profile')}}>Profile</button>
-        
-      </div>
+    <div className="dashboard">
+      {/* Sidebar */}
+      <div className="sidebar">
+        {/* Top Section */}
+        <div className="menu">
+          <button className="menu-item" onClick={() => navigate("/home")}>
+            Home
+          </button>
+          <button className="menu-item" onClick={() => navigate("/search")}>
+            Search
+          </button>
+          <button className="menu-item">Friends</button>
+          <button className="menu-item">Chats</button>
+          <button className="menu-item">Notifications</button>
+          <button className="menu-item" onClick={() => navigate("/profile")}>
+            Profile
+          </button>
+        </div>
 
-      {/* Bottom Section */}
-      <div className="pt-6">
-        <button
-          onClick={handleLogout}
-          className="w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 transition duration-200"
-        >
-          Logout
-        </button>
+        {/* Bottom Section */}
+        <div className="logout">
+          <button
+            onClick={handleLogout}
+            className="logout-btn"
+          >
+            Logout
+          </button>
+        </div>
       </div>
     </div>
   );

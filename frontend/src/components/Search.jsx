@@ -5,83 +5,114 @@ import SearchSuggestions from './SearchSuggestions';
 
 import { fetchUserDetails } from './userPosts.js';
 
-const Search =()=>{
-
-    const [user, setUser] = useState({ username: "", profilePic: "" });
+const Search = () => {
+  const [user, setUser] = useState({ username: "", profilePic: "" });
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    
+
     const getUserDetails = async () => {
       const userDetails = await fetchUserDetails(token);
-      console.log("userDetails");
-      console.log(userDetails);
       if (userDetails) {
         setUser({ username: userDetails.username, profilePic: userDetails.profilePic });
       }
-      console.log(user);
-      //added fior checkong streaks
-      // await checkAndResetStreakOnLogin(userDetails.userId);
     };
 
     getUserDetails();
   }, []);
 
-
-
-
-
-    return (
-        <div style={styles.container}>
-          <Navbar username={user.username} profilePic={user.profilePic} />
-          <section style={styles.content}>
-            <div style={styles.dashboard}>
-              <Dashboard />
-            </div>
-            <div style={styles.details}>
-              <SearchSuggestions />
-            </div>
-           
-          </section>
+  return (
+    <div style={styles.container}>
+      <Navbar username={user.username} profilePic={user.profilePic} />
+      <section style={styles.content}>
+        <div style={styles.dashboard}>
+          <Dashboard />
         </div>
-      );
-
-
-}
+        <div style={styles.details}>
+          <SearchSuggestions />
+        </div>
+      </section>
+    </div>
+  );
+};
 
 const styles = {
-    container: {
-      display: 'flex',
-      flexDirection: 'column',
-      height: '100vh',
-      backgroundColor:'#d3d3d3'
-    },
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100vh',
+    backgroundColor: '#f4f4f4', // Lighter background
+  },
+  content: {
+    display: 'flex',
+    flex: 1,
+    padding: '20px',
+    marginTop: '60px',
+    overflow: 'hidden',
+    flexDirection: 'row', // Default flex direction for larger screens
+  },
+  dashboard: {
+    flex: '1 1 20%', // Give more space for smaller screens
+    maxWidth: '250px',
+    minWidth: '150px', // Adjust width for very small screens
+    padding: '10px',
+  },
+  details: {
+    flex: '4 1 80%', // Details section should take up more space
+    padding: '20px',
+    margin: '0 auto',
+    overflowY: 'auto',
+  },
+  buttons: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginTop: '10px',
+  },
+  '@media (max-width: 1024px)': {
     content: {
-      display: 'flex',
-      flex: 1,
-      padding: '20px',
-      marginTop: '60px', // Adjust this to match the navbar height
-      overflow: 'hidden', // Remove scrolling
+      flexDirection: 'column', // Stack vertically for tablets
     },
     dashboard: {
-      width: '20%',
-      padding: '10px',
-    //   borderRight: '1px solid #ddd',
+      flex: '1 1 30%', // Adjust dashboard width on medium screens
+      maxWidth: '300px',
     },
     details: {
-        width: '80%', // Occupy more space
-        padding: '20px',
-        // border:'none',
-        margin: '0 auto', // Center the details section
-        overflowY: 'auto', // Enable vertical scrolling
-        scrollbarWidth: 'none', // Hide scrollbar in Firefox
-        msOverflowStyle: 'none', // Hide scrollbar in IE/Edge
+      flex: '4 1 70%',
+      padding: '15px',
     },
-    
-  };
+  },
+  '@media (max-width: 768px)': {
+    content: {
+      flexDirection: 'column',
+    },
+    dashboard: {
+      flex: '1 1 40%', // Reduce the dashboard width further for smaller screens
+    },
+    details: {
+      flex: '4 1 60%',
+      padding: '10px',
+    },
+  },
+  '@media (max-width: 480px)': {
+    content: {
+      flexDirection: 'column', // Stack vertically for small screens
+      padding: '10px',
+    },
+    dashboard: {
+      flex: '1 1 auto',
+      width: '100%',
+      order: -1, // Move dashboard to top on mobile
+    },
+    details: {
+      flex: '1 1 auto',
+      width: '100%',
+      padding: '20px',
+    },
+  },
+};
 
-  styles.details['::-webkit-scrollbar'] = {
-    display: 'none',
-  };
+styles.details['::-webkit-scrollbar'] = {
+  display: 'none',
+};
 
-  export default Search;
+export default Search;
