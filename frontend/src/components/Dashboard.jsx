@@ -13,6 +13,7 @@ const Dashboard = () => {
   return (
     <div className="dashboard">
       {/* Sidebar */}
+      
       <div className="sidebar">
         {/* Top Section */}
         <div className="menu">
@@ -40,7 +41,9 @@ const Dashboard = () => {
           </button>
         </div>
       </div>
-    </div>
+     
+      </div>
+    
   );
 };
 
