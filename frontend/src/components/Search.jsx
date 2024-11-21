@@ -61,7 +61,8 @@ const Search = () => {
       justifyContent: "center",
       alignItems: "flex-start",
       overflowY: "auto",
-      padding: "20px",
+      // padding: "20px",
+    
       backgroundColor: "#fff",
       height: "calc(100vh - 60px)", // Ensure the content area fits the remaining space
     },
@@ -71,6 +72,7 @@ const Search = () => {
   const getSidebarWidth = () => {
     if (window.innerWidth < 600) return "20%"; // Small screens
     if (window.innerWidth < 900) return "25%"; // Medium screens
+    if (window.innerWidth < 1700) return "20%"; 
     return "20%"; // Larger screens
   };
 

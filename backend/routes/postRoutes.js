@@ -137,7 +137,7 @@ router.get('/get', async (req, res) => {
 
     try {
         const posts = await Post.find({})
-            .populate('user', 'username profilePic') // Populate user info for the post
+            .populate('user', 'username profilePic ') // Populate user info for the post
             .populate({
                 path: 'comments',
                 populate: [
@@ -154,10 +154,14 @@ router.get('/get', async (req, res) => {
 
         const formattedPosts = posts.map(post => ({
             postId: post._id,
+            
             user: {
+            
                 profilePic: post.user?.profilePic || 'default-pic-url',
                 username: post.user?.username || 'Unknown User',
             },
+            //added
+            userId:post.user,
             postType: post.postType,
             caption: post.caption,
             content: {
@@ -420,6 +424,9 @@ router.post('/save', async (req, res) => {
     }
 });
 
+
+
+
 // Route to fetch saved posts by user
 router.get('/getsaved/:userId', async (req, res) => {
     const { userId } = req.params;
@@ -434,7 +441,36 @@ router.get('/getsaved/:userId', async (req, res) => {
 });
 
 
+// Delete post route
+router.delete('/:id',authenticateUser, async (req, res) => {
+    const postId = req.params.id;
+    const {userId} = req.user; // Assuming you have middleware to get the logged-in user's ID
+    console.log(postId);
+    console.log(userId);
 
+    try {
+      // Find the post
+      const post = await Post.findById(postId);
+  
+      if (!post) {
+        return res.status(404).json({ message: 'Post not found' });
+      }
+  
+      // Check if the logged-in user is the creator
+      if (post.user.toString() !== userId) {
+        return res.status(403).json({ message: 'You are not authorized to delete this post' });
+      }
+  
+      // Delete the post
+      await Post.findByIdAndDelete(postId);
+  
+      return res.status(200).json({ message: 'Post deleted successfully' });
+    } catch (error) {
+      console.error('Error deleting post:', error);
+      return res.status(500).json({ message: 'Internal Server Error' });
+    }
+  });
+  
 
 
 router.get('/:postId', async (req, res) => {

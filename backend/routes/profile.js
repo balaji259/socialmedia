@@ -374,4 +374,23 @@ router.get('/likedPosts/:userId', async (req, res) => {
   }
 });
 
+router.delete('/deleteSavedPost/:postId', async (req, res) => {
+  try {
+    console.log("enyteree route");
+    const { postId } = req.params;
+
+    // Remove the saved post from the database
+    const deletedPost = await SavedPost.findByIdAndDelete(postId);
+    if (!deletedPost) {
+      return res.status(404).json({ error: "Post not found" });
+    }
+
+    res.json({ message: "Post deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting post:", error);
+    res.status(500).json({ error: "Failed to delete post" });
+  }
+});
+
+
 module.exports = router;

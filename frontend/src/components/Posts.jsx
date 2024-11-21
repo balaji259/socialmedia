@@ -209,6 +209,7 @@ const PostComponent = () => {
   const [openComments, setOpenComments] = useState({});
   const [replyingTo, setReplyingTo] = useState({}); // Tracks which comment's reply input is open
   const [replyTexts, setReplyTexts] = useState({}); // Stores reply text for each comment
+  const [currentuserId,setcurrentuserId]=useState({});
 
   const backendBaseUrl = 'http://localhost:7000';
 
@@ -230,8 +231,30 @@ const PostComponent = () => {
     }
   };
 
+  const fetchuserId= async ()=>{
+    try{
+      const token = localStorage.getItem("token");
+
+      // Decode the JWT token to get the userId
+      const payload = parseJwt(token);
+      if (!payload || !payload.userId) {
+          alert("User not authenticated. Please log in again.");
+          return;
+      }
+  
+        setcurrentuserId(payload.userId);
+        console.log("currentuserId");
+        console.log(currentuserId);
+    }
+    catch(e){
+      console.log(e);
+    }
+  }
+
+
   useEffect(() => {
     fetchPosts();
+    fetchuserId();
     
   }, []);
 
@@ -413,6 +436,33 @@ const copyPostIdToClipboard = (postId) => {
 };
 
 
+//delete
+const deletePost = async (postId) => {
+  try {
+    console.log("delete called");
+    const token=localStorage.getItem('token');
+    const response = await fetch(`${backendBaseUrl}/posts/${postId}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`, // Replace with your actual token
+      },
+    });
+
+    const data = await response.json();
+    if (response.ok) {
+      toast.success('Post deleted successfully!',{duration:1500});
+
+      // Refresh or update the UI
+      fetchPosts();
+    } else {
+      toast.error(data.message,{duration:2500});
+    }
+  } catch (error) {
+    console.error('Error deleting post:', error);
+    alert('Failed to delete post');
+  }
+};
+
 
   
 
@@ -445,34 +495,7 @@ const copyPostIdToClipboard = (postId) => {
   }
 };
 
-// const handleAddReply = async (commentId) => {
-//   const token = localStorage.getItem("token");
-//   if (!token) {
-//     alert("No token found. Please log in again.");
-//     return;
-//   }
 
-//   try {
-//     const response = await fetch(`${backendBaseUrl}/posts/comment/reply/${commentId}`, {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json",
-//         Authorization: `Bearer ${token}`,
-//       },
-//       body: JSON.stringify({ text: replyTexts[commentId] || "" }),
-//     });
-
-//     if (response.ok) {
-//       await fetchPosts();
-//       clearReplyText(commentId);
-//       setReplyingTo((prev) => ({ ...prev, [commentId]: false }));
-//     } else {
-//       alert("Failed to add reply");
-//     }
-//   } catch (error) {
-//     console.error("Error adding reply:", error);
-//   }
-// };
 
 const handleAddReply = async (replyId) => {
   const token = localStorage.getItem("token");
@@ -554,6 +577,7 @@ const toggleReplyInput = (replyId) => {
   }));
 };
 
+
 return (
 
 
@@ -600,7 +624,13 @@ return (
             {showMenus[post.postId] && (
               <div style={dropdownMenuStyle}>
                 <div style={menuItemStyle} onClick={() => savePost(post.postId)}>Save Post</div>
+                
+
                 <div style={menuItemStyle} onClick={() => reportPost(post.postId)}>Report</div>
+                {/* //delete */}
+                {post.userId._id === currentuserId && (
+                <div style={menuItemStyle} onClick={() => deletePost(post.postId)}>Delete</div>
+                )}
               </div>
             )}
           </div>

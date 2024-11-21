@@ -1,22 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 const SearchSuggestions = () => {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
   const [suggestedUsers, setSuggestedUsers] = useState([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const backendBaseUrl = 'http://localhost:7000';
+  const backendBaseUrl = "http://localhost:7000";
 
   const getUserIdFromToken = () => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (!token) return null;
 
     try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
+      const payload = JSON.parse(atob(token.split(".")[1]));
       return payload.userId;
     } catch (error) {
-      console.error('Error decoding token:', error);
+      console.error("Error decoding token:", error);
       return null;
     }
   };
@@ -26,7 +26,7 @@ const SearchSuggestions = () => {
 
   const fetchUsers = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       const response = await axios.get(`${backendBaseUrl}/user/search/suggestions`, {
         params: { query, page },
         headers: {
@@ -45,13 +45,13 @@ const SearchSuggestions = () => {
         setHasMore(false);
       }
     } catch (error) {
-      console.error('Error fetching users:', error);
+      console.error("Error fetching users:", error);
     }
   };
 
   const handleFollowUnfollow = async (userId, action) => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       await axios.post(
         `${backendBaseUrl}/user/search/${action}`,
         { userId: currentUserId, targetId: userId },
@@ -61,7 +61,7 @@ const SearchSuggestions = () => {
       setSuggestedUsers((prev) =>
         prev.map((user) =>
           user._id === userId
-            ? { ...user, followStatus: action === 'follow' ? 'unfollow' : 'follow' }
+            ? { ...user, followStatus: action === "follow" ? "unfollow" : "follow" }
             : user
         )
       );
@@ -84,8 +84,8 @@ const SearchSuggestions = () => {
         setPage((prev) => prev + 1);
       }
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, [hasMore]);
 
   useEffect(() => {
@@ -93,7 +93,7 @@ const SearchSuggestions = () => {
   }, [page]);
 
   return (
-    <div className="w-full max-w-4xl mx-auto p-4 sm:p-8 bg-gray-100 min-h-screen">
+    <div className="w-full max-w-4xl lg:max-w-6xl xl:max-w-7xl mx-auto p-4 sm:p-8 bg-gray-100 min-h-screen">
       <div className="relative mb-8">
         <input
           type="text"
@@ -111,8 +111,8 @@ const SearchSuggestions = () => {
           >
             <img
               src={
-                user.profilePic === '/images/default_profile.jpeg'
-                  ? '/images/default_profile.jpeg'
+                user.profilePic === "/images/default_profile.jpeg"
+                  ? "/images/default_profile.jpeg"
                   : `${backendBaseUrl}${user.profilePic}`
               }
               alt={user.username}
@@ -123,21 +123,21 @@ const SearchSuggestions = () => {
                 {user.username}
               </h3>
               <p className="text-gray-600 mt-1 text-xs sm:text-sm">
-                {user.bio ? user.bio : '-'}
+                {user.bio ? user.bio : "-"}
               </p>
             </div>
             <div className="flex flex-col sm:flex-row justify-between items-center w-full mt-4 sm:mt-6 gap-2 sm:gap-4">
               <button
                 onClick={() =>
-                  handleFollowUnfollow(user._id, user.followStatus === 'follow' ? 'follow' : 'unfollow')
+                  handleFollowUnfollow(user._id, user.followStatus === "follow" ? "follow" : "unfollow")
                 }
                 className={`w-full sm:w-auto px-3 sm:px-4 py-2 ${
-                  user.followStatus === 'follow'
-                    ? 'bg-blue-600 hover:bg-blue-700'
-                    : 'bg-red-500 hover:bg-red-600'
+                  user.followStatus === "follow"
+                    ? "bg-blue-600 hover:bg-blue-700"
+                    : "bg-red-500 hover:bg-red-600"
                 } text-white font-semibold rounded-full shadow-md transition duration-200 text-xs sm:text-sm`}
               >
-                {user.followStatus === 'follow' ? 'Follow' : 'Unfollow'}
+                {user.followStatus === "follow" ? "Follow" : "Unfollow"}
               </button>
               <button className="w-full sm:w-auto px-3 sm:px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-full shadow-md transition duration-200 text-xs sm:text-sm">
                 Chat

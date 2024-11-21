@@ -45,6 +45,27 @@ function UserDetails() {
         }
     }, [userData]);
 
+    const handleDeletePost = async (postId) => {
+        try {
+            console.log("handledeletepost fucntion");
+          const response = await fetch(`${backendBaseUrl}/profile/deleteSavedPost/${postId}`, {
+            method: "DELETE",
+          });
+          if (response.ok) {
+            // Update the saved posts list
+            setSavedData((prevData) => prevData.filter((post) => post._id !== postId));
+
+            alert("Post deleted successfully!");
+          } else {
+            alert("Failed to delete the post. Please try again.");
+          }
+        } catch (error) {
+          console.error("Error deleting post:", error);
+          alert("An error occurred. Please try again.");
+        }
+      };
+      
+
     const fetchUserData = async () => {
         try {
             const token = localStorage.getItem('token');
@@ -371,24 +392,42 @@ function UserDetails() {
                         </>
                     ) : (
                         <>
-                            {console.log("userData")}
-                            {console.log(userData)}
-                            <h2 style={styles.username}>{userData.username || "User's Name"}</h2>
-                            <p style={styles.fullname}>{userData.fullname || 'Full Name'}</p>
-                            <p style={styles.additionalInfo}>Date of Birth: {userData.dateOfBirth ? userData.dateOfBirth.split('T')[0] : 'Not specified'}</p>
-                            <p style={styles.additionalInfo}>College: {userData.collegeName || 'Not specified'}</p>
-                            <p style={styles.additionalInfo}>Relationship Status: {userData.relationshipStatus || 'Single'}</p>
-                            <p style={styles.additionalInfo}>Best Friend: {userData.bestFriend?.username || 'Not specified'}</p>
-                            <p style={styles.additionalInfo}>Interests: {userData.interests || 'Not specified'}</p>
-                            <p style={styles.additionalInfo}>Favorite Sports: {userData.favoriteSports || 'Not specified'}</p>
-                            <p style={styles.additionalInfo}>Favorite Game: {userData.favoriteGame || 'Not specified'}</p>
-                            <p style={styles.additionalInfo}>Favorite Music: {userData.favoriteMusic || 'Not specified'}</p>
-                            <p style={styles.additionalInfo}>Favorite Movie: {userData.favoriteMovie || 'Not specified'}</p>
-                            <p style={styles.additionalInfo}>Favorite Anime: {userData.favoriteAnime || 'Not specified'}</p>
-                            <p style={styles.additionalInfo}>Favorite Actor: {userData.favoriteActor || 'Not specified'}</p>
-                            <p style={styles.additionalInfo}>Bio: {userData.bio || 'User bio goes here...'}</p>
-                            <button style={styles.editButton} onClick={toggleEditMode}>Edit Profile</button>
-                        </>
+                        {console.log("userData")}
+                        {console.log(userData)}
+                        <h2 style={styles.username}>{userData.username || "User's Name"}</h2>
+                        <p style={styles.fullname}>{userData.fullname || 'Full Name'}</p>
+                      
+                        {/* New Row for Posts, Following, and Followers */}
+                        <div style={styles.statsRow}>
+                          <div style={styles.statItem}>
+                            <span style={styles.statCount}>{userData.postsCount || 0}</span>
+                            <span style={styles.statLabel}> Posts</span>
+                          </div>
+                          <div style={styles.statItem}>
+                            <span style={styles.statCount}>{userData.followingCount || 0}</span>
+                            <span style={styles.statLabel}> Following</span>
+                          </div>
+                          <div style={styles.statItem}>
+                            <span style={styles.statCount}>{userData.followersCount || 0}</span>
+                            <span style={styles.statLabel}> Followers</span>
+                          </div>
+                        </div>
+                      
+                        <p style={styles.additionalInfo}>Date of Birth: {userData.dateOfBirth ? userData.dateOfBirth.split('T')[0] : 'Not specified'}</p>
+                        <p style={styles.additionalInfo}>College: {userData.collegeName || 'Not specified'}</p>
+                        <p style={styles.additionalInfo}>Relationship Status: {userData.relationshipStatus || 'Single'}</p>
+                        <p style={styles.additionalInfo}>Best Friend: {userData.bestFriend?.username || 'Not specified'}</p>
+                        <p style={styles.additionalInfo}>Interests: {userData.interests || 'Not specified'}</p>
+                        <p style={styles.additionalInfo}>Favorite Sports: {userData.favoriteSports || 'Not specified'}</p>
+                        <p style={styles.additionalInfo}>Favorite Game: {userData.favoriteGame || 'Not specified'}</p>
+                        <p style={styles.additionalInfo}>Favorite Music: {userData.favoriteMusic || 'Not specified'}</p>
+                        <p style={styles.additionalInfo}>Favorite Movie: {userData.favoriteMovie || 'Not specified'}</p>
+                        <p style={styles.additionalInfo}>Favorite Anime: {userData.favoriteAnime || 'Not specified'}</p>
+                        <p style={styles.additionalInfo}>Favorite Actor: {userData.favoriteActor || 'Not specified'}</p>
+                        <p style={styles.additionalInfo}>Bio: {userData.bio || 'User bio goes here...'}</p>
+                        <button style={styles.editButton} onClick={toggleEditMode}>Edit Profile</button>
+                      </>
+                      
                     )}
                 </div>
             </div>
@@ -447,8 +486,29 @@ function UserDetails() {
   savedData.map((post, index) => (
     <div
       key={post._id}
-      className="bg-white rounded-lg shadow-md p-4 mb-4"
+      className="bg-white rounded-lg shadow-md p-4 mb-4 relative"
     >
+      {/* Delete Icon */}
+      <button
+        className="absolute top-4 right-4 text-gray-500 hover:text-red-600"
+        onClick={() => handleDeletePost(post._id)}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={1.5}
+          stroke="currentColor"
+          className="w-6 h-6"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
+
       {/* Profile picture and username */}
       <div className="flex items-center mb-4">
         <img
@@ -583,22 +643,81 @@ const styles = {
         textAlign: 'left',
         lineHeight: '1.6',
     },
+    // username: {
+    //     fontSize: '1.8em',
+    //     fontWeight: 'bold',
+    //     color: '#333',
+    //     marginBottom: '5px',
+    // },
+    // fullname: {
+    //     fontSize: '1.3em',
+    //     color: '#555',
+    //     marginBottom: '15px',
+    // },
     username: {
-        fontSize: '1.8em',
+        fontSize: '1.8rem',
         fontWeight: 'bold',
         color: '#333',
-        marginBottom: '5px',
-    },
-    fullname: {
-        fontSize: '1.3em',
+        marginBottom: '10px',
+      },
+      fullname: {
+        fontSize: '1.3rem',
         color: '#555',
-        marginBottom: '15px',
-    },
-    additionalInfo: {
-        fontSize: '1.1em',
-        color: '#666',
-        marginTop: '8px',
-    },
+        marginBottom: '20px',
+      },
+    // statsRow: {
+    //     display: 'flex',
+    //     justifyContent: 'space-around',
+    //     alignItems: 'center',
+    //     margin: '16px 0',
+    //     padding: '8px 0',
+    //     borderTop: '1px solid #ddd',
+    //     borderBottom: '1px solid #ddd',
+    //   },
+    //   statItem: {
+    //     textAlign: 'center',
+    //   },
+    //   statCount: {
+    //     fontSize: '20px',
+    //     fontWeight: 'bold',
+    //     color: '#333',
+    //   },
+    //   statLabel: {
+    //     fontSize: '14px',
+    //     color: '#777',
+    //   },
+    // additionalInfo: {
+    //     fontSize: '1.1em',
+    //     color: '#666',
+    //     marginTop: '8px',
+    // },
+    statsRow: {
+        display: 'flex',
+        justifyContent: 'space-around',
+        borderTop: '1px solid #e0e0e0',
+        borderBottom: '1px solid #e0e0e0',
+        padding: '10px 0',
+        marginBottom: '20px',
+      },
+      statItem: {
+        textAlign: 'center',
+      },
+      statCount: {
+        fontSize: '1.2rem',
+        fontWeight: 'bold',
+        color: '#333',
+      },
+      statLabel: {
+        fontSize: '1rem',
+        fontWeight: 'bold',
+        color: '#777',
+      },
+      additionalInfo: {
+        fontSize: '1rem',
+        color: '#555',
+        marginBottom: '10px',
+      },
+    
     editButton: {
         marginTop: '20px',
         padding: '10px 20px',
@@ -729,7 +848,6 @@ const styles = {
     },
 
 };
-
 
 
 
