@@ -24,7 +24,7 @@ const Navbar = ({ username, profilePic }) => {
         <img
           src={profilePicUrl}
           alt="Profile"
-          className="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover"
+          className="w-8 h-8 sm:w-10 sm:h-10 rounded-md object-cover"
         />
         <p className="text-sm sm:text-base font-medium text-gray-800 truncate max-w-[6rem] sm:max-w-[10rem]">
           {username || 'Username'}

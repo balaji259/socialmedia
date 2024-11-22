@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-
+import "./details.css";
 function UserDetails() {
     const [userData, setUserData] = useState(null);
     const [sectionData, setSectionData] = useState([]);
@@ -310,16 +310,16 @@ function UserDetails() {
 
     
     return (
-        <div style={styles.container}>
-            <div style={styles.profileCard}>
-                <div style={styles.profilePicContainer}>
+        <div className="container">
+            <div className="profileCard">
+                <div className="profilePicContainer">
                     {isEditing ? (
                         <div>
                             <label htmlFor="profilePicUpload">
                                 <img
                                     src={previewImage || editableData.profilePic || '/images/default_profile.jpeg'}
                                     alt="Profile Pic"
-                                    style={styles.profilePic}
+                                    className="profilePic"
                                 />
                             </label>
                             <input
@@ -335,18 +335,18 @@ function UserDetails() {
                         <img
                             src={userData.profilePic === '/images/default_profile.jpeg' ? '/images/default_profile.jpeg' : `${backendBaseUrl}${userData.profilePic}`}
                             alt="Profile Pic"
-                            style={styles.profilePic}
+                            className="profilePic"
                         />
                     )}
                 </div>
                 
-                <div style={styles.profileInfo}>
+                <div className="profileInfo">
                     {isEditing ? (
                         <>
-                            <input type="text" name="username" value={editableData.username} onChange={handleInputChange} style={styles.input} placeholder="Username" />
-                            <input type="text" name="fullname" value={editableData.fullname} onChange={handleInputChange} style={styles.input} placeholder="Full Name" />
-                            <input type="date" name="dateOfBirth" value={editableData.dateOfBirth} onChange={handleInputChange} style={styles.input} placeholder="Date of Birth" />
-                            <input type="text" name="collegeName" value={editableData.collegeName} onChange={handleInputChange} style={styles.input} placeholder="College Name" />
+                            <input type="text" name="username" value={editableData.username} onChange={handleInputChange} className="input" placeholder="Username" />
+                            <input type="text" name="fullname" value={editableData.fullname} onChange={handleInputChange} className="input" placeholder="Full Name" />
+                            <input type="date" name="dateOfBirth" value={editableData.dateOfBirth} onChange={handleInputChange} className="input" placeholder="Date of Birth" />
+                            <input type="text" name="collegeName" value={editableData.collegeName} onChange={handleInputChange} className="input" placeholder="College Name" />
                             {/* <input type="text" name="bestFriend" value={editableData.bestFriend} onChange={handleInputChange} style={styles.input} placeholder="Best Friend" /> */}
                             <div style={styles.inputContainer}>
                                     <input
@@ -355,7 +355,7 @@ function UserDetails() {
                                         name="bestFriend"
                                         value={searchQuery}
                                         onChange={handleBestFriendChange}
-                                        style={styles.input}
+                                        className="input"
                                         placeholder="Type username of your best friend"
                                     />
                                     {suggestions.length > 0 && (
@@ -372,72 +372,72 @@ function UserDetails() {
                                     )}
                                     </div>
 
-                            <input type="text" name="interests" value={editableData.interests} onChange={handleInputChange} style={styles.input} placeholder="Interests" />
-                            <input type="text" name="favoriteSports" value={editableData.favoriteSports} onChange={handleInputChange} style={styles.input} placeholder="Favorite Sports" />
-                            <input type="text" name="favoriteGame" value={editableData.favoriteGame} onChange={handleInputChange} style={styles.input} placeholder="Favorite Game" />
-                            <input type="text" name="favoriteMusic" value={editableData.favoriteMusic} onChange={handleInputChange} style={styles.input} placeholder="Favorite Music" />
-                            <input type="text" name="favoriteMovie" value={editableData.favoriteMovie} onChange={handleInputChange} style={styles.input} placeholder="Favorite Movie" />
-                            <input type="text" name="favoriteAnime" value={editableData.favoriteAnime} onChange={handleInputChange} style={styles.input} placeholder="Favorite Anime" />
-                            <input type="text" name="favoriteActor" value={editableData.favoriteActor} onChange={handleInputChange} style={styles.input} placeholder="Favorite Actor" />
-                            <select id="edit-relationship-status" name="relationshipStatus" value={editableData.relationshipStatus} onChange={handleInputChange} style={styles.input}>
+                            <input type="text" name="interests" value={editableData.interests} onChange={handleInputChange} className="input" placeholder="Interests" />
+                            <input type="text" name="favoriteSports" value={editableData.favoriteSports} onChange={handleInputChange} className="input" placeholder="Favorite Sports" />
+                            <input type="text" name="favoriteGame" value={editableData.favoriteGame} onChange={handleInputChange} className="input" placeholder="Favorite Game" />
+                            <input type="text" name="favoriteMusic" value={editableData.favoriteMusic} onChange={handleInputChange} className="input" placeholder="Favorite Music" />
+                            <input type="text" name="favoriteMovie" value={editableData.favoriteMovie} onChange={handleInputChange} className="input" placeholder="Favorite Movie" />
+                            <input type="text" name="favoriteAnime" value={editableData.favoriteAnime} onChange={handleInputChange} className="input" placeholder="Favorite Anime" />
+                            <input type="text" name="favoriteActor" value={editableData.favoriteActor} onChange={handleInputChange} className="input" placeholder="Favorite Actor" />
+                            <select id="edit-relationship-status" name="relationshipStatus" value={editableData.relationshipStatus} onChange={handleInputChange} className="input">
                                 <option value="single">Single</option>
                                 <option value="in a relationship">In a Relationship</option>
                                 <option value="married">Married</option>
                                 <option value="complicated">Complicated</option>
                                 <option value="other">Other</option>
                             </select>
-                            <textarea name="bio" value={editableData.bio} onChange={handleInputChange} style={styles.textarea} placeholder="Bio" />
-                            <button style={styles.saveButton} onClick={saveChanges}>Save Changes</button>
-                            <button style={styles.cancelButton} onClick={toggleEditMode}>Cancel</button>
+                            <textarea name="bio" value={editableData.bio} onChange={handleInputChange} className="textarea" placeholder="Bio" />
+                            <button className="saveButton" onClick={saveChanges}>Save Changes</button>
+                            <button className="cancelButton" onClick={toggleEditMode}>Cancel</button>
                         </>
                     ) : (
                         <>
                         {console.log("userData")}
                         {console.log(userData)}
-                        <h2 style={styles.username}>{userData.username || "User's Name"}</h2>
-                        <p style={styles.fullname}>{userData.fullname || 'Full Name'}</p>
+                        <h2 className="username">{userData.username || "User's Name"}</h2>
+                        <p className="fullname">{userData.fullname || 'Full Name'}</p>
                       
                         {/* New Row for Posts, Following, and Followers */}
-                        <div style={styles.statsRow}>
-                          <div style={styles.statItem}>
-                            <span style={styles.statCount}>{userData.postsCount || 0}</span>
-                            <span style={styles.statLabel}> Posts</span>
+                        <div className="statsRow">
+                          <div className="statItem">
+                            <span className="statCount">{userData.postsCount || 0}</span>
+                            <span className="statLabel"> Posts</span>
                           </div>
-                          <div style={styles.statItem}>
-                            <span style={styles.statCount}>{userData.followingCount || 0}</span>
-                            <span style={styles.statLabel}> Following</span>
+                          <div className="statItem">
+                            <span className="statCount">{userData.followingCount || 0}</span>
+                            <span className="statLabel"> Following</span>
                           </div>
-                          <div style={styles.statItem}>
-                            <span style={styles.statCount}>{userData.followersCount || 0}</span>
-                            <span style={styles.statLabel}> Followers</span>
+                          <div className="statItem">
+                            <span className="statCount">{userData.followersCount || 0}</span>
+                            <span className="statLabel"> Followers</span>
                           </div>
                         </div>
                       
-                        <p style={styles.additionalInfo}>Date of Birth: {userData.dateOfBirth ? userData.dateOfBirth.split('T')[0] : 'Not specified'}</p>
-                        <p style={styles.additionalInfo}>College: {userData.collegeName || 'Not specified'}</p>
-                        <p style={styles.additionalInfo}>Relationship Status: {userData.relationshipStatus || 'Single'}</p>
-                        <p style={styles.additionalInfo}>Best Friend: {userData.bestFriend?.username || 'Not specified'}</p>
-                        <p style={styles.additionalInfo}>Interests: {userData.interests || 'Not specified'}</p>
-                        <p style={styles.additionalInfo}>Favorite Sports: {userData.favoriteSports || 'Not specified'}</p>
-                        <p style={styles.additionalInfo}>Favorite Game: {userData.favoriteGame || 'Not specified'}</p>
-                        <p style={styles.additionalInfo}>Favorite Music: {userData.favoriteMusic || 'Not specified'}</p>
-                        <p style={styles.additionalInfo}>Favorite Movie: {userData.favoriteMovie || 'Not specified'}</p>
-                        <p style={styles.additionalInfo}>Favorite Anime: {userData.favoriteAnime || 'Not specified'}</p>
-                        <p style={styles.additionalInfo}>Favorite Actor: {userData.favoriteActor || 'Not specified'}</p>
-                        <p style={styles.additionalInfo}>Bio: {userData.bio || 'User bio goes here...'}</p>
-                        <button style={styles.editButton} onClick={toggleEditMode}>Edit Profile</button>
+                        <p className="additionalInfo">Date of Birth: {userData.dateOfBirth ? userData.dateOfBirth.split('T')[0] : 'Not specified'}</p>
+                        <p className="additionalInfo">College: {userData.collegeName || 'Not specified'}</p>
+                        <p className="additionalInfo">Relationship Status: {userData.relationshipStatus || 'Single'}</p>
+                        <p className="additionalInfo">Best Friend: {userData.bestFriend?.username || 'Not specified'}</p>
+                        <p className="additionalInfo">Interests: {userData.interests || 'Not specified'}</p>
+                        <p className="additionalInfo">Favorite Sports: {userData.favoriteSports || 'Not specified'}</p>
+                        <p className="additionalInfo">Favorite Game: {userData.favoriteGame || 'Not specified'}</p>
+                        <p className="additionalInfo">Favorite Music: {userData.favoriteMusic || 'Not specified'}</p>
+                        <p className="additionalInfo">Favorite Movie: {userData.favoriteMovie || 'Not specified'}</p>
+                        <p className="additionalInfo">Favorite Anime: {userData.favoriteAnime || 'Not specified'}</p>
+                        <p className="additionalInfo">Favorite Actor: {userData.favoriteActor || 'Not specified'}</p>
+                        <p className="additionalInfo">Bio: {userData.bio || 'User bio goes here...'}</p>
+                        <button className="editButton" onClick={toggleEditMode}>Edit Profile</button>
                       </>
                       
                     )}
                 </div>
             </div>
 
-            <div style={styles.buttonContainer}>
+            <div className="buttonContainer">
                 <button style={activeSection === 'posts' ? styles.activeButton : styles.inactiveButton} onClick={() => handleSectionChange('posts')}>Posts</button>
                 <button style={activeSection === 'saved' ? styles.activeButton : styles.inactiveButton} onClick={() => handleSectionChange('saved')}>Saved</button>
                 <button style={activeSection === 'liked' ? styles.activeButton : styles.inactiveButton} onClick={() => handleSectionChange('liked')}>Liked</button>
             </div>
-            <div style={styles.sectionContent}>
+            <div className="sectionContent">
                 {/* {sectionData.map((item, index) => (
                     <div key={index} style={styles.post}>{item.caption}</div>
                 ))} */}
@@ -445,14 +445,15 @@ function UserDetails() {
   sectionData.map((post, index) => (
     <div
       key={post._id}
-      className="bg-white rounded-lg shadow-md p-10 mb-4"
+      className="bg-white rounded-lg shadow-md p-8 mb-4"
+    //   style={{ minWidth: '800px' }}
     >
       {/* Profile picture and username */}
       <div className="flex items-center mb-4">
         <img
           src={`${backendBaseUrl}${userData.profilePic}`} // Add profile picture URL here
           alt="Profile"
-          className="w-12 h-12 rounded-md mr-2"
+          className="w-14 h-14 rounded-md mr-2"
         />
         <strong className="text-lg ml-4">{post.user.username}</strong>
       </div>
@@ -486,7 +487,8 @@ function UserDetails() {
   savedData.map((post, index) => (
     <div
       key={post._id}
-      className="bg-white rounded-lg shadow-md p-4 mb-4 relative"
+      className="bg-white rounded-lg shadow-md p-8 mb-4 relative"
+    //   style={{ minWidth: '800px' }}
     >
       {/* Delete Icon */}
       <button
@@ -514,7 +516,7 @@ function UserDetails() {
         <img
           src={`${backendBaseUrl}${userData.profilePic}`} // Add profile picture URL here
           alt="Profile"
-          className="w-10 h-10 rounded-md mr-2"
+          className="w-14 h-14 rounded-md mr-2"
         />
         <strong className="text-lg ml-4">{post.postId.user.username}</strong>
       </div>
@@ -549,14 +551,15 @@ function UserDetails() {
   likedData.map((post, index) => (
     <div
       key={post._id}
-      className="bg-white rounded-lg shadow-md p-4 mb-4"
+      className="bg-white rounded-lg shadow-md p-8 mb-4"
+    //   style={{ minWidth: '800px' }}
     >
       {/* Profile picture and username */}
       <div className="flex items-center mb-4">
         <img
           src={`${backendBaseUrl}${userData.profilePic}`} // Add profile picture URL here
           alt="Profile"
-          className="w-10 h-10 rounded-md mr-2"
+          className="w-14 h-14 rounded-md mr-2"
         />
         <strong className="text-lg ml-4">{post.user.username}</strong>
       </div>
@@ -596,146 +599,109 @@ function UserDetails() {
 }
 
 
-const styles = {
-    container: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        padding: '20px',
-        backgroundColor: '#d5d5d5',
-    },
-    profileCard: {
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'stretch',  // Makes both sections equal in height
-        width: '800px',
-        maxWidth: '90%',
-        backgroundColor: '#fff',
-        borderRadius: '12px',
-        boxShadow: '0 8px 16px rgba(0, 0, 0, 0.1)',
-        padding: '20px',
-        gap: '20px',
-        marginBottom: '25px',
-    },
-    profilePicContainer: {
-        flex: '1',
-        // backgroundColor: 'red',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: '20px',  // Provides spacing around the image
-    },
-    profilePic: {
-        width: '100%',  
-        maxWidth: '250px',  // Adjusts the max width to create a vertical rectangle shape
-        height: '350px',  // Sets the height to make it taller than it is wide
-        borderRadius: '12px',
-        objectFit: 'cover',
-        backgroundColor: '#e0e0e0',
-        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-    },
-    profileInfo: {
-        flex: '2',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        paddingLeft: '20px',
-        textAlign: 'left',
-        lineHeight: '1.6',
-    },
-    // username: {
-    //     fontSize: '1.8em',
-    //     fontWeight: 'bold',
-    //     color: '#333',
-    //     marginBottom: '5px',
-    // },
-    // fullname: {
-    //     fontSize: '1.3em',
-    //     color: '#555',
-    //     marginBottom: '15px',
-    // },
-    username: {
-        fontSize: '1.8rem',
-        fontWeight: 'bold',
-        color: '#333',
-        marginBottom: '10px',
-      },
-      fullname: {
-        fontSize: '1.3rem',
-        color: '#555',
-        marginBottom: '20px',
-      },
-    // statsRow: {
-    //     display: 'flex',
-    //     justifyContent: 'space-around',
-    //     alignItems: 'center',
-    //     margin: '16px 0',
-    //     padding: '8px 0',
-    //     borderTop: '1px solid #ddd',
-    //     borderBottom: '1px solid #ddd',
-    //   },
-    //   statItem: {
-    //     textAlign: 'center',
-    //   },
-    //   statCount: {
-    //     fontSize: '20px',
-    //     fontWeight: 'bold',
-    //     color: '#333',
-    //   },
-    //   statLabel: {
-    //     fontSize: '14px',
-    //     color: '#777',
-    //   },
-    // additionalInfo: {
-    //     fontSize: '1.1em',
-    //     color: '#666',
-    //     marginTop: '8px',
-    // },
-    statsRow: {
-        display: 'flex',
-        justifyContent: 'space-around',
-        borderTop: '1px solid #e0e0e0',
-        borderBottom: '1px solid #e0e0e0',
-        padding: '10px 0',
-        marginBottom: '20px',
-      },
-      statItem: {
-        textAlign: 'center',
-      },
-      statCount: {
-        fontSize: '1.2rem',
-        fontWeight: 'bold',
-        color: '#333',
-      },
-      statLabel: {
-        fontSize: '1rem',
-        fontWeight: 'bold',
-        color: '#777',
-      },
-      additionalInfo: {
-        fontSize: '1rem',
-        color: '#555',
-        marginBottom: '10px',
-      },
-    
-    editButton: {
-        marginTop: '20px',
-        padding: '10px 20px',
-        backgroundColor: '#6C63FF',
-        color: '#fff',
-        border: 'none',
-        borderRadius: '6px',
-        cursor: 'pointer',
-        fontSize: '1em',
-        transition: 'background-color 0.3s',
-        boxShadow: '0 4px 12px rgba(108, 99, 255, 0.2)',
-    },
-    buttonContainer: {
-        display: 'flex',
-        justifyContent: 'center',
-        gap: '15px',
-        marginTop: '20px',
-    },
+ const styles = {
+//     container: {
+//         display: 'flex',
+//         flexDirection: 'column',
+//         alignItems: 'center',
+//         padding: '20px',
+//         backgroundColor: '#d5d5d5',
+//         overflowX: 'hidden', // Prevents horizontal scrolling
+//     },
+//     profileCard: {
+//         display: 'flex',
+//         flexDirection: 'row',
+//         alignItems: 'stretch', // Makes both sections equal in height
+//         width: '800px',
+//         maxWidth: '90%',
+//         backgroundColor: '#fff',
+//         borderRadius: '12px',
+//         boxShadow: '0 8px 16px rgba(0, 0, 0, 0.1)',
+//         padding: '20px',
+//         gap: '20px',
+//         marginBottom: '25px',
+//     },
+//     profilePicContainer: {
+//         flex: '1',
+//         display: 'flex',
+//         justifyContent: 'center',
+//         alignItems: 'center',
+//         // backgroundColor:'red',
+//         padding: '20px',
+//     },
+//     profilePic: {
+//         width: '100%',
+//         maxWidth: '250px',
+//         height: 'auto', // Scales proportionally
+//         borderRadius: '12px',
+//         objectFit: 'cover',
+//         backgroundColor: '#e0e0e0',
+//         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+//     },
+//     profileInfo: {
+//         flex: '2',
+//         display: 'flex',
+//         flexDirection: 'column',
+//         justifyContent: 'space-between',
+//         paddingLeft: '20px',
+//         textAlign: 'left',
+//         lineHeight: '1.6',
+//     },
+//     username: {
+//         fontSize: '1.8rem',
+//         fontWeight: 'bold',
+//         color: '#333',
+//         marginBottom: '10px',
+//     },
+//     fullname: {
+//         fontSize: '1.3rem',
+//         color: '#555',
+//         marginBottom: '20px',
+//     },
+//     statsRow: {
+//         display: 'flex',
+//         justifyContent: 'space-around',
+//         borderTop: '1px solid #e0e0e0',
+//         borderBottom: '1px solid #e0e0e0',
+//         padding: '10px 0',
+//         marginBottom: '20px',
+//     },
+//     statItem: {
+//         textAlign: 'center',
+//     },
+//     statCount: {
+//         fontSize: '1.2rem',
+//         fontWeight: 'bold',
+//         color: '#333',
+//     },
+//     statLabel: {
+//         fontSize: '1rem',
+//         fontWeight: 'bold',
+//         color: '#777',
+//     },
+//     additionalInfo: {
+//         fontSize: '1rem',
+//         color: '#555',
+//         marginBottom: '10px',
+//     },
+//     editButton: {
+//         marginTop: '20px',
+//         padding: '10px 20px',
+//         backgroundColor: '#6C63FF',
+//         color: '#fff',
+//         border: 'none',
+//         borderRadius: '6px',
+//         cursor: 'pointer',
+//         fontSize: '1em',
+//         transition: 'background-color 0.3s',
+//         boxShadow: '0 4px 12px rgba(108, 99, 255, 0.2)',
+//     },
+//     buttonContainer: {
+//         display: 'flex',
+//         justifyContent: 'center',
+//         gap: '15px',
+//         marginTop: '20px',
+//     },
     activeButton: {
         padding: '12px 25px',
         backgroundColor: '#28a745',
@@ -747,108 +713,195 @@ const styles = {
     },
     inactiveButton: {
         padding: '12px 25px',
-        // backgroundColor: '#bbb',
-        backgroundColor:'transparent',
+        backgroundColor: 'transparent',
         color: '#333',
         border: 'none',
         borderRadius: '6px',
         cursor: 'pointer',
         fontSize: '1.2em',
     },
-    sectionContent: {
-        marginTop:'40px',
-        width: '1000px',
-        backgroundColor: '#d5d5d5',
-        // backgroundColor:'blue',
-        padding: '25px',
-        // borderRadius: '10px',
-        // boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-        textAlign: 'left',
-        lineHeight: '1.6',
-    },
-    post: {
-        marginBottom: '20px',
-        padding: '15px',
-        backgroundColor: '#fff',
-        borderRadius: '8px',
-        boxShadow: '0 3px 6px rgba(0, 0, 0, 0.1)',
-        fontSize: '1em',
-    },
+//     sectionContent: {
+//         marginTop: '40px',
+//         width: '1000px',
+//         backgroundColor: '#d5d5d5',
+//         padding: '25px',
+//         textAlign: 'left',
+//         lineHeight: '1.6',
+//     },
+//    post: {
+//     marginBottom: '20px',
+//     padding: '15px',
+//     backgroundColor: '#fff',
+//     borderRadius: '8px',
+//     boxShadow: '0 3px 6px rgba(0, 0, 0, 0.1)',
+//     fontSize: '1em',
+//     maxWidth: '100%', // Ensures it fits within the viewport
+//     overflowWrap: 'break-word', // Breaks long words
+// },
+//     inputContainer: {
+//         position: 'relative',
+//         width: '100%',
+//     },
+//     suggestionsList: {
+//         position: 'absolute',
+//         top: '100%',
+//         left: 0,
+//         width: '100%',
+//         backgroundColor: '#fff',
+//         border: '1px solid black',
+//         borderRadius: '8px',
+//         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+//         maxHeight: '200px',
+//         overflowY: 'auto',
+//         zIndex: 10,
+//         padding: '0',
+//         marginTop: '8px',
+//     },
+//     suggestionItem: {
+//         padding: '10px',
+//         cursor: 'pointer',
+//         fontSize: '1em',
+//         color: '#333',
+//     },
+//     suggestionItemHover: {
+//         backgroundColor: '#f0f0f0',
+//     },
+//     input: {
+//         marginBottom: '12px',
+//         padding: '10px',
+//         width: '100%',
+//         fontSize: '1em',
+//         borderRadius: '5px',
+//         border: '1px solid #ddd',
+//     },
+//     textarea: {
+//         marginBottom: '12px',
+//         padding: '10px',
+//         width: '100%',
+//         height: '80px',
+//         fontSize: '1em',
+//         borderRadius: '5px',
+//         border: '1px solid #ddd',
+//     },
+//     saveButton: {
+//         padding: '10px 20px',
+//         marginTop: '5px',
+//         marginBottom: '15px',
+//         backgroundColor: '#28a745',
+//         color: '#fff',
+//         border: 'none',
+//         borderRadius: '6px',
+//         cursor: 'pointer',
+//         fontSize: '1em',
+//         transition: 'background-color 0.3s',
+//         boxShadow: '0 4px 12px rgba(40, 167, 69, 0.2)',
+//     },
+//     cancelButton: {
+//         padding: '10px 20px',
+//         backgroundColor: '#dc3545',
+//         color: '#fff',
+//         border: 'none',
+//         borderRadius: '6px',
+//         cursor: 'pointer',
+//         fontSize: '1em',
+//         transition: 'background-color 0.3s',
+//         boxShadow: '0 4px 12px rgba(220, 53, 69, 0.2)',
+//     },
+//     // Media queries
 
-    inputContainer: {
-        position: 'relative',  // Required for the absolute positioning of the suggestions dropdown
-        width: '100%',
-    },
+//     '@media (max-width: 1024px)': { // For medium screens (e.g., iPads)
+//         profileCard: {
+//             flexDirection: 'column', // Stacks profile picture and info
+//             alignItems: 'center',
+//             padding: '15px',
+//         },
+//         profilePicContainer: {
+//             width: '100%',
+//             padding: '10px',
+//             backgroundColor:'red',
+//         },
+//         profilePic: {
+//             maxWidth: '150px', // Adjust the picture size
+//             height: 'auto',
+//         },
+//         profileInfo: {
+//             width: '100%',
+//             paddingLeft: '0',
+//         },
+//         statsRow: {
+//             flexDirection: 'column',
+//             gap: '10px',
+//         },
+//     },
 
-    suggestionsList: {
-        position: 'absolute',
-        top: '100%',  // Positions the list right below the input
-        left: 0,
-        width: '100%',
-        backgroundColor: '#fff',
-        border: '1px solid black',
-        borderRadius: '8px',
-        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-        maxHeight: '200px',  // Limits the height so it doesn't grow indefinitely
-        overflowY: 'auto',  // Adds scroll if suggestions exceed max height
-        zIndex: 10,
-        padding: '0',
-        marginTop: '8px',
-    },
-    suggestionItem: {
-        padding: '10px',
-        cursor: 'pointer',
-        fontSize: '1em',
-        color: '#333',
-    },
-    suggestionItemHover: {
-        backgroundColor: '#f0f0f0',  // Light background when hovering
-    },
+//     '@media (max-width: 768px)': {
+//         profileCard: {
+//             width: '100%',
+//             padding: '10px',
+//             backgroundColor:'red',
+//         },
+//         profilePicContainer:{
+//             width:'35%',
+//             display:'flex',
+//             justifyContent:'center',
+//             alignItems:'start',
+//         },
+//         profilePic: {
+//             maxWidth: '200px', // Scale down further
+//         },
+//         profileInfo: {
+//             paddingLeft: '0',
+//             textAlign: 'center',
+//         },
+//         statsRow: {
+//             flexDirection: 'column',
+//             alignItems: 'center',
+//         },
 
-    input: {
-        marginBottom: '12px',
-        padding: '10px',
-        width: '100%',
-        fontSize: '1em',
-        borderRadius: '5px',
-        border: '1px solid #ddd',
-    },
-    textarea: {
-        marginBottom: '12px',
-        padding: '10px',
-        width: '100%',
-        height: '80px',
-        fontSize: '1em',
-        borderRadius: '5px',
-        border: '1px solid #ddd',
-    },
-    saveButton: {
-        padding: '10px 20px',
-        marginTop:'5px',
-        marginBottom:'15px',
-        backgroundColor: '#28a745',
-        color: '#fff',
-        border: 'none',
-        borderRadius: '6px',
-        cursor: 'pointer',
-        fontSize: '1em',
-        transition: 'background-color 0.3s',
-        boxShadow: '0 4px 12px rgba(40, 167, 69, 0.2)',
-    },
-    cancelButton: {
-        padding: '10px 20px',
-        backgroundColor: '#dc3545',
-        color: '#fff',
-        border: 'none',
-        borderRadius: '6px',
-        cursor: 'pointer',
-        fontSize: '1em',
-        transition: 'background-color 0.3s',
-        boxShadow: '0 4px 12px rgba(220, 53, 69, 0.2)',
-    },
+//         post: {
+//             padding: '10px',
+//             fontSize: '0.9em', // Slightly smaller text
+//         },
 
+//         sectionContent: {
+//             width: '100%',
+//             padding: '20px',
+//         },
+//         username: {
+//             fontSize: '1.5rem',
+//         },
+//         fullname: {
+//             fontSize: '1.2rem',
+//         },
+//     },
+//     '@media (max-width: 480px)': {
+//         container: {
+//             padding: '10px',
+//         },
+//         profileCard: {
+//             padding: '8px',
+//         },
+//         profilePic: {
+//             height: '100px',
+//         },
+//         username: {
+//             fontSize: '1.2rem',
+//         },
+//         fullname: {
+//             fontSize: '1rem',
+//         },
+//         editButton: {
+//             fontSize: '0.9em',
+//         },
+//         post: {
+//             fontSize: '0.8em',
+//         },
+//         activeButton: {
+//             fontSize: '1em',
+//         },
+//         inactiveButton: {
+//             fontSize: '1em',
+//         },
+//     },
 };
-
-
-
 export default UserDetails;
