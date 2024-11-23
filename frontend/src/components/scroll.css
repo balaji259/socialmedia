@@ -1,6 +1,8 @@
 .post-component-container::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, and Edge */
+    display: none; 
+    background-color:transparent;
   }
+
 
 .sidebar-container::-webkit-scrollbar {
     display: none;

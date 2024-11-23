@@ -9,7 +9,7 @@ const postComponentContainerStyle = {
   marginTop: '15px',
   padding: '20px',
   backgroundColor: '#d5d5d5',
-  maxHeight: '80vh',
+  // maxHeight: '80vh',
   overflowY: 'scroll',
 };
 
@@ -608,7 +608,7 @@ return (
       </form>
     </div>
 
-    <div   style={{ marginTop: '20px' }}>
+    <div  style={{ marginTop: '20px' }}>
       {posts.map((post) => (
         <div key={post.postId} style={userPostStyle}>
           <div style={postHeaderStyle}>

@@ -93,7 +93,7 @@ const SearchSuggestions = () => {
   }, [page]);
 
   return (
-    <div className="w-full max-w-4xl lg:max-w-6xl xl:max-w-7xl mx-auto p-4 sm:p-8 bg-gray-100 min-h-screen">
+    <div className="w-full max-w-4xl lg:max-w-6xl xl:max-w-7xl mx-auto p-4 sm:p-8 bg-[#d5d5d5] min-h-screen">
       <div className="relative mb-8">
         <input
           type="text"

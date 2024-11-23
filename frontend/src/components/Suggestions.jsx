@@ -27,6 +27,8 @@ const SuggestionsSidebar = () => {
     const handleFollow = async (followId) => {
       try {
           const token = localStorage.getItem('token');
+          console.log("suggestions object")
+          console.log(suggestions);
           console.log(currentUserId);
           console.log(followId);
           await axios.post(
@@ -86,6 +88,8 @@ const SuggestionsSidebar = () => {
       }
 
       const data = await response.json();
+      console.log("user suggestions");
+      console.log(data);
       if (data.users && Array.isArray(data.users)) {
         setSuggestions(data.users);
       } else {

@@ -5,37 +5,12 @@ import SuggestionsSidebar from './Suggestions';
 import PostsComponent from './Posts';
 import { fetchUserDetails } from './userPosts.js';
 
+
 const getISTDate = () => {
   const options = { timeZone: 'Asia/Kolkata' };
   return new Date(new Date().toLocaleString('en-US', options));
 };
 
-// // Function to check and reset streak if needed
-// const checkAndResetStreakOnLogin = async (userId) => {
-//   try {
-//     // Fetch user details using the userId
-//     const user = await fetchUserDetails(userId);  // Assuming fetchUserDetails can fetch user by ID
-//     if (!user) {
-//       throw new Error('User not found');
-//     }
-
-//     const currentDate = getISTDate();
-//     const lastPostDate = user.streak.lastPostTime;
-
-//     // If the last post time is older than yesterday, reset the streak
-//     if (lastPostDate) {
-//       const lastPostDateIST = new Date(lastPostDate);
-//       const diffInDays = Math.floor((currentDate - lastPostDateIST) / (24 * 60 * 60 * 1000)); // Difference in days
-
-//       if (diffInDays > 1) {
-//         // Reset streak if the user hasn't posted in 2 or more days
-//         await fetchUserDetails(userId, { 'streak.count': 0 });  // Assuming this will update the streak
-//       }
-//     }
-//   } catch (error) {
-//     console.error('Error resetting streak on login:', error);
-//   }
-// };
 
 
 
@@ -61,21 +36,36 @@ const Home = () => {
   }, []);
 
 
+  const getSidebarWidth = () => {
+    if (window.innerWidth < 600) return "20%"; // Small screens
+    if (window.innerWidth < 900) return "25%"; // Medium screens
+    return "20%"; // Larger screens
+  };
 
 
 
 
   return (
     <div style={styles.container}>
-      <Navbar  username={user.username} profilePic={user.profilePic} />
+      {/* Navbar */}
+      <div style={styles.navbar}>
+        <Navbar username={user.username} profilePic={user.profilePic} />
+      </div>
+  
+      {/* Main content */}
       <section style={styles.content}>
-        <div style={styles.dashboard}>
+        {/* Dashboard Sidebar */}
+        <div style={{ ...styles.dashboard, width: getSidebarWidth() }}>
           <Dashboard />
         </div>
+  
+        {/* Posts Section */}
         <div style={styles.posts}>
           <PostsComponent />
         </div>
-        <div style={styles.suggestionsSidebar}>
+  
+        {/* Suggestions Sidebar */}
+        <div style={{ ...styles.suggestionsSidebar, width: getSidebarWidth() }}>
           <SuggestionsSidebar />
         </div>
       </section>
@@ -85,38 +75,57 @@ const Home = () => {
 
 const styles = {
   container: {
-    display: 'flex',
-    flexDirection: 'column',
-    height: '100vh',
-    // backgroundColor:'#blue'
+    display: "flex",
+    flexDirection: "column",
+    height: "100vh", // Full viewport height
+    fontFamily: "'Arial', sans-serif",
+    overflow: "hidden", // Prevent overflow
+    backgroundColor: "#d5d5d5",
+  },
+  navbar: {
+    flexShrink: 0,
+    zIndex: 1000, // Ensure Navbar stays on top
+    position: "sticky",
+    top: 0,
+    backgroundColor: "#fff",
+    boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.1)",
   },
   content: {
-    display: 'flex',
+    display: "flex",
     flex: 1,
-    backgroundColor:'#d5d5d5',
-    // padding: '20px',
-    marginTop: '60px', // Adjust this to match the navbar height
-    overflow: 'hidden', // Remove scrolling
+    marginTop: "60px", // Adjust this to match the navbar height
+    overflow: "hidden", // Remove scrolling
+    backgroundColor: "#d5d5d5",
   },
   dashboard: {
-    width: '13%',
-    padding: '10px',
-    // borderRight: '1px solid #ddd',
+    backgroundColor: "#f9f9f9",
+    // boxShadow: "2px 0 5px rgba(0, 0, 0, 0.1)",
+    overflowY: "auto",
+    height: "calc(100vh - 60px)", // Fit within the viewport height
+    // padding: "10px",
+    display: "flex",
+    flexDirection: "column",
   },
   posts: {
-    width: '85%',
-    padding: '10px',
-    // border:'2px solid black',
-    margin: '0 10px',
-    // marginLeft:'20px'
+    flex: 1, // Take up the remaining space
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "flex-start",
+    overflowY: "auto",
+    backgroundColor: "#fff",
+    // height: "calc(100vh - 60px)", 
+    // padding: "10px",
+    // margin: "0 10px",
   },
   suggestionsSidebar: {
-    width: '20%',
-    padding: '15px 5px',
-    marginRight:'0px',
-    // backgroundColor:'blue'
-    // border: '1px solid red',
+    // backgroundColor: "#f9f9f9",
+    backgroundColor:"#d5d5d5",
+    boxShadow: "-2px 0 5px rgba(0, 0, 0, 0.1)",
+    overflowY: "auto",
+    height: "calc(100vh - 60px)", 
+    // padding: "15px 5px",
+    display: "flex",
+    flexDirection: "column",
   },
 };
-
 export default Home;

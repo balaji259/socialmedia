@@ -9,6 +9,7 @@
 }
 
 .profileCard {
+    margin-top: 20px;
     display: flex;
     flex-direction: row;
     align-items: stretch; /* Makes both sections equal in height */
@@ -107,13 +108,7 @@
     box-shadow: 0 4px 12px rgba(108, 99, 255, 0.2);
 }
 
-.buttonContainer {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-top: 20px;
-    margin-bottom:20px;
-}
+
 
 .activeButton {
     padding: 12px 25px;
@@ -323,9 +318,20 @@
         font-size: 1rem;
     }
 
+
     .editButton {
         font-size: 0.9em;
     }
+    
+    .buttonContainer {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 20px;
+        margin-bottom:20px;
+    }
+    
+
 
     .post {
         font-size: 0.8em;

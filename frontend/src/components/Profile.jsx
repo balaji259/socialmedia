@@ -63,6 +63,7 @@ const styles = {
     height: "100vh", // Full viewport height
     fontFamily: "'Arial', sans-serif",
     overflow: "hidden", // Prevent overflow
+    backgroundColor: "#d5d5d5",
   },
   navbar: {
     flexShrink: 0,
@@ -77,12 +78,13 @@ const styles = {
     flex: 1,
     overflow: "hidden",
     marginTop: "60px", // Ensure the content starts below the navbar
+    backgroundColor: "#d5d5d5",
   },
   sidebar: {
     backgroundColor: "#f9f9f9",
     boxShadow: "2px 0 5px rgba(0, 0, 0, 0.1)",
     overflowY: "auto",
-    padding: "10px",
+    // padding: "10px 0px 10px 10px",
     height: "calc(100vh - 60px)", // Ensure the Dashboard fits within the viewport height
     display: "flex",
     flexDirection: "column",

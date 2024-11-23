@@ -50,7 +50,7 @@ const Search = () => {
       backgroundColor: "#f9f9f9",
       boxShadow: "2px 0 5px rgba(0, 0, 0, 0.1)",
       overflowY: "auto",
-      padding: "10px",
+      // padding: "10px",
       height: "calc(100vh - 60px)", // Ensure the Dashboard fits within the viewport height
       display: "flex",
       flexDirection: "column",

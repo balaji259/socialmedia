@@ -448,7 +448,7 @@ function UserDetails() {
       className="bg-white rounded-lg shadow-md p-8 mb-4"
     //   style={{ minWidth: '800px' }}
     >
-      {/* Profile picture and username */}
+    {/* Profile picture and username */}
       <div className="flex items-center mb-4">
         <img
           src={`${backendBaseUrl}${userData.profilePic}`} // Add profile picture URL here
