@@ -7,6 +7,7 @@ const postRouter=require("./routes/postRoutes");
 const userRouter=require("./routes/user")
 const profileRouter=require("./routes/profile");
 const streakRouter=require('./routes/streak');
+const chatRouter=require("./routes/message");
 // const otpRoutes = require('./routes/otpRoutes')
 
 const cors = require('cors');
@@ -41,6 +42,8 @@ app.use('/posts',postRouter);
 app.use('/user',userRouter);
 app.use('/profile',profileRouter);
 app.use('/streak',streakRouter);
+app.use('/messages',chatRouter);
+// app.use('/chat',chatRouter);
 // app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
 
 

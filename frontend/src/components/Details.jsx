@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { toast } from 'react-hot-toast';
 import "./details.css";
 function UserDetails() {
     const [userData, setUserData] = useState(null);
@@ -55,7 +56,7 @@ function UserDetails() {
             // Update the saved posts list
             setSavedData((prevData) => prevData.filter((post) => post._id !== postId));
 
-            alert("Post deleted successfully!");
+            alert("Post removed from savedPosts!");
           } else {
             alert("Failed to delete the post. Please try again.");
           }
@@ -259,6 +260,34 @@ function UserDetails() {
         console.log("Updated likedData:", likedData);
     }, [likedData]);
 
+    const deletePost = async (postId) => {
+        try {
+          console.log("delete called");
+          console.log(postId);
+          const token=localStorage.getItem('token');
+          const response = await fetch(`${backendBaseUrl}/posts/${postId}`, {
+            method: 'DELETE',
+            headers: {
+              Authorization: `Bearer ${token}`, // Replace with your actual token
+            },
+          });
+      
+          const data = await response.json();
+          if (response.ok) {
+            toast.success('Post deleted successfully!',{duration:1500});
+            setSectionData((prevData) => prevData.filter((post) => post._id !== postId));
+      
+            // Refresh or update the UI
+            // fetchPosts();
+          } else {
+            toast.error(data.message,{duration:2500});
+          }
+        } catch (error) {
+          console.error('Error deleting post:', error);
+          toast.error('Failed to delete post');
+        }
+      };
+    
 
     const fetchUserSaved = async () => {
         try {
@@ -308,6 +337,7 @@ function UserDetails() {
         return <div>Loading...</div>;
     }
 
+      
     
     return (
         <div className="container">
@@ -438,17 +468,64 @@ function UserDetails() {
                 <button style={activeSection === 'liked' ? styles.activeButton : styles.inactiveButton} onClick={() => handleSectionChange('liked')}>Liked</button>
             </div>
             <div className="sectionContent">
-                {/* {sectionData.map((item, index) => (
-                    <div key={index} style={styles.post}>{item.caption}</div>
-                ))} */}
-                 {activeSection === "posts" &&
+                
+                 {/* {activeSection === "posts" &&
   sectionData.map((post, index) => (
     <div
       key={post._id}
       className="bg-white rounded-lg shadow-md p-8 mb-4"
     //   style={{ minWidth: '800px' }}
     >
-    {/* Profile picture and username */}
+    
+      <div className="flex items-center mb-4">
+        <img
+          src={`${backendBaseUrl}${userData.profilePic}`} // Add profile picture URL here
+          alt="Profile"
+          className="w-14 h-14 rounded-md mr-2"
+        />
+        <strong className="text-lg ml-4">{post.user.username}</strong>
+      </div>
+
+     
+      {post.caption && (
+        <p className="text-gray-700 mb-4">{post.caption}</p>
+      )}
+
+      {post.content.mediaUrl && post.postType === "image" && (
+        <img
+          src={`${backendBaseUrl}/${post.content.mediaUrl}`}
+          alt="Post content"
+          className="w-full rounded-lg mt-2"
+        />
+      )}
+      {post.content.mediaUrl && post.postType === "video" && (
+        <video controls className="w-full rounded-lg mt-2">
+          <source
+            type="video/mp4"
+            src={`${backendBaseUrl}/${post.content.mediaUrl}`}
+          />
+          Your browser does not support the video tag.
+        </video>
+      )}
+    </div>
+  ))} */}
+
+{activeSection === "posts" &&
+  sectionData.map((post, index) => (
+    <div
+      key={post._id}
+      className="relative bg-white rounded-lg shadow-md p-8 mb-4"
+    >
+      {/* Delete icon */}
+      <button
+        className="absolute top-2 right-2 text-red-500 hover:text-red-700"
+        onClick={() => deletePost(post._id)}
+        aria-label="Delete post"
+      >
+      ✖
+      </button>
+
+      {/* Profile picture and username */}
       <div className="flex items-center mb-4">
         <img
           src={`${backendBaseUrl}${userData.profilePic}`} // Add profile picture URL here
@@ -482,6 +559,7 @@ function UserDetails() {
       )}
     </div>
   ))}
+
             {/* //saved */}
             {activeSection === "saved" &&
   savedData.map((post, index) => (

@@ -41,7 +41,13 @@
     "@react-oauth/google": "^0.12.1",
   
       
+    "axios": "^1.7.8",
+  
+      
     "body-parser": "^1.20.3",
+  
+      
+    "cloudinary": "^2.5.1",
   
       
     "crypto": "^1.0.1",
@@ -53,10 +59,16 @@
     "jwt-decode": "^4.0.0",
   
       
+    "lucide-react": "^0.461.0",
+  
+      
     "nodemailer": "^6.9.16",
   
       
-    "react-hot-toast": "^2.4.1"
+    "react-hot-toast": "^2.4.1",
+  
+      
+    "zustand": "^5.0.1"
   
     }
 }

@@ -7,7 +7,8 @@ import './scroll.css';
 // Define all styles at the top
 const postComponentContainerStyle = {
   marginTop: '15px',
-  padding: '20px',
+  // padding: '20px',
+  width:'100%',
   backgroundColor: '#d5d5d5',
   // maxHeight: '80vh',
   overflowY: 'scroll',

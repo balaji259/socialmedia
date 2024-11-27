@@ -444,6 +444,8 @@ router.get('/getsaved/:userId', async (req, res) => {
 // Delete post route
 router.delete('/:id',authenticateUser, async (req, res) => {
     const postId = req.params.id;
+    // console.log("postid of deleted post");
+    // console.log(postId);
     const {userId} = req.user; // Assuming you have middleware to get the logged-in user's ID
     console.log(postId);
     console.log(userId);
@@ -451,6 +453,8 @@ router.delete('/:id',authenticateUser, async (req, res) => {
     try {
       // Find the post
       const post = await Post.findById(postId);
+      console.log("post");
+      console.log(post);
   
       if (!post) {
         return res.status(404).json({ message: 'Post not found' });
@@ -463,6 +467,7 @@ router.delete('/:id',authenticateUser, async (req, res) => {
   
       // Delete the post
       await Post.findByIdAndDelete(postId);
+      console.log("post deleted!");
   
       return res.status(200).json({ message: 'Post deleted successfully' });
     } catch (error) {

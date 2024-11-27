@@ -17,6 +17,9 @@ import Register from './components/Register';
 import Login from './components/Login';
 import SearchSuggestions from './components/SearchSuggestions';
 import WelcomeOverlay from './components/Welcome';
+import Sidebar from "./components/Sidebar.jsx";
+import ChatHomePage from "./components/ChatHomePage.jsx";
+// import chatsection from './components/chatsection'
 
 const RoutesComponent = () => {
     return (
@@ -38,7 +41,9 @@ const RoutesComponent = () => {
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/search" element={<Search />} />
                 <Route path="/searchsug" element={<SearchSuggestions />} />
-            
+                <Route path="/chat/sidebar" element={<Sidebar />} />
+                <Route path="/chat/page" element={<ChatHomePage />} />
+                {/* <Route path='./chat' element={<chatsection />} />             */}
             </Routes>
         </Router>
     );
