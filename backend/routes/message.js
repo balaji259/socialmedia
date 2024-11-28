@@ -24,7 +24,8 @@ const getUsersForSideBar=async (req,res)=>{
     catch(e)
     {
         console.log(e);
-        res.status(500).json({error:"Internal server error!"});
+        // res.status(500).json({error:"Internal server error!"});
+        res.status(500).json(e);
     }
 };
  
@@ -32,9 +33,11 @@ const getMessages=async (req,res)=>{
     try{
         const {id:userToChatId}=req.params;
         const myId=req.user.userId;
+        console.log(myId);
+        console.log(userToChatId);
 
         const messages=await Message.find({
-            $ar:[
+            $or:[
                 {senderId:myId, receiverId:userToChatId},
                 {senderId:userToChatId, receiverId:myId}
             ]
@@ -86,7 +89,7 @@ const sendMessage=async (req,res)=>{
 
 //routers
 
-router.get("/get",authenticateUser,getMessages);
+router.get("/get/:id",authenticateUser,getMessages);
 router.post("/send/:id",authenticateUser,sendMessage);
 router.get("/getusers",authenticateUser,getUsersForSideBar);
 

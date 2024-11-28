@@ -7,6 +7,7 @@ const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const Otp = require('../models/otp');
 const router = express.Router();
+const authenticateUser = require("./authenticate_user");
 
 // Setup Nodemailer transporter
 const transporter = nodemailer.createTransport({
@@ -165,6 +166,8 @@ router.post('/login', async (req, res) => {
     }
 });
 
-
+router.get("/userId",authenticateUser,async(req,res)=>{
+    res.status(200).json(req.user.userId);
+})
 
 module.exports = router;
