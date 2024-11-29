@@ -4,11 +4,17 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
+import {useSocket} from "./useSocket";
+
+// const [user,setUser]=useState(null);
+
+
 
 const Login = ({ onSwitch }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
+    const {user, setUser ,socket, connectSocket}= useSocket();
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -17,6 +23,10 @@ const Login = ({ onSwitch }) => {
                 const token = response.data.token;
                 localStorage.setItem('token', token);
                 toast.success('Login Successful', { duration: 2000 });
+                
+                setUser(response.data.payload);
+                
+                connectSocket();
                 setTimeout(() => {
                     navigate('/home');
                 }, 1000);
@@ -35,6 +45,10 @@ const Login = ({ onSwitch }) => {
                     const token = response.data.token;
                     localStorage.setItem('token', token);
                     toast.success('Login Successful', { duration: 2000 });
+                    
+                    setUser(response.data.payload);
+                    connectSocket();
+                    
                     setTimeout(() => {
                         navigate('/home');
                     }, 1000);

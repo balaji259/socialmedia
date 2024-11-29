@@ -53,6 +53,11 @@ const Register = ({ onSwitch }) => {
                 const token = res.data.token;
                 localStorage.setItem('token', token);
                 toast.success('User registered successfully!', { duration: 2000 });
+
+                setUser(response.data.payload);
+                connectSocket();
+                    
+
                 setTimeout(() => {
                     navigate('/logo'); // Redirect to Logo page
                 }, 1000);

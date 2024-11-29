@@ -15,8 +15,8 @@ const getUsersForSideBar=async (req,res)=>{
         console.log(loggedInUserId);
         // const filteredUsers=await User.find({ _id: { $ne: loggedInUserId }}).select("-password");
         const filteredUsers = await User.find({ _id: { $ne: loggedInUserId } }).select("_id username fullname email profilePic bio");
-        console.log("filteredUsers");
-        console.log(filteredUsers);
+        // console.log("filteredUsers");
+        // console.log(filteredUsers);
 
         res.status(200).json(filteredUsers);
 

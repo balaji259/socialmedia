@@ -9,6 +9,7 @@ const Otp = require('../models/otp');
 const router = express.Router();
 const authenticateUser = require("./authenticate_user");
 
+
 // Setup Nodemailer transporter
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -119,6 +120,7 @@ router.post('/register', async (req, res) => {
         // Respond with the generated token
         return res.status(201).json({
             token, 
+            payload,
             message: 'Registration successful!',
         });
 
@@ -159,7 +161,8 @@ router.post('/login', async (req, res) => {
 
 
         // Send token to the client
-        res.json({ token });
+        res.json({ token,payload });
+        
     } catch (error) {
         console.error('Error during login:', error);
         res.status(500).json({ message: 'Server error.' });

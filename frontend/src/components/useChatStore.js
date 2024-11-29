@@ -22,8 +22,8 @@ export const useChatStore = create((set,get)=>({
                   Authorization: `Bearer ${token}`,
                 },
               });
-            console.log("sidebar user data");
-            console.log(res.data);
+            // console.log("sidebar user data");
+            // console.log(res.data);
             set({users:res.data});
 
         }
@@ -46,10 +46,10 @@ export const useChatStore = create((set,get)=>({
                 }
             });
             // set({messages:res.data});
-            console.log("getmessages checking");
-            console.log(res);
-            console.log("res.data.messages")
-            console.log(res.data);
+            // console.log("getmessages checking");
+            // console.log(res);
+            // console.log("res.data.messages")
+            // console.log(res.data);
             set({ messages: Array.isArray(res.data) ? res.data: [] });
 
         }

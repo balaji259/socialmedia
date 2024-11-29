@@ -10,6 +10,8 @@ const streakRouter=require('./routes/streak');
 const chatRouter=require("./routes/message");
 // const otpRoutes = require('./routes/otpRoutes')
 
+const {app,server} =require("./socket.js");
+
 const cors = require('cors');
 
 
@@ -17,7 +19,7 @@ const cors = require('cors');
 // const upload = require('./routes/upload'); // Import upload middleware
 require('dotenv').config();
 
-const app = express();
+// const app = express();
 
 app.use(express.json({ limit: '50mb' })); // Set limit to 10 MB
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
@@ -59,6 +61,6 @@ app.use('/messages',chatRouter);
 
 // Start the server
 const PORT = process.env.PORT || 7000;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

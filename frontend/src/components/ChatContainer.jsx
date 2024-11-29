@@ -35,7 +35,8 @@ const  ChatContainer=() =>{
                 },
 
               })
-              console.log("get request");
+              console.log("get userId request");
+              console.log(res);
               console.log(res.data);
               setUserId(res.data);
         }
@@ -53,7 +54,8 @@ const  ChatContainer=() =>{
                 },
 
             })
-            console.log("userdetails");
+            console.log("get userdetails request this");
+            console.log(res);
             console.log(res.data);
             setUser(res.data);
         }
@@ -67,10 +69,11 @@ const  ChatContainer=() =>{
         // console.log(req.user.userId);
         // console.log(selectedUser._id);
         getMessages(selectedUser._id);
-        
+
         getUserId();
         getUserData();
-        // console.log(user);
+        console.log("user");
+        console.log(user);
         console.log("this is userid bro");
         console.log(userId);
 
@@ -89,51 +92,62 @@ const  ChatContainer=() =>{
 
     return (
         <div className="flex-1 flex flex-col overflow-auto">
-            <ChatHeader />
+  <ChatHeader />
 
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                {messages.map((message)=> (
-                    <div key={message._id}
-                        className={`chat ${message.senderId ===userId ? "chat-end" :"chat-start"}`}>
-                            <div className="chat-image avatar">
-                                <div className="size-10 rounded-full border">
-                                    <img 
-                                        // src={message.senderId === userId ? {`${backendBaseUrl}${user.profilePic}`} || "/avatar.png" : {`${backendBaseUrl}${selectedUser.profilePic}`} || "/avatar.png"}
-                                        src={
-                                            message.senderId === userId 
-                                              ? (user.profilePic ? `${backendBaseUrl}${user.profilePic}` : "/avatar.png") 
-                                              : (selectedUser.profilePic ? `${backendBaseUrl}${selectedUser.profilePic}` : "/avatar.png")
-                                          }
-                                        
-                                        alt="profile pic"
-                                        />              
-                                </div>
-                            </div>
-                            <div className="chat-header mb-1">
-                                <time className="text-xs opacity-50 ml-1">
-                                    {formatMessageTime(message.createdAt)}
-                                </time>
-                            </div>
-                            <div className="chat-bubble flex">
-                                {message.image && (
-                                    <img 
-                                        src={message.image}
-                                        alt="Attachment"
-                                        className="sm:max-w-[200px] rounded-md mb-2"
-                                        />
-                                )}
-                                {message.text && <p>{message.text}</p>}
-                            </div>
-                    </div>
-                ))}
-            </div>
-
-            <MessageInput />
-             
-
-
-
+  <div className="flex-1 overflow-y-auto p-4 space-y-4">
+    {messages.map((message) => (
+      <div
+        key={message._id}
+        className={`flex ${message.senderId === userId ? "justify-end" : "justify-start"}`}
+      >
+        {/* Profile Picture */}
+        <div className="flex-shrink-0">
+          <div className="w-10 h-10 rounded-full border overflow-hidden">
+            <img
+              src={
+                message.senderId === userId
+                  ? user.profilePic
+                    ? `${backendBaseUrl}${user.profilePic}`
+                    : "/avatar.png"
+                  : selectedUser.profilePic
+                  ? `${backendBaseUrl}${selectedUser.profilePic}`
+                  : "/avatar.png"
+              }
+              alt="profile pic"
+            />
+          </div>
         </div>
+
+        {/* Message Content */}
+        <div className={`max-w-md ${message.senderId === userId ? "text-right ml-2" : "text-left mr-2"}`}>
+          {/* Message Header */}
+          <div className="mb-1">
+            <time className="text-xs opacity-50">
+              {formatMessageTime(message.createdAt)}
+            </time>
+          </div>
+
+          {/* Chat Bubble */}
+          <div className={`inline-block bg-primary text-white px-4 py-2 rounded-lg ${message.senderId === userId ? "bg-blue-500 text-white" : "bg-blue-500 text-white"}`}>
+            {/* Image Attachment */}
+            {message.image && (
+              <img
+                src={message.image}
+                alt="Attachment"
+                className="sm:max-w-[200px] rounded-md mb-2"
+              />
+            )}
+            {/* Text Message */}
+            {message.text && <p>{message.text}</p>}
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <MessageInput />
+</div>
+
     )
 
     
