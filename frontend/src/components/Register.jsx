@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
+import { useSocketStore } from './useSocket';
 
 const Register = ({ onSwitch }) => {
     const [username, setUsername] = useState('');
@@ -47,15 +48,19 @@ const Register = ({ onSwitch }) => {
 
     // Function to handle registration
     const handleSubmit = () => {
+        try{
         console.log('Completing registration...');
+        //zustand
+        set({ isSigningUp: true });
         axios.post('http://localhost:7000/user/register', { username, fullname, email, password })
             .then((res) => {
                 const token = res.data.token;
                 localStorage.setItem('token', token);
+                set({ authUser: res.data });
                 toast.success('User registered successfully!', { duration: 2000 });
-
+                get().connectSocket();
                 setUser(response.data.payload);
-                connectSocket();
+                // connectSocket();
                     
 
                 setTimeout(() => {
@@ -65,7 +70,15 @@ const Register = ({ onSwitch }) => {
             .catch((err) => {
                 const errorMessage = err.response?.data?.error || 'Registration failed';
                 toast.error(errorMessage, { duration: 2000 });
-            });
+            })
+        }
+        catch(e){
+            console.log(e);
+        }
+        finally{
+            set({ isSigningUp: false });
+        }
+
     };
 
     return (

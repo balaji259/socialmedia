@@ -11,9 +11,9 @@ const getTopStreakUsers = async (req, res) => {
       .sort({ 'streak.count': -1 }) // Sort by streak count in descending order
       .limit(10) // Limit to top 10 users
       .select('profilePic username streak.count'); // Select only the necessary fields
-
-    console.log("top streak users");
-    console.log(topStreakUsers);
+// 
+    // console.log("top streak users");
+    // console.log(topStreakUsers);
     res.status(200).json(topStreakUsers);
   } catch (error) {
     console.error(error);

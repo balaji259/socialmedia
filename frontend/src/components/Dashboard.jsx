@@ -2,15 +2,20 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import "./dashboard.css"
-import {useSocket} from "./useSocket";
+// import {useSocketStore} from "./useSocket";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const {user, setUser ,socket, connectSocket,disconnectSocket} =useSocket();
+  // const {user, setUser ,socket, connectSocket,disconnectSocket,isLogout,setIsLogout} =useSocket();
 
   const handleLogout = () => {
-    disconnectSocket();
-    setUser(null);
+    // set({ authUser: null });
+    // get().disconnectSocket();
+    console.log("loggedout!");
+    // console.log(socket);
+    // disconnectSocket();
+    // setIsLogout(true);
+    // setUser(null);
     localStorage.clear();
     navigate("/");
   };

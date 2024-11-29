@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { create } from "zustand";
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { GoogleLogin } from "@react-oauth/google";
-import { jwtDecode } from "jwt-decode";
-import {useSocket} from "./useSocket";
+import  {jwtDecode}  from "jwt-decode";
+import { useSocketStore } from "./useSocket";
+
 
 // const [user,setUser]=useState(null);
 
@@ -14,19 +16,35 @@ const Login = ({ onSwitch }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
-    const {user, setUser ,socket, connectSocket}= useSocket();
+    // const {isLogin,setIsLogin}=useState();
+    // const {user, setUser ,socket, connectSocket,isLogin,setIsLogin}= useSocket();
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+
+    // const { set , get , connectSocket, setAuthUser, isLoggingIn } = useSocketStore((state) => ({
+    //     set: state.set,
+    //     get: state.get,
+    //     connectSocket: state.connectSocket,
+    //     setAuthUser: state.setAuthUser,
+    //     isLoggingIn: state.isLoggingIn,
+    // }));
+
+
+    
+        const handleSubmit = (e) => {
+         
+            e.preventDefault();
+    try{           // set({ isLoggingIn: true });
         axios.post("http://localhost:7000/user/login", { email, password })
             .then((response) => {
                 const token = response.data.token;
                 localStorage.setItem('token', token);
+                // set({ authUser: res.data });
+                // set({ authUser: response.data.payload });
                 toast.success('Login Successful', { duration: 2000 });
-                
-                setUser(response.data.payload);
-                
-                connectSocket();
+                // connectSocket();
+                // setUser(response.data.payload);
+                // setIsLogin(true);
+                // connectSocket();
                 setTimeout(() => {
                     navigate('/home');
                 }, 1000);
@@ -35,7 +53,14 @@ const Login = ({ onSwitch }) => {
                 const errorMessage = error.response?.data?.error || 'Login failed: Server error.';
                 toast.error(errorMessage, { duration: 2000 });
             });
-    };
+    }
+catch(e){
+    console.log(e);
+}finally{
+ 
+   // set({ isLoggingIn: false });
+}
+        }
 
     const handleGoogleLogin = async (x) => {
         try {
@@ -46,8 +71,12 @@ const Login = ({ onSwitch }) => {
                     localStorage.setItem('token', token);
                     toast.success('Login Successful', { duration: 2000 });
                     
-                    setUser(response.data.payload);
-                    connectSocket();
+                    // setUser(response.data.payload);
+                    // connectSocket();
+                    // setIsLogin(true);
+                    // set({ authUser: response.data.payload }); // Update Zustand store
+                    // connectSocket();
+
                     
                     setTimeout(() => {
                         navigate('/home');
@@ -120,5 +149,6 @@ const Login = ({ onSwitch }) => {
         </div>
     );
 };
+
 
 export default Login;
