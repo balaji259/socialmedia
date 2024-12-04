@@ -57,7 +57,7 @@ const getUserDetails = async (req, res) => {
 
 
 async function followUser(req, res) {
-  const { userId, followId } = req.body;
+  const { userId, targetId: followId } = req.body;
   // const followId=req.body.targetId;
 
   console.log({userId,followId});

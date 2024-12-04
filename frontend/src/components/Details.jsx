@@ -18,6 +18,9 @@ function UserDetails() {
     const [suggestions, setSuggestions] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
 
+    const [selectedPost, setSelectedPost] = useState(null);
+
+
     const backendBaseUrl = 'http://localhost:7000';
 
     useEffect(() => {
@@ -509,14 +512,14 @@ function UserDetails() {
       )}
     </div>
   ))} */}
-
-{activeSection === "posts" &&
+{/* 
+  {activeSection === "posts" &&
   sectionData.map((post, index) => (
     <div
       key={post._id}
       className="relative bg-white rounded-lg shadow-md p-8 mb-4"
     >
-      {/* Delete icon */}
+      
       <button
         className="absolute top-2 right-2 text-red-500 hover:text-red-700"
         onClick={() => deletePost(post._id)}
@@ -525,22 +528,22 @@ function UserDetails() {
       ✖
       </button>
 
-      {/* Profile picture and username */}
+      
       <div className="flex items-center mb-4">
         <img
-          src={`${backendBaseUrl}${userData.profilePic}`} // Add profile picture URL here
+          src={`${backendBaseUrl}${userData.profilePic}`} 
           alt="Profile"
           className="w-14 h-14 rounded-md mr-2"
         />
         <strong className="text-lg ml-4">{post.user.username}</strong>
       </div>
 
-      {/* Post caption */}
+    
       {post.caption && (
         <p className="text-gray-700 mb-4">{post.caption}</p>
       )}
 
-      {/* Image or video media */}
+      
       {post.content.mediaUrl && post.postType === "image" && (
         <img
           src={`${backendBaseUrl}/${post.content.mediaUrl}`}
@@ -558,7 +561,112 @@ function UserDetails() {
         </video>
       )}
     </div>
-  ))}
+  ))} */}
+
+
+
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
+  {activeSection === "posts" &&
+    sectionData.map((post) => (
+      <div
+        key={post._id}
+        className="relative bg-white rounded-lg shadow-md cursor-pointer overflow-hidden"
+        onClick={() => setSelectedPost(post)} // Open modal on click
+        style={{ aspectRatio: "4 / 3" }} // Ensures consistent dimensions
+      >
+        {/* Post content */}
+        {post.postType === "image" && post.content.mediaUrl && (
+          <img
+            src={`${backendBaseUrl}/${post.content.mediaUrl}`}
+            alt="Post media"
+            className="w-full h-full object-cover"
+          />
+        )}
+        {post.postType === "video" && post.content.mediaUrl && (
+          <video className="w-full h-full object-cover" muted>
+            <source
+              src={`${backendBaseUrl}/${post.content.mediaUrl}`}
+              type="video/mp4"
+            />
+            Your browser does not support the video tag.
+          </video>
+        )}
+        {post.postType === "text" && (
+          <div className="p-4 flex items-center justify-center text-center">
+            <p className="text-gray-700">{post.caption}</p>
+          </div>
+        )}
+      </div>
+    ))}
+</div>
+
+{/* Modal for Enlarged Post */}
+{selectedPost && (
+  <div
+    className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+    style={{ paddingTop: "4rem" }} // Ensures the modal stays below the navbar
+  >
+    <div
+      className="bg-white rounded-lg shadow-lg p-4 relative max-w-4xl w-full mx-4"
+      style={{
+        maxHeight: "90vh", // Ensures the modal content fits within the viewport
+        overflow: "hidden",
+      }}
+    >
+      <button
+        className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+        onClick={() => setSelectedPost(null)} // Close modal
+      >
+        ✖
+      </button>
+      {/* Enlarged content */}
+      <div className="flex flex-col">
+        {/* User Info (Side-by-Side) */}
+        <div className="flex items-center mb-4">
+          <img
+            src={`${backendBaseUrl}${selectedPost.user.profilePic}`}
+            alt="Profile"
+            className="w-10 h-10 rounded-mid mr-3"
+          />
+          <strong className="text-lg text-gray-800">
+            {selectedPost.user.username}
+          </strong>
+        </div>
+
+        {/* Post Caption */}
+        {selectedPost.caption && (
+          <p className="text-gray-700 mb-4 text-left">{selectedPost.caption}</p>
+        )}
+
+        {/* Post Media */}
+        <div className="flex justify-center items-center">
+          {selectedPost.content.mediaUrl && selectedPost.postType === "image" && (
+            <img
+              src={`${backendBaseUrl}/${selectedPost.content.mediaUrl}`}
+              alt="Post content"
+              className="max-w-full max-h-[75vh] object-contain rounded-lg"
+            />
+          )}
+          {selectedPost.content.mediaUrl &&
+            selectedPost.postType === "video" && (
+              <video
+                controls
+                className="max-w-full max-h-[75vh] object-contain rounded-lg"
+              >
+                <source
+                  type="video/mp4"
+                  src={`${backendBaseUrl}/${selectedPost.content.mediaUrl}`}
+                />
+                Your browser does not support the video tag.
+              </video>
+            )}
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+
+
 
             {/* //saved */}
             {activeSection === "saved" &&

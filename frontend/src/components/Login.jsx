@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { create } from "zustand";
+// import { create } from "zustand";
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { GoogleLogin } from "@react-oauth/google";
 import  {jwtDecode}  from "jwt-decode";
-import { useSocketStore } from "./useSocket";
+import {useSocket} from "./useSocket";
+// import { useSocketStore } from "./useSocket";
 
 
 // const [user,setUser]=useState(null);
@@ -19,21 +20,22 @@ const Login = ({ onSwitch }) => {
     // const {isLogin,setIsLogin}=useState();
     // const {user, setUser ,socket, connectSocket,isLogin,setIsLogin}= useSocket();
 
-
-    // const { set , get , connectSocket, setAuthUser, isLoggingIn } = useSocketStore((state) => ({
-    //     set: state.set,
-    //     get: state.get,
-    //     connectSocket: state.connectSocket,
-    //     setAuthUser: state.setAuthUser,
-    //     isLoggingIn: state.isLoggingIn,
-    // }));
-
-
+    // const { connectSocket, setAuthUser, isLoggingIn, setIsLoggingIn } = useSocketStore(
+    //     (state) => ({
+    //       connectSocket: state.connectSocket,
+    //       setAuthUser: state.setAuthUser,
+    //       isLoggingIn: state.isLoggingIn,
+    //       setIsLoggingIn: state.setIsLoggingIn,
+    //     })
+    //   );
+    
+    const {user, setUser ,socket, connectSocket}= useSocket();
     
         const handleSubmit = (e) => {
          
             e.preventDefault();
-    try{           // set({ isLoggingIn: true });
+            // setIsLoggingIn(true);
+             // set({ isLoggingIn: true });
         axios.post("http://localhost:7000/user/login", { email, password })
             .then((response) => {
                 const token = response.data.token;
@@ -41,29 +43,30 @@ const Login = ({ onSwitch }) => {
                 // set({ authUser: res.data });
                 // set({ authUser: response.data.payload });
                 toast.success('Login Successful', { duration: 2000 });
-                // connectSocket();
-                // setUser(response.data.payload);
-                // setIsLogin(true);
-                // connectSocket();
+                
+                // setAuthUser(response.data.payload); // Update Zustand store with authUser
+                 
+                setUser(response.data.payload);
+                
+                connectSocket();
                 setTimeout(() => {
+                    // connectSocket();
                     navigate('/home');
                 }, 1000);
             })
             .catch((error) => {
                 const errorMessage = error.response?.data?.error || 'Login failed: Server error.';
                 toast.error(errorMessage, { duration: 2000 });
+            })
+            .finally(() => {
+                // setIsLoggingIn(false);
             });
     }
-catch(e){
-    console.log(e);
-}finally{
- 
-   // set({ isLoggingIn: false });
-}
-        }
+
+        
 
     const handleGoogleLogin = async (x) => {
-        try {
+        
             console.log(x.email);
             axios.post("http://localhost:7000/user/login", { email: x.email })
                 .then((response) => {
@@ -72,13 +75,14 @@ catch(e){
                     toast.success('Login Successful', { duration: 2000 });
                     
                     // setUser(response.data.payload);
-                    // connectSocket();
-                    // setIsLogin(true);
+                   
+                    // setAuthUser(response.data.payload);
                     // set({ authUser: response.data.payload }); // Update Zustand store
-                    // connectSocket();
-
                     
+                    setUser(response.data.payload);
+                    connectSocket();
                     setTimeout(() => {
+                        // connectSocket();
                         navigate('/home');
                     }, 1000);
                 })
@@ -86,9 +90,7 @@ catch(e){
                     const errorMessage = error.response?.data?.error || 'Login failed: Server error.';
                     toast.error(errorMessage, { duration: 2000 });
                 });
-        } catch (e) {
-            console.log(e);
-        }
+         
     };
 
     return (

@@ -19,6 +19,7 @@ import SearchSuggestions from './components/SearchSuggestions';
 import WelcomeOverlay from './components/Welcome';
 import Sidebar from "./components/Sidebar.jsx";
 import ChatHomePage from "./components/ChatHomePage.jsx";
+import FriendList from "./components/FetchFriends";
 // import chatsection from './components/chatsection'
 
 const RoutesComponent = () => {
@@ -43,6 +44,7 @@ const RoutesComponent = () => {
                 <Route path="/searchsug" element={<SearchSuggestions />} />
                 <Route path="/chat/sidebar" element={<Sidebar />} />
                 <Route path="/chat/page" element={<ChatHomePage />} />
+                <Route path="/friends" element={<FriendList /> } />
                 {/* <Route path='./chat' element={<chatsection />} />             */}
             </Routes>
         </Router>

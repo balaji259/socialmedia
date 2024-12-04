@@ -51,6 +51,7 @@ const SearchSuggestions = () => {
 
   const handleFollowUnfollow = async (userId, action) => {
     try {
+      console.log(currentUserId,userId);
       const token = localStorage.getItem("token");
       await axios.post(
         `${backendBaseUrl}/user/search/${action}`,
@@ -103,49 +104,54 @@ const SearchSuggestions = () => {
           className="w-full p-4 rounded-full border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-300 transition duration-200 ease-in-out shadow-sm text-sm sm:text-base"
         />
       </div>
+     
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-        {suggestedUsers.map((user) => (
-          <div
-            key={user._id}
-            className="bg-white p-4 sm:p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1 flex flex-col items-center text-sm sm:text-base"
-          >
-            <img
-              src={
-                user.profilePic === "/images/default_profile.jpeg"
-                  ? "/images/default_profile.jpeg"
-                  : `${backendBaseUrl}${user.profilePic}`
-              }
-              alt={user.username}
-              className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-4 border-blue-500"
-            />
-            <div className="text-center mt-3 sm:mt-4">
-              <h3 className="text-base sm:text-lg font-semibold text-gray-800">
-                {user.username}
-              </h3>
-              <p className="text-gray-600 mt-1 text-xs sm:text-sm">
-                {user.bio ? user.bio : "-"}
-              </p>
-            </div>
-            <div className="flex flex-col sm:flex-row justify-between items-center w-full mt-4 sm:mt-6 gap-2 sm:gap-4">
-              <button
-                onClick={() =>
-                  handleFollowUnfollow(user._id, user.followStatus === "follow" ? "follow" : "unfollow")
-                }
-                className={`w-full sm:w-auto px-3 sm:px-4 py-2 ${
-                  user.followStatus === "follow"
-                    ? "bg-blue-600 hover:bg-blue-700"
-                    : "bg-red-500 hover:bg-red-600"
-                } text-white font-semibold rounded-full shadow-md transition duration-200 text-xs sm:text-sm`}
-              >
-                {user.followStatus === "follow" ? "Follow" : "Unfollow"}
-              </button>
-              <button className="w-full sm:w-auto px-3 sm:px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-full shadow-md transition duration-200 text-xs sm:text-sm">
-                Chat
-              </button>
-            </div>
-          </div>
-        ))}
+  {suggestedUsers.map((user) => (
+    <div
+      key={user._id}
+      className="bg-white p-4 sm:p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1 text-center"
+    >
+      {/* Profile Picture */}
+      <img
+        src={
+          user.profilePic === "/images/default_profile.jpeg"
+            ? "/images/default_profile.jpeg"
+            : `${backendBaseUrl}${user.profilePic}`
+        }
+        alt={user.username}
+        className="w-full h-48 object-cover rounded-md"
+      />
+
+      {/* Username */}
+      <h3 className="mt-4 text-lg font-semibold text-gray-800">{user.username}</h3>
+
+      {/* Bio */}
+      <p className="mt-2 text-gray-600 text-sm">
+        {user.bio ? user.bio : "-"}
+      </p>
+
+      {/* Buttons */}
+      <div className="flex justify-between items-center mt-4 gap-4">
+        <button
+          onClick={() =>
+            handleFollowUnfollow(user._id, user.followStatus === "follow" ? "follow" : "unfollow")
+          }
+          className={`flex-1 px-4 py-2 ${
+            user.followStatus === "follow"
+              ? "bg-blue-600 hover:bg-blue-700"
+              : "bg-red-500 hover:bg-red-600"
+          } text-white font-semibold rounded-md shadow-md transition duration-200`}
+        >
+          {user.followStatus === "follow" ? "Follow" : "Unfollow"}
+        </button>
+        <button className="flex-1 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-md shadow-md transition duration-200">
+          Chat
+        </button>
       </div>
+    </div>
+  ))}
+</div>
+
     </div>
   );
 };

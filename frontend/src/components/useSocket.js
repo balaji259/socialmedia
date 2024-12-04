@@ -1,45 +1,48 @@
-import { create } from "zustand";
-// import { axiosInstance } from "../lib/axios.js"/;
-import axios from "axios";
-import toast from "react-hot-toast";
-import { io } from "socket.io-client"
-
+import {io} from "socket.io-client";
+import {useState,useEffect} from "react";
 const backendBaseUrl="http://localhost:7000";
-
-export const useSocketStore = create((set,get) => ({
-
-  authUser: null,
-  isSigningUp: false,
-  isLoggingIn: false,
-  isUpdatingProfile: false,
-  isCheckingAuth: true,
-  onlineUsers: [],
-  socket: null,
-
-  
-
-  connectSocket: () => {
-    const { authUser,  } = get();
-    if (!authUser || get().socket?.connected) return;
-
-    const socket = io(BASE_URL, {
-      query: {
-        userId: authUser._id,
-      },
-    });
-
-    // const socket=io(backendBaseUrl);
-
-    socket.connect();
-
-    set({ socket: socket });
-
-    // socket.on("getOnlineUsers", (userIds) => {
-    //   set({ onlineUsers: userIds });
-    // });
-  },
-  disconnectSocket: () => {
-    if (get().socket?.connected) get().socket.disconnect();
-  },
-}
-));
+export const useSocket =() => {
+    const [user,setUser]=useState(null);
+    const [socket,setSocket]=useState(null);
+    
+    const connectSocket = () => {
+        if (socket?.connected) {
+            console.log("Socket is already connected.");
+            return;
+        }
+    
+        // if (!user) {
+        //     console.log("No user detected! Please set a user before connecting the socket.");
+        //     return;
+        // }
+    
+        const newSocket = io(backendBaseUrl);
+        newSocket.on("connect", () => {
+            console.log("Socket connected:", newSocket.id);
+        });
+        newSocket.on("disconnect", () => {
+            console.log("Socket disconnected:", newSocket.id);
+        });
+        console.log("setting new socket value");
+        console.log(newSocket);
+        setSocket(newSocket);
+    };
+    const disconnectSocket =() =>{
+        if (socket && socket.connected) {
+            console.log("Socket disconnected successfully.");
+            socket.disconnect();
+        } else {
+            console.log("Socket is not connected or already null.");
+        }
+    };
+    useEffect(() => {
+      return () => {
+        if (socket) {
+          socket.disconnect();
+          console.log("Socket disconnected on unmount.");
+        }
+      };
+    }, [socket]);
+    
+return {user, setUser ,socket, connectSocket,disconnectSocket};
+};

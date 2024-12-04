@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { useSocketStore } from './useSocket';
+// import { useSocketStore } from './useSocket';
 
 const Register = ({ onSwitch }) => {
     const [username, setUsername] = useState('');
@@ -56,10 +56,10 @@ const Register = ({ onSwitch }) => {
             .then((res) => {
                 const token = res.data.token;
                 localStorage.setItem('token', token);
-                set({ authUser: res.data });
+                // set({ authUser: res.data });
                 toast.success('User registered successfully!', { duration: 2000 });
-                get().connectSocket();
-                setUser(response.data.payload);
+                // get().connectSocket();
+                // setUser(response.data.payload);
                 // connectSocket();
                     
 
@@ -76,7 +76,7 @@ const Register = ({ onSwitch }) => {
             console.log(e);
         }
         finally{
-            set({ isSigningUp: false });
+            // set({ isSigningUp: false });
         }
 
     };
