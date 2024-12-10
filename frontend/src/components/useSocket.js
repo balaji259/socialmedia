@@ -11,26 +11,29 @@ export const useSocket =() => {
             return;
         }
     
-        // if (!user) {
-        //     console.log("No user detected! Please set a user before connecting the socket.");
-        //     return;
-        // }
-    
         const newSocket = io(backendBaseUrl);
+        console.log("before bro");
         newSocket.on("connect", () => {
             console.log("Socket connected:", newSocket.id);
         });
-        newSocket.on("disconnect", () => {
-            console.log("Socket disconnected:", newSocket.id);
-        });
+        console.log("after bro");
         console.log("setting new socket value");
-        console.log(newSocket);
         setSocket(newSocket);
+        console.log("newsocket");
+        console.log(newSocket);
+        console.log("socket");
+        console.log(socket);
+        newSocket.on("disconnect", () => {
+            console.log("triggered disconnect!");
+            console.log("Socket disconnected:");
+        });
     };
     const disconnectSocket =() =>{
+        console.log("called discount ! !");
         if (socket && socket.connected) {
-            console.log("Socket disconnected successfully.");
+            console.log("socket id before disconnecting",socket.id);
             socket.disconnect();
+            console.log("Socket disconnected successfully.");
         } else {
             console.log("Socket is not connected or already null.");
         }
@@ -38,11 +41,21 @@ export const useSocket =() => {
     useEffect(() => {
       return () => {
         if (socket) {
-          socket.disconnect();
+        console.log("socket value before unmount",socket.id);
+        // socket.disconnect();
+        // disconnectSocket();
+    
+            
+          console.log("socket value after  unmount",socket.id);
           console.log("Socket disconnected on unmount.");
+        }
+        else
+        {
+            console.log("no socket exists !")
         }
       };
     }, [socket]);
+ 
     
 return {user, setUser ,socket, connectSocket,disconnectSocket};
 };

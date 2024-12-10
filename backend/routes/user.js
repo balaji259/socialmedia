@@ -100,6 +100,7 @@ async function followUser(req, res) {
   }
 }
 
+
 async function unfollowUser(req, res) {
   const { userId } = req.body;
   const unfollowId=req.body.targetId;
@@ -172,6 +173,54 @@ async function unfollowUser(req, res) {
 //         res.status(500).json({ message: 'Server error', error });
 //     }
 // };
+
+
+router.post("/search/followsug",async(req,res)=>{
+  const { userId, followId } = req.body;
+  // const followId=req.body.targetId;
+
+  console.log({userId,followId});
+
+  try {
+    const user = await User.findById(userId);
+    const followUser = await User.findById(followId);
+
+    if (!user || !followUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Check if already followed
+    if (user.following.includes(followId)) {
+      return res.status(400).json({ message: 'Already following' });
+    }
+
+    // Update the follower and following lists
+    user.following.push(followId);
+    followUser.followers.push(userId);
+
+    // Check if mutual following exists
+    if (followUser.following.includes(userId)) {
+      // Add to each other's friends list
+      if (!user.friends.includes(followId)) {
+        user.friends.push(followId);
+      }
+      if (!followUser.friends.includes(userId)) {
+        followUser.friends.push(userId);
+      }
+    }
+
+    console.log("implemented friends feature !");
+    await user.save();
+    await followUser.save();
+
+    res.status(200).json({ message: 'Followed successfully and friends list updated if mutual' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+})
+
+
+
 
 // Define the route
 

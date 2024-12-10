@@ -1,21 +1,38 @@
 
 import React from "react";
+import {useEffect} from "react";
 import { useNavigate } from "react-router-dom";
 import "./dashboard.css"
-// import {useSocketStore} from "./useSocket";
+
+import {useSocket} from "./useSocket";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  // const {user, setUser ,socket, connectSocket,disconnectSocket,isLogout,setIsLogout} =useSocket();
+  //  const {user, setUser ,socket, connectSocket,Socket,isLogout,setIsLogout} =useSocket();
+  const {user, setUser ,socket, connectSocket,disconnectSocket} =useSocket();
+
+  useEffect(()=>{
+    if(socket)
+
+      console.log(socket,"in dashboard");
+    else  
+      console.log("no socket exisyts bro! in dshboard")
+  },[socket])
 
   const handleLogout = () => {
-    // set({ authUser: null });
-    // get().disconnectSocket();
+    
     console.log("loggedout!");
-    // console.log(socket);
     // disconnectSocket();
-    // setIsLogout(true);
-    // setUser(null);
+
+    if (socket) {
+           console.log("socket value before unmount in dashbaor5r",socket.id);
+             socket.disconnect();
+             console.log("socket value after  unmount dashboard",socket.id);
+             console.log("Socket disconnected on unmount.");
+    }
+    else{
+      console.log("socket is:",socket);
+    }
     localStorage.clear();
     navigate("/");
   };
@@ -33,7 +50,7 @@ const Dashboard = () => {
           <button className="menu-item" onClick={() => navigate("/search")}>
             Search
           </button>
-          <button className="menu-item">Friends</button>
+          <button className="menu-item" onClick={() => navigate("/friends")}>Friends</button>
           <button className="menu-item">Chats</button>
           <button className="menu-item">Notifications</button>
           <button className="menu-item" onClick={() => navigate("/profile")}>

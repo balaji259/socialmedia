@@ -41,7 +41,7 @@ const FriendsList = () => {
     }, [userId]);
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-4 " >
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {friends.map((friend) => (
           <div key={friend._id} className="bg-white shadow-md rounded-lg overflow-hidden">
@@ -56,7 +56,9 @@ const FriendsList = () => {
             />
             <div className="p-4">
               <h3 className="text-lg font-semibold text-left">{friend.username}</h3>
-              <button className="mt-3 w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition">
+              <button className="mt-3 w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition"   onClick={() => {
+                 console.log("clicked chat option!");
+               }}>
                 Chat
               </button>
             </div>
@@ -74,15 +76,18 @@ const styles = {
     gap: '20px',
     justifyContent: 'center',
     padding: '20px',
+    border:'2px solid black',
+    backgroundColor:'black',
   },
   card: {
-    width: '200px',
+    width: '250px',
     border: '1px solid #ddd',
     borderRadius: '8px',
     overflow: 'hidden',
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
     textAlign: 'center',
-    backgroundColor: '#f8f8f8',
+    // backgroundColor: '#f8f8f8',
+    // backgroundColor:'red',
   },
   profilePic: {
     width: '100%',

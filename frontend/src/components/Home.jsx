@@ -1,13 +1,33 @@
-import React, { useEffect, useState } from 'react';
-import Navbar from './Navbar';
-import Dashboard from './Dashboard';
-import SuggestionsSidebar from './Suggestions';
-import PostsComponent from './Posts';
-import { fetchUserDetails } from './userPosts.js';
+import React, { useEffect, useState } from "react";
+import Navbar from "./Navbar";
+import Dashboard from "./Dashboard";
+import SuggestionsSidebar from "./Suggestions";
+import PostsComponent from "./Posts";
+import { fetchUserDetails } from "./userPosts.js";
 
 const Home = () => {
   const [user, setUser] = useState({ username: "", profilePic: "" });
-  const [isSidebarVisible, setIsSidebarVisible] = useState(true);
+  const [isSidebarVisible, setIsSidebarVisible] = useState(false); // Default to `false` for smaller screens
+
+  // Determine sidebar visibility based on screen width
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 900) {
+        setIsSidebarVisible(true); // Open by default for larger screens
+      } else {
+        setIsSidebarVisible(false); // Closed by default for medium and smaller screens
+      }
+    };
+
+    // Initialize the sidebar state on load
+    handleResize();
+
+    // Add resize event listener
+    window.addEventListener("resize", handleResize);
+
+    // Cleanup event listener on component unmount
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -28,8 +48,8 @@ const Home = () => {
 
   const getSidebarWidth = () => {
     if (window.innerWidth < 600) return "20%";
-    if (window.innerWidth < 900) return "25%";
-    return "20%";
+    if (window.innerWidth < 900) return "15%";
+    return "17%";
   };
 
   return (
@@ -63,6 +83,7 @@ const Home = () => {
             width: isSidebarVisible ? getSidebarWidth() : "0", // Smoothly hide sidebar
             transition: "width 0.3s ease-in-out",
             overflow: isSidebarVisible ? "auto" : "hidden", // Prevent overflow when hidden
+            zIndex: isSidebarVisible && window.innerWidth < 900 ? 1000 : "auto", // For smaller screens, overlay suggestions
           }}
         >
           {isSidebarVisible && (
@@ -78,7 +99,7 @@ const Home = () => {
         {/* Toggle Button to Open Sidebar */}
         {!isSidebarVisible && (
           <button style={styles.openButton} onClick={toggleSidebar}>
-            ☰ 
+            ☰
           </button>
         )}
       </section>
@@ -106,6 +127,7 @@ const styles = {
   content: {
     display: "flex",
     flex: 1,
+    columnGap:"10px",
     marginTop: "60px",
     overflow: "hidden",
     backgroundColor: "#d5d5d5",
@@ -116,6 +138,7 @@ const styles = {
     height: "calc(100vh - 60px)",
     display: "flex",
     flexDirection: "column",
+    // border:"2px solid red",
   },
   posts: {
     flex: 1,
@@ -126,7 +149,6 @@ const styles = {
     backgroundColor: "#d5d5d5",
   },
   suggestionsSidebar: {
-    
     backgroundColor: "#d5d5d5",
     boxShadow: "-2px 0 5px rgba(0, 0, 0, 0.1)",
     height: "calc(100vh - 60px)",
@@ -136,46 +158,35 @@ const styles = {
     transition: "width 0.3s ease-in-out", // Smooth transition for opening/closing
   },
   closeButton: {
-    position: "absolute",
-    top: "15px",
-    right: "-5px", // Place it outside the sidebar
+    position: "fixed", // Fixed position for visibility
+    top: "80px", // Place it below the navbar
+    right: "-10px", // Aligned to the right
     padding: "10px 30px 10px 15px",
-    marginTop:"10px",
     backgroundColor: "#ff4d4d",
     color: "#fff",
     border: "none",
-    borderRadius: "15px",
+    borderRadius: "10px",
     cursor: "pointer",
     fontSize: "14px",
-    zIndex: 10,
+    zIndex: 1100,
     boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
-    transform: "translateX(10px)", // Pull slightly into the screen
     transition: "transform 0.3s ease, box-shadow 0.3s ease",
   },
   openButton: {
     position: "fixed",
     top: "80px", // Below Navbar
-    right: "-5px", // Flush with the screen edge
+    right: "-10px",
     padding: "10px 30px 10px 15px",
     backgroundColor: "#007bff",
     color: "#fff",
     border: "none",
-    borderRadius: "15px",
+    borderRadius: "10px",
     cursor: "pointer",
     fontSize: "14px",
     zIndex: 1000,
     boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
-    transform: "translateX(10px)", // Slightly into the screen
     transition: "transform 0.3s ease, box-shadow 0.3s ease",
   },
 };
 
-// Add hover effects for buttons (in a CSS file or a <style> block in your React file):
-/*
-.openButton:hover,
-.closeButton:hover {
-  transform: translateX(0); // Pop out fully into view
-  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3); // Enhanced shadow
-}
-*/
 export default Home;

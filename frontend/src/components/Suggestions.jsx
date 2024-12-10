@@ -30,9 +30,10 @@ const SuggestionsSidebar = () => {
           console.log("suggestions object")
           console.log(suggestions);
           console.log(currentUserId);
+          console.log("followId");
           console.log(followId);
           await axios.post(
-              `${backendBaseUrl}/user/search/follow`,
+              `${backendBaseUrl}/user/search/followsug`,
               { userId: currentUserId, followId },
               { headers: { Authorization: `Bearer ${token}` } }
           );

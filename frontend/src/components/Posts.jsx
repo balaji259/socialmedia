@@ -689,7 +689,7 @@ return (
               {/* {`💬 Comment ${post.comments.length}`} */}
               <div className="flex items-center justify-center"> 
                 <img src="/images/comments.jpeg" className="w-6 h-6 mr-4" />
-                <p>{`Comments ${post.comments.length}`}</p>
+                <p>{`${post.comments.length}`}</p>
 
               </div>
 
@@ -698,7 +698,7 @@ return (
               {/* 🔗 Share */}
               <div className="flex items-center justify-center">
               <img src='/images/share.jpeg' className="w-6 h-6 mr-4" />
-              <p>Share</p> 
+              {/* <p>Share</p>  */}
               </div>
                
             </button>
