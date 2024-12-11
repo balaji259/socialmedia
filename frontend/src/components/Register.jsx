@@ -51,7 +51,7 @@ const Register = ({ onSwitch }) => {
         try{
         console.log('Completing registration...');
         //zustand
-        set({ isSigningUp: true });
+        // set({ isSigningUp: true });
         axios.post('http://localhost:7000/user/register', { username, fullname, email, password })
             .then((res) => {
                 const token = res.data.token;

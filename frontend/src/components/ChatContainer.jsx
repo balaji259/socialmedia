@@ -1,8 +1,9 @@
 import {useChatStore} from "./useChatStore";
-import {useEffect, useState} from "react";
+import {useEffect, useState,useRef} from "react";
 import ChatHeader from "./ChatHeader";
 import MessageInput from "./MessageInput";
 import MessageSkeleton from "./skeletons/MessageSkeleton";
+import {useSocket} from "./useSocket";
 
 import axios from "axios";
 const backendBaseUrl="http://localhost:7000";
@@ -11,9 +12,13 @@ const backendBaseUrl="http://localhost:7000";
 // const authenticateUser=require("../../../backend/routes/authenticate_user");
 
 const  ChatContainer=() =>{
-    const {messages,getMessages,isMessagesLoading,selectedUser}=useChatStore();
+    const {messages,getMessages,isMessagesLoading,selectedUser,subscribeToMessages,unsubscribeFromMessages}=useChatStore();
     const [userId,setUserId]=useState();
     const [user,setUser]=useState();
+
+    const {socket} =useSocket();
+
+    const messageEndRef=useRef(null);
 
 
     const formatMessageTime=(date) => {
@@ -64,6 +69,12 @@ const  ChatContainer=() =>{
         }
     }
 
+    useEffect(() => {
+      if(messageEndRef.current && messages){
+        messageEndRef.current.scrollIntoView({behavior: "smooth"});
+      }
+    },[messages])
+
 
     useEffect(() => {
         // console.log(req.user.userId);
@@ -72,13 +83,20 @@ const  ChatContainer=() =>{
 
         getUserId();
         getUserData();
+
+        console.log("socketvaklue");
+        console.log(socket);
+
+        subscribeToMessages(socket);
         console.log("user");
         console.log(user);
         console.log("this is userid bro");
         console.log(userId);
 
+        return () => unsubscribeFromMessages(socket);
 
-    },[selectedUser._id,getMessages]);
+
+    },[selectedUser._id,getMessages,subscribeToMessages,unsubscribeFromMessages]);
 
     if(isMessagesLoading) return (
         <div className="flex-1 flex flex-col overflow-auto">
@@ -99,20 +117,21 @@ const  ChatContainer=() =>{
       <div
         key={message._id}
         className={`flex ${message.senderId === userId ? "justify-end" : "justify-start"}`}
+        ref={messageEndRef}
       >
         {/* Profile Picture */}
         <div className="flex-shrink-0">
           <div className="w-10 h-10 rounded-full border overflow-hidden">
             <img
-              src={
-                message.senderId === userId
-                  ? user.profilePic
-                    ? `${backendBaseUrl}${user.profilePic}`
-                    : "/avatar.png"
-                  : selectedUser.profilePic
-                  ? `${backendBaseUrl}${selectedUser.profilePic}`
-                  : "/avatar.png"
-              }
+              // src={
+              //   message.senderId === userId
+              //     ? user.profilePic
+              //       ? `${backendBaseUrl}${user.profilePic}`
+              //       : "/avatar.png"
+              //     : selectedUser.profilePic
+              //     ? `${backendBaseUrl}${selectedUser.profilePic}`
+              //     : "/avatar.png"
+              // }
               alt="profile pic"
             />
           </div>

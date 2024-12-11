@@ -1,16 +1,23 @@
 import {create} from "zustand";
 import toast from "react-hot-toast";
 import axios from "axios";
+
+import {useSocket} from "./useSocket";
 // import {axiosInstance} from "../lib/axios";
 const backendBaseUrl = "http://localhost:7000";
 const token=localStorage.getItem('token');
 
+
 export const useChatStore = create((set,get)=>({
+    
+    
+
     messages:[],
     users:[],
     selectedUser:null,
     isUsersLoading:false,
     isMessagesLoading:false,
+
 
 
     getUsers: async()=>{
@@ -94,8 +101,25 @@ export const useChatStore = create((set,get)=>({
         }
     },
 
+    subscribeToMessages: (socket) => {
+        const {selectedUser} = get();
+        if(!selectedUser || !socket) return;
+
+        socket.on("newMessage",(newMessage) => {
+            const {messages} = get();
+            set((state) => ({
+                messages:[...messages,newMessage],
+            })); 
+        });
+
+    }, 
+
+    unsubscribeFromMessages:(socket) =>{
+        socket?.off("newMessage");
+    }, 
+
     //optimise this one later
     setSelectedUser:(selectedUser)=> set({selectedUser}),
 
-
-}))
+    
+}));

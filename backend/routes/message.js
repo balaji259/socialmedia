@@ -7,6 +7,10 @@ const cloudinary = require('../cloudinaryConfig');
 const Message=require("../models/message");
 const authenticateUser=require("./authenticate_user");
 
+const { getReceiverSocketId,io } = require("../socket");  // Adjust path if necessary
+
+
+
 
 const getUsersForSideBar=async (req,res)=>{
     try{
@@ -75,6 +79,11 @@ const sendMessage=async (req,res)=>{
         await newMessage.save();
 
         //real time functinlity goes here!
+        const receiverSocketId = getReceiverSocketId(receiverId);
+        if(receiverSocketId){
+            io.to(receiverSocketId).emit("newMessage",newMessage);
+        }
+
 
         res.status(201).json(newMessage);
 
