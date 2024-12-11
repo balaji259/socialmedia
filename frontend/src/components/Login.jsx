@@ -34,23 +34,22 @@ const Login = ({ onSwitch }) => {
         const handleSubmit = (e) => {
          
             e.preventDefault();
-            // setIsLoggingIn(true);
-             // set({ isLoggingIn: true });
+           
         axios.post("http://localhost:7000/user/login", { email, password })
             .then((response) => {
                 const token = response.data.token;
                 localStorage.setItem('token', token);
-                // set({ authUser: res.data });
-                // set({ authUser: response.data.payload });
-                toast.success('Login Successful', { duration: 2000 });
                 
-                // setAuthUser(response.data.payload); // Update Zustand store with authUser
-                 
                 setUser(response.data.payload);
-                
-                connectSocket();
+                // console.log("user",user);
+                console.log(response.data.payload);
+                toast.success('Login Successful', { duration: 2000 });
+ 
+               
+
+                // connectSocket();
                 setTimeout(() => {
-                    // connectSocket();
+                    connectSocket();
                     navigate('/home');
                 }, 1000);
             })
@@ -80,7 +79,7 @@ const Login = ({ onSwitch }) => {
                     // set({ authUser: response.data.payload }); // Update Zustand store
                     
                     setUser(response.data.payload);
-                    connectSocket();
+                    // connectSocket();
                     setTimeout(() => {
                         // connectSocket();
                         navigate('/home');

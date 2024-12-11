@@ -1,8 +1,11 @@
 import React from 'react';
+import {useEffect} from "react";
 import { useNavigate } from 'react-router-dom';
+import {useSocket} from "./useSocket";
 const WelcomeOverlay = () => {
 
     const navigate=useNavigate();
+    const {user, setUser ,socket, connectSocket}= useSocket();
     
     function onRegister(){
         navigate('/register');
@@ -12,6 +15,10 @@ const WelcomeOverlay = () => {
     function onLogin(){
         navigate('/login');
     }
+
+    // useEffect(()=>{
+    //     connectSocket();
+    // },[]);
 
     return (
         <div className="relative w-screen h-screen flex items-center justify-center bg-gray-800 text-white p-8">

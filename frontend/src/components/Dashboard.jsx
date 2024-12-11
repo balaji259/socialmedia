@@ -11,22 +11,22 @@ const Dashboard = () => {
   //  const {user, setUser ,socket, connectSocket,Socket,isLogout,setIsLogout} =useSocket();
   const {user, setUser ,socket, connectSocket,disconnectSocket} =useSocket();
 
-  useEffect(()=>{
-    if(socket)
+  // useEffect(()=>{
+  //   if(socket)
 
-      console.log(socket,"in dashboard");
-    else  
-      console.log("no socket exisyts bro! in dshboard")
-  },[socket])
+  //     console.log(socket,"in dashboard");
+  //   else  
+  //     console.log("no socket exisyts bro! in dshboard")
+  // },[socket])
 
   const handleLogout = () => {
     
-    console.log("loggedout!");
+    console.log("loggingout!");
     // disconnectSocket();
 
     if (socket) {
            console.log("socket value before unmount in dashbaor5r",socket.id);
-             socket.disconnect();
+             disconnectSocket();
              console.log("socket value after  unmount dashboard",socket.id);
              console.log("Socket disconnected on unmount.");
     }
@@ -51,7 +51,7 @@ const Dashboard = () => {
             Search
           </button>
           <button className="menu-item" onClick={() => navigate("/friends")}>Friends</button>
-          <button className="menu-item">Chats</button>
+          <button className="menu-item" onClick={()=> navigate("/chats")}>Chats</button>
           <button className="menu-item">Notifications</button>
           <button className="menu-item" onClick={() => navigate("/profile")}>
             Profile

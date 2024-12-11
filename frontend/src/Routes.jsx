@@ -22,9 +22,11 @@ import ChatHomePage from "./components/ChatHomePage.jsx";
 import Friends from "./components/Friends.jsx";
 import FriendList from "./components/FetchFriends";
 // import chatsection from './components/chatsection'
+import { SocketProvider } from "./components/useSocket";
 
 const RoutesComponent = () => {
     return (
+        <SocketProvider>
         <Router>
             <Routes>
                 <Route path="/" element={<WelcomeOverlay />} />
@@ -44,12 +46,13 @@ const RoutesComponent = () => {
                 <Route path="/search" element={<Search />} />
                 <Route path="/searchsug" element={<SearchSuggestions />} />
                 <Route path="/chat/sidebar" element={<Sidebar />} />
-                <Route path="/chat/page" element={<ChatHomePage />} />
+                <Route path="/chats" element={<ChatHomePage />} />
                 <Route path="/friends" element={<Friends /> } />
                 <Route path="/friendlist" element={<FriendList />} />
                 {/* <Route path='./chat' element={<chatsection />} />             */}
             </Routes>
         </Router>
+        </SocketProvider>
     );
 };
 
