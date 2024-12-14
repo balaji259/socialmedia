@@ -12,6 +12,7 @@ import SinglePost from './components/SinglePost';
 import Home from "./components/Home";
 import UserDetails from "./components/Details";
 import Profile from "./components/Profile";
+import UserProfile from "./components/CheckProfile.jsx"; 
 import Search from "./components/Search";
 import Register from './components/Register';
 import Login from './components/Login';
@@ -43,6 +44,7 @@ const RoutesComponent = () => {
                 <Route path="/posts/:postId" element={<SinglePost />} />
                 <Route path="/details" element={<UserDetails />} />
                 <Route path="/profile" element={<Profile />} />
+                <Route path="/profile/:userId" element={<UserProfile />} /> 
                 <Route path="/search" element={<Search />} />
                 <Route path="/searchsug" element={<SearchSuggestions />} />
                 <Route path="/chat/sidebar" element={<Sidebar />} />

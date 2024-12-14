@@ -71,17 +71,13 @@ const Login = ({ onSwitch }) => {
                 .then((response) => {
                     const token = response.data.token;
                     localStorage.setItem('token', token);
+                    setUser(response.data.payload);
                     toast.success('Login Successful', { duration: 2000 });
                     
-                    // setUser(response.data.payload);
-                   
-                    // setAuthUser(response.data.payload);
-                    // set({ authUser: response.data.payload }); // Update Zustand store
                     
-                    setUser(response.data.payload);
-                    // connectSocket();
                     setTimeout(() => {
-                        // connectSocket();
+                        
+                        connectSocket();
                         navigate('/home');
                     }, 1000);
                 })
@@ -93,10 +89,14 @@ const Login = ({ onSwitch }) => {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-900 via-teal-400 to-yellow-200 px-4">
-            <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md text-center">
-                <img src="/images/logo.jpeg" alt="Organization Logo" className="w-32 md:w-40 mb-4 mx-auto" />
-                <h2 className="text-xl md:text-2xl font-semibold mb-4">Welcome Back</h2>
+        <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-900 via-teal-400 to-yellow-200 px-4 sm:px-6 lg:px-8">
+            <div className="bg-white p-6 sm:p-8 rounded-lg shadow-lg w-full max-w-xs sm:max-w-md text-center">
+                <img 
+                    src="/images/logo.jpeg" 
+                    alt="Organization Logo" 
+                    className="w-24 sm:w-32 md:w-40 mb-4 mx-auto"
+                />
+                <h2 className="text-lg sm:text-xl md:text-2xl font-semibold mb-4">Welcome Back</h2>
                 <form onSubmit={handleSubmit} className="flex flex-col">
                     <input
                         type="email"
@@ -104,7 +104,7 @@ const Login = ({ onSwitch }) => {
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="Email Address"
                         required
-                        className="p-3 mb-3 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
+                        className="p-2 sm:p-3 mb-3 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
                     />
                     <input
                         type="password"
@@ -112,16 +112,16 @@ const Login = ({ onSwitch }) => {
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="Password"
                         required
-                        className="p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
+                        className="p-2 sm:p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
                     />
                     <button
                         type="submit"
-                        className="p-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition duration-200"
+                        className="p-2 sm:p-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition duration-200"
                     >
                         Login
                     </button>
                 </form>
-                <div className="mt-4 text-sm">
+                <div className="mt-4 text-xs sm:text-sm">
                     Don't have an account?{" "}
                     <span
                         onClick={() => navigate('/register')}
@@ -130,25 +130,26 @@ const Login = ({ onSwitch }) => {
                         Register here
                     </span>
                 </div>
-
+    
                 {/* Google Login */}
-                <div className="flex items-center justify-center mt-5">
-                    <div>
-                        <GoogleLogin
-                            onSuccess={(res) => {
-                                let x = jwtDecode(res?.credential);
-                                handleGoogleLogin(x);
-                            }}
-                            onError={(err) => {
-                                console.log(err, "Login Failed");
-                            }}
-                        />
-                        <p className="text-gray-700 mt-4">Sign in with Google</p>
-                    </div>
+                <div className="flex flex-col items-center justify-center mt-5">
+                    <GoogleLogin
+                        onSuccess={(res) => {
+                            let x = jwtDecode(res?.credential);
+                            handleGoogleLogin(x);
+                        }}
+                        onError={(err) => {
+                            console.log(err, "Login Failed");
+                        }}
+                    />
+                    <p className="text-gray-700 mt-4 text-sm sm:text-base">Sign in with Google</p>
                 </div>
             </div>
         </div>
     );
+    
+
+
 };
 
 

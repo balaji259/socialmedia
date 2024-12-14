@@ -72,9 +72,7 @@ export const useChatStore = create((set,get)=>({
     sendMessages: async(messageData)=>{
         const {selectedUser,messages}=get();
 
-        // console.log("selecteruserid");  
-        // console.log(selectedUser._id);
-        // console.log("selecteruserid"); 
+        
 
         try{
             console.log("checking msg at star5t");
@@ -87,11 +85,7 @@ export const useChatStore = create((set,get)=>({
 
               });
 
-            // console.log("prevmsg");
-            // console.log(messages); 
-
-            // console.log("messages");
-            // console.log(res.data);
+       
             set({messages:[...messages,res.data]})
 
         }

@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 // import { useSocketStore } from './useSocket';
 
+import {useSocket} from "./useSocket";
+
 const Register = ({ onSwitch }) => {
     const [username, setUsername] = useState('');
     const [fullname, setFullname] = useState('');
@@ -14,6 +16,8 @@ const Register = ({ onSwitch }) => {
     const [isOtpValidated, setIsOtpValidated] = useState(false);
 
     const navigate = useNavigate();
+
+    const {user, setUser ,socket, connectSocket}= useSocket();
 
     // Function to handle registration and send OTP
     const handleSendOtp = (e) => {
@@ -56,6 +60,7 @@ const Register = ({ onSwitch }) => {
             .then((res) => {
                 const token = res.data.token;
                 localStorage.setItem('token', token);
+                setUser(response.data.payload);
                 // set({ authUser: res.data });
                 toast.success('User registered successfully!', { duration: 2000 });
                 // get().connectSocket();
@@ -64,6 +69,7 @@ const Register = ({ onSwitch }) => {
                     
 
                 setTimeout(() => {
+                    connectSocket();
                     navigate('/logo'); // Redirect to Logo page
                 }, 1000);
             })
@@ -81,11 +87,12 @@ const Register = ({ onSwitch }) => {
 
     };
 
+    //before
     return (
         <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-900 via-teal-400 to-yellow-200">
-            <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md text-center">
-                <h2 className="text-2xl font-semibold mb-4">Create an Account</h2>
-
+            <div className="bg-white p-6 sm:p-8 rounded-lg shadow-lg w-full max-w-xs sm:max-w-md text-center">
+                <h2 className="text-xl sm:text-2xl font-semibold mb-4">Create an Account</h2>
+    
                 {!isOtpSent ? (
                     // Registration Form
                     <form onSubmit={handleSendOtp} className="flex flex-col">
@@ -95,7 +102,7 @@ const Register = ({ onSwitch }) => {
                             onChange={(e) => setUsername(e.target.value)}
                             placeholder="Username"
                             required
-                            className="p-3 mb-3 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
+                            className="p-2 sm:p-3 mb-3 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
                         />
                         <input
                             type="text"
@@ -103,7 +110,7 @@ const Register = ({ onSwitch }) => {
                             onChange={(e) => setFullname(e.target.value)}
                             placeholder="Full Name"
                             required
-                            className="p-3 mb-3 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
+                            className="p-2 sm:p-3 mb-3 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
                         />
                         <input
                             type="email"
@@ -111,7 +118,7 @@ const Register = ({ onSwitch }) => {
                             onChange={(e) => setEmail(e.target.value)}
                             placeholder="Email Address"
                             required
-                            className="p-3 mb-3 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
+                            className="p-2 sm:p-3 mb-3 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
                         />
                         <input
                             type="password"
@@ -119,11 +126,11 @@ const Register = ({ onSwitch }) => {
                             onChange={(e) => setPassword(e.target.value)}
                             placeholder="Password"
                             required
-                            className="p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
+                            className="p-2 sm:p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
                         />
                         <button 
                             type="submit"
-                            className="p-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition duration-200"
+                            className="p-2 sm:p-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition duration-200"
                         >
                             Register
                         </button>
@@ -131,18 +138,18 @@ const Register = ({ onSwitch }) => {
                 ) : !isOtpValidated ? (
                     // OTP Validation Form
                     <form onSubmit={handleValidateOtp} className="flex flex-col">
-                        <h3 className="text-xl font-semibold mb-4">Enter the OTP sent to your email</h3>
+                        <h3 className="text-lg sm:text-xl font-semibold mb-4">Enter the OTP sent to your email</h3>
                         <input
                             type="text"
                             value={otp}
                             onChange={(e) => setOtp(e.target.value)}
                             placeholder="Enter OTP"
                             required
-                            className="p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
+                            className="p-2 sm:p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
                         />
                         <button
                             type="submit"
-                            className="p-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-200"
+                            className="p-2 sm:p-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-200"
                         >
                             Validate OTP
                         </button>
@@ -150,8 +157,8 @@ const Register = ({ onSwitch }) => {
                 ) : (
                     <p>Redirecting to home...</p>
                 )}
-
-                <div className="mt-4 text-sm">
+    
+                <div className="mt-4 text-xs sm:text-sm">
                     Already have an account?{' '}
                     <span
                         onClick={() => navigate('/login')}
@@ -163,6 +170,7 @@ const Register = ({ onSwitch }) => {
             </div>
         </div>
     );
+    
 };
 
 export default Register;

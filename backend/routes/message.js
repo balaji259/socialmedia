@@ -57,14 +57,17 @@ const getMessages=async (req,res)=>{
 
 const sendMessage=async (req,res)=>{
     try{
-        const {text,image}=req.body;
+        // const {text,image}=req.body;
+        const { text, media, mediaType } = req.body;
         const {id:receiverId}=req.params;
         const senderId= req.user.userId;
 
-        let imageUrl;
-        if(image){
-            const uploadResponse=await cloudinary.uploader.upload(image);
-            imageUrl=uploadResponse.secure_url;
+        let mediaUrl;
+        if(media){
+            const uploadResponse = await cloudinary.uploader.upload(media, {
+                resource_type: mediaType === "video" ? "video" : "image",
+            });
+            mediaUrl = uploadResponse.secure_url;
         }
 
         const newMessage=new Message(
@@ -72,7 +75,8 @@ const sendMessage=async (req,res)=>{
                 senderId,
                 receiverId,
                 text,
-                image: imageUrl,
+                media: mediaUrl,
+                mediaType,
             }
         ); 
 

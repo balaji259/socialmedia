@@ -73,13 +73,19 @@ const  ChatContainer=() =>{
       if(messageEndRef.current && messages){
         messageEndRef.current.scrollIntoView({behavior: "smooth"});
       }
+
+      console.log("messages");
+      console.log(messages);
+
     },[messages])
+
 
 
     useEffect(() => {
         // console.log(req.user.userId);
         // console.log(selectedUser._id);
         getMessages(selectedUser._id);
+        
 
         getUserId();
         getUserData();
@@ -148,21 +154,32 @@ const  ChatContainer=() =>{
 
           {/* Chat Bubble */}
           <div className={`inline-block bg-primary text-white px-4 py-2 rounded-lg ${message.senderId === userId ? "bg-blue-500 text-white" : "bg-blue-500 text-white"}`}>
-            {/* Image Attachment */}
-            {message.image && (
-              <img
-                src={message.image}
-                alt="Attachment"
-                className="sm:max-w-[200px] rounded-md mb-2"
-              />
-            )}
-            {/* Text Message */}
-            {message.text && <p>{message.text}</p>}
+            
+            {message.media && (
+                  <>
+                    {message.mediaType === "image" && (
+                      <img
+                        src={message.media}
+                        alt="Attachment"
+                        className="sm:max-w-[200px] rounded-md mb-2"
+                      />
+                    )}
+                    {message.mediaType === "video" && (
+                      <video
+                        src={message.media}
+                        controls
+                        className="sm:max-w-[200px] rounded-md mb-2"
+                      />
+                    )}
+                  </>
+                )}
+                {/* Text Message */}
+                {message.text && <p>{message.text}</p>}
+              </div>
+            </div>
           </div>
-        </div>
+        ))}
       </div>
-    ))}
-  </div>
 
   <MessageInput />
 </div>

@@ -277,6 +277,31 @@ router.get('/:userId/friends', async (req, res) => {
   }
 });
 
+// Example Express.js route
+router.post('/getUsersByIds', async (req, res) => {
+  const { userIds } = req.body;
+  try {
+      const users = await User.find({ _id: { $in: userIds } }).select('username'); // Fetch only usernames
+      res.json(users);
+  } catch (error) {
+      res.status(500).json({ message: 'Error fetching users' });
+  }
+});
+
+async function getUserProfile(req,res){
+    try{
+        const {userId} =req.params;
+        const userProfile=await User.findById(userId).select('-password');
+        if(!userProfile)
+            return res.status(404).json({message:'User not found'});
+        res.status(200).json(userProfile);   
+    } 
+    catch(e){
+      console.log(e);
+      res.status(500).json({message: 'Server error!'})
+    }
+}
+
 
 
 
@@ -285,6 +310,7 @@ router.get('/suggestions',authenticateUser,getRandomUserSuggestions);
 router.get('/search/suggestions',authenticateUser,getSearchSuggestions);
 router.post('/search/follow',followUser);
 router.post('/search/unfollow',unfollowUser);
+router.get('/viewProfile/:userId',getUserProfile);
 
 module.exports = router;
 

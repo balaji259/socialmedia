@@ -1,27 +1,30 @@
-const mongoose=require('mongoose');
+const mongoose = require('mongoose');
 
-const messageSChema=new mongoose.Schema(
+const messageSchema = new mongoose.Schema(
     {
         senderId: {
-            type:mongoose.Schema.Types.ObjectId,
-            ref:'User',
-            required:true,
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            required: true,
         },
         receiverId: {
-            type:mongoose.Schema.Types.ObjectId,
-            ref:'User',
-            required:true,
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            required: true,
         },
-        text:{
-            type:String,
+        text: {
+            type: String,
         },
-        image:{
-            type:String,
+        media: {
+            type: String, // This will store the URL or base64 string of the media
+        },
+        mediaType: {
+            type: String, // Either "image" or "video"
+            enum: ['image', 'video', null], // Restrict to specific types
         },
     },
-    {timestamps: true}
-    
+    { timestamps: true }
 );
 
-const Message=mongoose.model('Message',messageSChema);
-module.exports=Message;
+const Message = mongoose.model('Message', messageSchema);
+module.exports = Message;

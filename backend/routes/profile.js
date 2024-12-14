@@ -365,7 +365,7 @@ router.get('/likedPosts/:userId', async (req, res) => {
       // Find posts where the logged-in user's ID is in the likes array
       const likedPosts = await Post.find({ likes: userId })
           .select('user mediaType caption content mediaUrl postType') // Include postType in selected fields
-          .populate('user', 'username'); // Populate only the username of the user who posted
+          .populate('user', 'username profilePic'); // Populate only the username of the user who posted
 
       res.json(likedPosts);
   } catch (error) {

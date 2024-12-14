@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from "react-router-dom";
 import logo from '/images/logo.jpeg';
 
 const Navbar = ({ username, profilePic }) => {
@@ -7,6 +8,8 @@ const Navbar = ({ username, profilePic }) => {
     profilePic === '/images/default_profile.jpeg'
       ? '/images/default_profile.jpeg'
       : `${BACKEND_URL}${profilePic}`;
+
+    const navigate=useNavigate();
 
   return (
     <nav className="fixed top-0 left-0 w-full flex flex-wrap justify-between items-center py-3 px-4 bg-gray-100 border-b-2 border-gray-300 z-10 shadow-md">
@@ -20,7 +23,7 @@ const Navbar = ({ username, profilePic }) => {
       </div>
 
       {/* Right side: Profile Picture and Username */}
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center space-x-2 cursor-pointer" onClick={()=>navigate(`/profile`)}> 
         <img
           src={profilePicUrl}
           alt="Profile"

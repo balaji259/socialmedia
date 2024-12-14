@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Trash, HeartOff, BookmarkMinus } from "lucide-react";
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import "./details.css";
@@ -7,7 +8,8 @@ function UserDetails() {
     const [sectionData, setSectionData] = useState([]);
     const [savedData, setSavedData] = useState([]);
     const [likedData,setLikedData]=useState([]);
-    const [activeSection, setActiveSection] = useState('posts');
+    // const [activeSection, setActiveSection] = useState('posts');
+    const [activeSection, setActiveSection] = useState();
     const [error, setError] = useState(null);
     const [friendSuggestions, setFriendSuggestions] = useState([]);
 
@@ -20,8 +22,53 @@ function UserDetails() {
 
     const [selectedPost, setSelectedPost] = useState(null);
 
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [modalContent, setModalContent] = useState([]);
+
 
     const backendBaseUrl = 'http://localhost:7000';
+
+    // const openModal = (type) => {
+    //   if (type === 'followers') {
+    //     setModalContent(userData.followers);
+    //   } else if (type === 'following') {
+    //     setModalContent(userData.following);
+    //   }
+    //   setIsModalOpen(true);
+    // };
+
+    const openModal = async (type) => {
+      let userIds = [];
+      if (type === 'followers') {
+          userIds = userData.followers;
+      } else if (type === 'following') {
+          userIds = userData.following;
+      }
+  
+      try {
+          // Fetch user details from backend
+          const response = await fetch(`${backendBaseUrl}/user/getUsersByIds`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ userIds }),
+          });
+          const userDetails = await response.json(); // [{ _id, username }, ...]
+          console.log("userbyids");
+          console.log(userDetails);
+          // Map user details
+          const usernames = userDetails.map(user => user.username);
+          setModalContent(usernames); // Set modal content with usernames
+          setIsModalOpen(true);
+      } catch (error) {
+          console.error('Error fetching user details:', error);
+      }
+  };
+  
+
+    const closeModal = () => {
+      setIsModalOpen(false);
+      setModalContent([]);
+    };
 
     useEffect(() => {
         fetchUserData();
@@ -49,7 +96,7 @@ function UserDetails() {
         }
     }, [userData]);
 
-    const handleDeletePost = async (postId) => {
+    const handleUnsavePost = async (postId) => {
         try {
             console.log("handledeletepost fucntion");
           const response = await fetch(`${backendBaseUrl}/profile/deleteSavedPost/${postId}`, {
@@ -171,14 +218,7 @@ function UserDetails() {
     const saveChanges = async () => {
         const formData = new FormData();
        
-        // Object.keys(editableData).forEach((key) => {
-        //     // Skip appending 'bestFriend' if it's an empty string
-        //     if (key === 'bestFriend' && editableData[key] === '') {
-        //         formData.append(key, null); // Set it as null
-        //     } else {
-        //         formData.append(key, editableData[key]);
-        //     }
-        // });
+       
         formData.append('username', editableData.username);
         formData.append('fullname', editableData.fullname);
         formData.append('relationshipStatus', editableData.relationshipStatus);
@@ -436,12 +476,12 @@ function UserDetails() {
                             <span className="statCount">{userData.postsCount || 0}</span>
                             <span className="statLabel"> Posts</span>
                           </div>
-                          <div className="statItem">
-                            <span className="statCount">{userData.followingCount || 0}</span>
+                          <div className="statItem cursor-pointer" onClick={() => openModal('following')}>
+                            <span className="statCount">{userData.following.length || 0}</span>
                             <span className="statLabel"> Following</span>
                           </div>
-                          <div className="statItem">
-                            <span className="statCount">{userData.followersCount || 0}</span>
+                          <div className="statItem cursor-pointer" onClick={() => openModal('followers')}>
+                            <span className="statCount">{userData.followers.length || 0}</span>
                             <span className="statLabel"> Followers</span>
                           </div>
                         </div>
@@ -459,6 +499,32 @@ function UserDetails() {
                         <p className="additionalInfo">Favorite Actor: {userData.favoriteActor || 'Not specified'}</p>
                         <p className="additionalInfo">Bio: {userData.bio || 'User bio goes here...'}</p>
                         <button className="editButton" onClick={toggleEditMode}>Edit Profile</button>
+                      
+                        {isModalOpen && (
+  <div className="modalBackdrop">
+    <div className="modalContent">
+      <h3 className="modalTitle">{modalContent.length > 0 ? 'Users List' : 'No Users Found'}</h3>
+      <ul className="modalList">
+        {modalContent.map((username, index) => (
+          <li key={index} className="modalListItem">
+            <img
+              src={`https://via.placeholder.com/40`} // Replace with actual user avatar URL if available
+              alt={username}
+              className="userAvatar"
+            />
+            <span className="username">{username}</span>
+          </li>
+        ))}
+      </ul>
+      <button className="closeButton" onClick={closeModal}>
+        Close
+      </button>
+    </div>
+  </div>
+)}
+
+                      
+                      
                       </>
                       
                     )}
@@ -472,96 +538,7 @@ function UserDetails() {
             </div>
             <div className="sectionContent">
                 
-                 {/* {activeSection === "posts" &&
-  sectionData.map((post, index) => (
-    <div
-      key={post._id}
-      className="bg-white rounded-lg shadow-md p-8 mb-4"
-    //   style={{ minWidth: '800px' }}
-    >
-    
-      <div className="flex items-center mb-4">
-        <img
-          src={`${backendBaseUrl}${userData.profilePic}`} // Add profile picture URL here
-          alt="Profile"
-          className="w-14 h-14 rounded-md mr-2"
-        />
-        <strong className="text-lg ml-4">{post.user.username}</strong>
-      </div>
-
-     
-      {post.caption && (
-        <p className="text-gray-700 mb-4">{post.caption}</p>
-      )}
-
-      {post.content.mediaUrl && post.postType === "image" && (
-        <img
-          src={`${backendBaseUrl}/${post.content.mediaUrl}`}
-          alt="Post content"
-          className="w-full rounded-lg mt-2"
-        />
-      )}
-      {post.content.mediaUrl && post.postType === "video" && (
-        <video controls className="w-full rounded-lg mt-2">
-          <source
-            type="video/mp4"
-            src={`${backendBaseUrl}/${post.content.mediaUrl}`}
-          />
-          Your browser does not support the video tag.
-        </video>
-      )}
-    </div>
-  ))} */}
-{/* 
-  {activeSection === "posts" &&
-  sectionData.map((post, index) => (
-    <div
-      key={post._id}
-      className="relative bg-white rounded-lg shadow-md p-8 mb-4"
-    >
-      
-      <button
-        className="absolute top-2 right-2 text-red-500 hover:text-red-700"
-        onClick={() => deletePost(post._id)}
-        aria-label="Delete post"
-      >
-      ✖
-      </button>
-
-      
-      <div className="flex items-center mb-4">
-        <img
-          src={`${backendBaseUrl}${userData.profilePic}`} 
-          alt="Profile"
-          className="w-14 h-14 rounded-md mr-2"
-        />
-        <strong className="text-lg ml-4">{post.user.username}</strong>
-      </div>
-
-    
-      {post.caption && (
-        <p className="text-gray-700 mb-4">{post.caption}</p>
-      )}
-
-      
-      {post.content.mediaUrl && post.postType === "image" && (
-        <img
-          src={`${backendBaseUrl}/${post.content.mediaUrl}`}
-          alt="Post content"
-          className="w-full rounded-lg mt-2"
-        />
-      )}
-      {post.content.mediaUrl && post.postType === "video" && (
-        <video controls className="w-full rounded-lg mt-2">
-          <source
-            type="video/mp4"
-            src={`${backendBaseUrl}/${post.content.mediaUrl}`}
-          />
-          Your browser does not support the video tag.
-        </video>
-      )}
-    </div>
-  ))} */}
+                 
 
 
 
@@ -613,6 +590,29 @@ function UserDetails() {
         overflow: "hidden",
       }}
     >
+{/* added */}
+<button
+  className="absolute top-4 right-12 text-gray-500 hover:text-gray-700"
+  onClick={() => {
+    if (activeSection === "posts") {
+      deletePost(selectedPost._id);
+      setSelectedPost(null);
+    } else if (activeSection === "liked") {
+      // unlikePost(selectedPost._id);
+      setSelectedPost(null);
+    } else if (activeSection === "saved") {
+      handleUnsavePost(selectedPost._id);
+      setSelectedPost(null);
+    }
+    setSelectedPost(null); // Close modal
+  }}
+>
+  {activeSection === "posts" && <Trash size={16} color="red" />}
+  {activeSection === "liked" && <HeartOff size={16} color="blue" />} {/* Unlike icon */}
+  {activeSection === "saved" && <BookmarkMinus size={16} color="green" />} {/* Unsave icon */}
+</button>
+{/* added */}
+
       <button
         className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
         onClick={() => setSelectedPost(null)} // Close modal
@@ -623,22 +623,36 @@ function UserDetails() {
       <div className="flex flex-col">
         {/* User Info (Side-by-Side) */}
         <div className="flex items-center mb-4">
-          <img
+          {/* <img
             src={`${backendBaseUrl}${selectedPost.user.profilePic}`}
             alt="Profile"
             className="w-10 h-10 rounded-mid mr-3"
-          />
+          /> */}
+          <img
+          src={`${
+                  activeSection === "liked"
+                    ? `${backendBaseUrl}${selectedPost.user.profilePic}`
+                    : activeSection === "posts"
+                    ? `${backendBaseUrl}${selectedPost.user.profilePic}`
+                    : activeSection === "saved"
+                    ? `${backendBaseUrl}${selectedPost.postId.user.profilePic}`
+                    : "/default_profile_pic.jpeg" // Fallback if no section matches
+                }`}
+              alt="Profile"
+              className="w-10 h-10 rounded-md mr-3"
+            />
+
           <strong className="text-lg text-gray-800">
-            {selectedPost.user.username}
+            {activeSection==="saved"?selectedPost.postId.user.username:selectedPost.user.username}
           </strong>
         </div>
 
         {/* Post Caption */}
-        {selectedPost.caption && (
+        {/* {selectedPost.caption && (
           <p className="text-gray-700 mb-4 text-left">{selectedPost.caption}</p>
         )}
 
-        {/* Post Media */}
+  
         <div className="flex justify-center items-center">
           {selectedPost.content.mediaUrl && selectedPost.postType === "image" && (
             <img
@@ -660,7 +674,77 @@ function UserDetails() {
                 Your browser does not support the video tag.
               </video>
             )}
-        </div>
+        </div> */}
+
+{activeSection !== "saved" ? (
+  // For "liked" and "posts"
+  <>
+    {selectedPost.caption && (
+      <p className="text-gray-700 mb-4 text-left">{selectedPost.caption}</p>
+    )}
+
+    {/* Post Media */}
+    <div className="flex justify-center items-center">
+      {selectedPost.content.mediaUrl && selectedPost.postType === "image" && (
+        <img
+          src={`${backendBaseUrl}/${selectedPost.content.mediaUrl}`}
+          alt="Post content"
+          className="max-w-full max-h-[75vh] object-contain rounded-lg"
+        />
+      )}
+      {selectedPost.content.mediaUrl && selectedPost.postType === "video" && (
+        <video
+          controls
+          className="max-w-full max-h-[75vh] object-contain rounded-lg"
+        >
+          <source
+            type="video/mp4"
+            src={`${backendBaseUrl}/${selectedPost.content.mediaUrl}`}
+          />
+          Your browser does not support the video tag.
+        </video>
+      )}
+    </div>
+  </>
+) : (
+  // For "saved"
+  <>
+    {selectedPost.postId.caption && (
+      <p className="text-gray-700 mb-4 text-left">
+        {selectedPost.postId.caption}
+      </p>
+    )}
+
+    {/* Post Media */}
+    <div className="flex justify-center items-center">
+      {selectedPost.postId.content.mediaUrl &&
+        selectedPost.postId.postType === "image" && (
+          <img
+            src={`${backendBaseUrl}/${selectedPost.postId.content.mediaUrl}`}
+            alt="Post content"
+            className="max-w-full max-h-[75vh] object-contain rounded-lg"
+          />
+        )}
+      {selectedPost.postId.content.mediaUrl &&
+        selectedPost.postId.postType === "video" && (
+          <video
+            controls
+            className="max-w-full max-h-[75vh] object-contain rounded-lg"
+          >
+            <source
+              type="video/mp4"
+              src={`${backendBaseUrl}/${selectedPost.postId.content.mediaUrl}`}
+            />
+            Your browser does not support the video tag.
+          </video>
+        )}
+    </div>
+  </>
+)}
+
+
+
+
       </div>
     </div>
   </div>
@@ -669,14 +753,54 @@ function UserDetails() {
 
 
             {/* //saved */}
-            {activeSection === "saved" &&
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
+{activeSection === "saved" &&
+  savedData.map((post, index) => (
+    <div
+      key={post._id}
+      className="relative bg-white rounded-lg shadow-md cursor-pointer overflow-hidden"
+       onClick={() => setSelectedPost(post)} // Open modal on click
+        style={{ aspectRatio: "4 / 3" }}
+    >
+    {post.postId.postType === "image" && post.content.mediaUrl && (
+          <img
+            src={`${backendBaseUrl}/${post.postId.content.mediaUrl}`}
+            alt="Post content"
+            className="w-full h-full object-cover "
+          />
+        )}
+        {post.postId.postType === "video" && post.postId.content.mediaUrl && (
+          <video className="w-full h-full object-cover muted" controls>
+            <source
+              src={`${backendBaseUrl}/${post.postId.content.mediaUrl}`}
+              type="video/mp4"
+            />
+            Your browser does not support the video tag.
+          </video>
+        )}
+        {post.postId.postType === "text" && (
+          <div className="p-4 flex items-center justify-center text-center">
+            <p className="text-gray-700">{post.postId.caption}</p>
+          </div>
+        )}
+
+        
+        
+      </div>
+
+      
+  ))} 
+</div>
+
+
+            {/* {activeSection === "saved" &&
   savedData.map((post, index) => (
     <div
       key={post._id}
       className="bg-white rounded-lg shadow-md p-8 mb-4 relative"
     //   style={{ minWidth: '800px' }}
     >
-      {/* Delete Icon */}
       <button
         className="absolute top-4 right-4 text-gray-500 hover:text-red-600"
         onClick={() => handleDeletePost(post._id)}
@@ -697,22 +821,20 @@ function UserDetails() {
         </svg>
       </button>
 
-      {/* Profile picture and username */}
       <div className="flex items-center mb-4">
         <img
-          src={`${backendBaseUrl}${userData.profilePic}`} // Add profile picture URL here
+          src={`${backendBaseUrl}${userData.profilePic}`} 
           alt="Profile"
           className="w-14 h-14 rounded-md mr-2"
         />
         <strong className="text-lg ml-4">{post.postId.user.username}</strong>
       </div>
 
-      {/* Post caption */}
+      
       {post.postId.caption && (
         <p className="text-gray-700 mb-4">{post.postId.caption}</p>
       )}
 
-      {/* Image or video media */}
       {post.postId.content.mediaUrl && post.postId.postType === "image" && (
         <img
           src={`${backendBaseUrl}/${post.postId.content.mediaUrl}`}
@@ -730,32 +852,32 @@ function UserDetails() {
         </video>
       )}
     </div>
-  ))}
+  ))} */}
 
             {/* liked */}
-            {activeSection === "liked" &&
+            {/* {activeSection === "liked" &&
   likedData.map((post, index) => (
     <div
       key={post._id}
       className="bg-white rounded-lg shadow-md p-8 mb-4"
     //   style={{ minWidth: '800px' }}
     >
-      {/* Profile picture and username */}
+      
       <div className="flex items-center mb-4">
         <img
-          src={`${backendBaseUrl}${userData.profilePic}`} // Add profile picture URL here
+          src={`${backendBaseUrl}${userData.profilePic}`} 
           alt="Profile"
           className="w-14 h-14 rounded-md mr-2"
         />
         <strong className="text-lg ml-4">{post.user.username}</strong>
       </div>
 
-      {/* Post caption */}
+     
       {post.caption && (
         <p className="text-gray-700 mb-4">{post.caption}</p>
       )}
 
-      {/* Image or video media */}
+      
       {post.content.mediaUrl && post.postType === "image" && (
         <img
           src={`${backendBaseUrl}/${post.content.mediaUrl}`}
@@ -773,7 +895,52 @@ function UserDetails() {
         </video>
       )}
     </div>
-  ))}
+  ))} */}
+
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
+  {/* Liked Section */}
+  {activeSection === "liked" &&
+    likedData.map((post) => (
+      <div
+        key={post._id}
+        className="relative bg-white rounded-lg shadow-md cursor-pointer overflow-hidden"
+        // Optionally, handle post selection or other actions here
+        onClick={() => setSelectedPost(post)} // Open modal on click
+        style={{ aspectRatio: "4 / 3" }}
+      >
+        {/* Profile picture and username */}
+      
+
+        {/* Post content */}
+        {post.postType === "image" && post.content.mediaUrl && (
+          <img
+            src={`${backendBaseUrl}/${post.content.mediaUrl}`}
+            alt="Post content"
+            className="w-full h-full object-cover "
+          />
+        )}
+        {post.postType === "video" && post.content.mediaUrl && (
+          <video className="w-full h-full object-cover muted" controls>
+            <source
+              src={`${backendBaseUrl}/${post.content.mediaUrl}`}
+              type="video/mp4"
+            />
+            Your browser does not support the video tag.
+          </video>
+        )}
+        {post.postType === "text" && (
+          <div className="p-4 flex items-center justify-center text-center">
+            <p className="text-gray-700">{post.caption}</p>
+          </div>
+        )}
+
+        
+        
+      </div>
+    ))}
+</div>
+
+  
 
 
 
@@ -786,108 +953,7 @@ function UserDetails() {
 
 
  const styles = {
-//     container: {
-//         display: 'flex',
-//         flexDirection: 'column',
-//         alignItems: 'center',
-//         padding: '20px',
-//         backgroundColor: '#d5d5d5',
-//         overflowX: 'hidden', // Prevents horizontal scrolling
-//     },
-//     profileCard: {
-//         display: 'flex',
-//         flexDirection: 'row',
-//         alignItems: 'stretch', // Makes both sections equal in height
-//         width: '800px',
-//         maxWidth: '90%',
-//         backgroundColor: '#fff',
-//         borderRadius: '12px',
-//         boxShadow: '0 8px 16px rgba(0, 0, 0, 0.1)',
-//         padding: '20px',
-//         gap: '20px',
-//         marginBottom: '25px',
-//     },
-//     profilePicContainer: {
-//         flex: '1',
-//         display: 'flex',
-//         justifyContent: 'center',
-//         alignItems: 'center',
-//         // backgroundColor:'red',
-//         padding: '20px',
-//     },
-//     profilePic: {
-//         width: '100%',
-//         maxWidth: '250px',
-//         height: 'auto', // Scales proportionally
-//         borderRadius: '12px',
-//         objectFit: 'cover',
-//         backgroundColor: '#e0e0e0',
-//         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-//     },
-//     profileInfo: {
-//         flex: '2',
-//         display: 'flex',
-//         flexDirection: 'column',
-//         justifyContent: 'space-between',
-//         paddingLeft: '20px',
-//         textAlign: 'left',
-//         lineHeight: '1.6',
-//     },
-//     username: {
-//         fontSize: '1.8rem',
-//         fontWeight: 'bold',
-//         color: '#333',
-//         marginBottom: '10px',
-//     },
-//     fullname: {
-//         fontSize: '1.3rem',
-//         color: '#555',
-//         marginBottom: '20px',
-//     },
-//     statsRow: {
-//         display: 'flex',
-//         justifyContent: 'space-around',
-//         borderTop: '1px solid #e0e0e0',
-//         borderBottom: '1px solid #e0e0e0',
-//         padding: '10px 0',
-//         marginBottom: '20px',
-//     },
-//     statItem: {
-//         textAlign: 'center',
-//     },
-//     statCount: {
-//         fontSize: '1.2rem',
-//         fontWeight: 'bold',
-//         color: '#333',
-//     },
-//     statLabel: {
-//         fontSize: '1rem',
-//         fontWeight: 'bold',
-//         color: '#777',
-//     },
-//     additionalInfo: {
-//         fontSize: '1rem',
-//         color: '#555',
-//         marginBottom: '10px',
-//     },
-//     editButton: {
-//         marginTop: '20px',
-//         padding: '10px 20px',
-//         backgroundColor: '#6C63FF',
-//         color: '#fff',
-//         border: 'none',
-//         borderRadius: '6px',
-//         cursor: 'pointer',
-//         fontSize: '1em',
-//         transition: 'background-color 0.3s',
-//         boxShadow: '0 4px 12px rgba(108, 99, 255, 0.2)',
-//     },
-//     buttonContainer: {
-//         display: 'flex',
-//         justifyContent: 'center',
-//         gap: '15px',
-//         marginTop: '20px',
-//     },
+//     
     activeButton: {
         padding: '12px 25px',
         backgroundColor: '#28a745',
@@ -906,188 +972,6 @@ function UserDetails() {
         cursor: 'pointer',
         fontSize: '1.2em',
     },
-//     sectionContent: {
-//         marginTop: '40px',
-//         width: '1000px',
-//         backgroundColor: '#d5d5d5',
-//         padding: '25px',
-//         textAlign: 'left',
-//         lineHeight: '1.6',
-//     },
-//    post: {
-//     marginBottom: '20px',
-//     padding: '15px',
-//     backgroundColor: '#fff',
-//     borderRadius: '8px',
-//     boxShadow: '0 3px 6px rgba(0, 0, 0, 0.1)',
-//     fontSize: '1em',
-//     maxWidth: '100%', // Ensures it fits within the viewport
-//     overflowWrap: 'break-word', // Breaks long words
-// },
-//     inputContainer: {
-//         position: 'relative',
-//         width: '100%',
-//     },
-//     suggestionsList: {
-//         position: 'absolute',
-//         top: '100%',
-//         left: 0,
-//         width: '100%',
-//         backgroundColor: '#fff',
-//         border: '1px solid black',
-//         borderRadius: '8px',
-//         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-//         maxHeight: '200px',
-//         overflowY: 'auto',
-//         zIndex: 10,
-//         padding: '0',
-//         marginTop: '8px',
-//     },
-//     suggestionItem: {
-//         padding: '10px',
-//         cursor: 'pointer',
-//         fontSize: '1em',
-//         color: '#333',
-//     },
-//     suggestionItemHover: {
-//         backgroundColor: '#f0f0f0',
-//     },
-//     input: {
-//         marginBottom: '12px',
-//         padding: '10px',
-//         width: '100%',
-//         fontSize: '1em',
-//         borderRadius: '5px',
-//         border: '1px solid #ddd',
-//     },
-//     textarea: {
-//         marginBottom: '12px',
-//         padding: '10px',
-//         width: '100%',
-//         height: '80px',
-//         fontSize: '1em',
-//         borderRadius: '5px',
-//         border: '1px solid #ddd',
-//     },
-//     saveButton: {
-//         padding: '10px 20px',
-//         marginTop: '5px',
-//         marginBottom: '15px',
-//         backgroundColor: '#28a745',
-//         color: '#fff',
-//         border: 'none',
-//         borderRadius: '6px',
-//         cursor: 'pointer',
-//         fontSize: '1em',
-//         transition: 'background-color 0.3s',
-//         boxShadow: '0 4px 12px rgba(40, 167, 69, 0.2)',
-//     },
-//     cancelButton: {
-//         padding: '10px 20px',
-//         backgroundColor: '#dc3545',
-//         color: '#fff',
-//         border: 'none',
-//         borderRadius: '6px',
-//         cursor: 'pointer',
-//         fontSize: '1em',
-//         transition: 'background-color 0.3s',
-//         boxShadow: '0 4px 12px rgba(220, 53, 69, 0.2)',
-//     },
-//     // Media queries
-
-//     '@media (max-width: 1024px)': { // For medium screens (e.g., iPads)
-//         profileCard: {
-//             flexDirection: 'column', // Stacks profile picture and info
-//             alignItems: 'center',
-//             padding: '15px',
-//         },
-//         profilePicContainer: {
-//             width: '100%',
-//             padding: '10px',
-//             backgroundColor:'red',
-//         },
-//         profilePic: {
-//             maxWidth: '150px', // Adjust the picture size
-//             height: 'auto',
-//         },
-//         profileInfo: {
-//             width: '100%',
-//             paddingLeft: '0',
-//         },
-//         statsRow: {
-//             flexDirection: 'column',
-//             gap: '10px',
-//         },
-//     },
-
-//     '@media (max-width: 768px)': {
-//         profileCard: {
-//             width: '100%',
-//             padding: '10px',
-//             backgroundColor:'red',
-//         },
-//         profilePicContainer:{
-//             width:'35%',
-//             display:'flex',
-//             justifyContent:'center',
-//             alignItems:'start',
-//         },
-//         profilePic: {
-//             maxWidth: '200px', // Scale down further
-//         },
-//         profileInfo: {
-//             paddingLeft: '0',
-//             textAlign: 'center',
-//         },
-//         statsRow: {
-//             flexDirection: 'column',
-//             alignItems: 'center',
-//         },
-
-//         post: {
-//             padding: '10px',
-//             fontSize: '0.9em', // Slightly smaller text
-//         },
-
-//         sectionContent: {
-//             width: '100%',
-//             padding: '20px',
-//         },
-//         username: {
-//             fontSize: '1.5rem',
-//         },
-//         fullname: {
-//             fontSize: '1.2rem',
-//         },
-//     },
-//     '@media (max-width: 480px)': {
-//         container: {
-//             padding: '10px',
-//         },
-//         profileCard: {
-//             padding: '8px',
-//         },
-//         profilePic: {
-//             height: '100px',
-//         },
-//         username: {
-//             fontSize: '1.2rem',
-//         },
-//         fullname: {
-//             fontSize: '1rem',
-//         },
-//         editButton: {
-//             fontSize: '0.9em',
-//         },
-//         post: {
-//             fontSize: '0.8em',
-//         },
-//         activeButton: {
-//             fontSize: '1em',
-//         },
-//         inactiveButton: {
-//             fontSize: '1em',
-//         },
-//     },
+//     
 };
 export default UserDetails;

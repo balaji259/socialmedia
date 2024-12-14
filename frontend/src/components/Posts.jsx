@@ -579,6 +579,13 @@ const toggleReplyInput = (replyId) => {
 };
 
 
+const goToUserProfile = (userId) => {
+  // navigate(`/profile/${userId}`); 
+  userId===currentuserId?navigate(`/profile`):navigate(`/profile/${userId}`);
+};
+
+
+
 return (
 
 
@@ -613,7 +620,7 @@ return (
       {posts.map((post) => (
         <div key={post.postId} style={userPostStyle}>
           <div style={postHeaderStyle}>
-            <div style={userInfoStyle}>
+            <div style={userInfoStyle}  onClick={() => goToUserProfile(post.userId._id)}>
               <img
                 src={post.user.profilePic === '/images/default_profile.jpeg' ? '/images/default_profile.jpeg' : `${backendBaseUrl}${post.user.profilePic}`}
                 alt="User Profile"
