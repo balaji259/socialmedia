@@ -1,12 +1,13 @@
 import { X } from "lucide-react";
 // import { useAuthStore } from "./useAuthStore";
 import { useChatStore } from "./useChatStore";
+import {useSocket} from "./useSocket";
 
 const backendBaseUrl = "http://localhost:7000";
 
 const ChatHeader = () => {
   const { selectedUser, setSelectedUser } = useChatStore();
-//   const { onlineUsers } = useAuthStore();
+  const { onlineUsers } = useSocket();
 
   return (
     <div className="p-2.5 border-b border-base-300">
@@ -24,9 +25,9 @@ const ChatHeader = () => {
           {/* User info */}
           <div>
             <h3 className="font-medium text-black-900">{selectedUser.fullname}</h3>
-            {/* <p className="text-sm text-base-content/70">
+            <p className="text-sm text-base-content/70">
               {onlineUsers.includes(selectedUser._id) ? "Online" : "Offline"}
-            </p> */}
+            </p>
           </div>
         </div>
 

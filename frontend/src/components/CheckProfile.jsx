@@ -200,8 +200,8 @@ const UserProfile = () => {
 
 <div className="buttonContainer">
     <button style={activeSection === 'posts' ? styles.activeButton : styles.inactiveButton} onClick={() => handleSectionChange('posts')}>Posts</button>
-    <button style={activeSection === 'saved' ? styles.activeButton : styles.inactiveButton} onClick={() => handleSectionChange('saved')}>Saved</button>
-    <button style={activeSection === 'liked' ? styles.activeButton : styles.inactiveButton} onClick={() => handleSectionChange('liked')}>Liked</button>
+    {/* <button style={activeSection === 'saved' ? styles.activeButton : styles.inactiveButton} onClick={() => handleSectionChange('saved')}>Saved</button>
+    <button style={activeSection === 'liked' ? styles.activeButton : styles.inactiveButton} onClick={() => handleSectionChange('liked')}>Liked</button> */}
 </div>
 
 <div className="sectionContent">
@@ -298,7 +298,7 @@ const UserProfile = () => {
         </div>
     )}
 
-    {activeSection === "saved" &&
+    {/* {activeSection === "saved" &&
         savedData.map((post, index) => (
             <div
                 key={post._id}
@@ -387,7 +387,7 @@ const UserProfile = () => {
                     </video>
                 )}
             </div>
-        ))}
+        ))} */}
 </div>
 
 

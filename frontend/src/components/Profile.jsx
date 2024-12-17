@@ -2,12 +2,16 @@ import React, { useEffect, useState } from 'react';
 import Navbar from './Navbar';
 import Dashboard from './Dashboard';
 import Details from './Details';
+import {useSocket} from "./useSocket";
+import axios from "axios";
 
 import { fetchUserDetails } from './userPosts.js';
 
 const Profile =()=>{
 
-    const [user, setUser] = useState({ username: "", profilePic: "" });
+    const [currentuser, setCurrentUser] = useState({ username: "", profilePic: "" });
+    const {user,setUser,socket,connectSocket}= useSocket();
+    const backendBaseUrl="http://localhost:7000"; 
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -17,15 +21,40 @@ const Profile =()=>{
       console.log("userDetails");
       console.log(userDetails);
       if (userDetails) {
-        setUser({ username: userDetails.username, profilePic: userDetails.profilePic });
+        setCurrentUser({ username: userDetails.username, profilePic: userDetails.profilePic });
       }
-      console.log(user);
+      console.log(currentuser);
       //added fior checkong streaks
       // await checkAndResetStreakOnLogin(userDetails.userId);
     };
 
     getUserDetails();
   }, []);
+
+
+  async function getUser(){
+    try{
+        const token=localStorage.getItem("token");
+        const res=await axios.get(`${backendBaseUrl}/user/getUser`,{
+            headers: {
+                Authorization:`Bearer ${token}`,
+            },
+
+        })
+        // console.log("get userdetails request this");
+        // console.log(res);
+        console.log(res.data);
+        setUser(res.data);
+    }
+    catch(e){
+        console.log(e);
+    }
+}
+
+useEffect(()=>{
+    console.log("loading home page!");
+    getUser();
+},[]);
 
 
 
@@ -35,7 +64,7 @@ const Profile =()=>{
       <div style={styles.container}>
       {/* Navbar */}
       <div style={styles.navbar}>
-        <Navbar username={user.username} profilePic={user.profilePic} />
+        <Navbar username={currentuser.username} profilePic={currentuser.profilePic} />
       </div>
 
       {/* Main content wrapper */}

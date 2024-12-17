@@ -3,9 +3,14 @@ import Navbar from "./Navbar";
 import Dashboard from "./Dashboard";
 import FetchFriends from "./FetchFriends.jsx";
 import { fetchUserDetails } from "./userPosts.js";
+import {useSocket} from "./useSocket";
+import axios from "axios";
 
 const Friends = () => {
-  const [user, setUser] = useState({ username: "", profilePic: "" });
+  const [currentuser, setCurrentUser] = useState({ username: "", profilePic: "" });
+  const {user,setUser,socket,connectSocket}= useSocket();
+  const backendBaseUrl="http://localhost:7000"; 
+
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -13,7 +18,7 @@ const Friends = () => {
     const getUserDetails = async () => {
       const userDetails = await fetchUserDetails(token);
       if (userDetails) {
-        setUser({
+        setCurrentUser({
           username: userDetails.username,
           profilePic: userDetails.profilePic,
         });
@@ -22,6 +27,31 @@ const Friends = () => {
 
     getUserDetails();
   }, []);
+
+  async function getUser(){
+    try{
+        const token=localStorage.getItem("token");
+        const res=await axios.get(`${backendBaseUrl}/user/getUser`,{
+            headers: {
+                Authorization:`Bearer ${token}`,
+            },
+
+        })
+        // console.log("get userdetails request this");
+        // console.log(res);
+        console.log(res.data);
+        setUser(res.data);
+    }
+    catch(e){
+        console.log(e);
+    }
+}
+
+useEffect(()=>{
+    console.log("loading home page!");
+    getUser();
+},[]);
+
 
   // Styles for layout and responsiveness
   const styles = {
@@ -80,7 +110,7 @@ const Friends = () => {
     <div style={styles.container}>
       {/* Navbar */}
       <div style={styles.navbar}>
-        <Navbar username={user.username} profilePic={user.profilePic} />
+        <Navbar username={currentuser.username} profilePic={currentuser.profilePic} />
       </div>
 
       {/* Main content wrapper */}

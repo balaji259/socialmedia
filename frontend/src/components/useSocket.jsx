@@ -15,6 +15,11 @@ export const SocketProvider = ({ children }) => {
 
   useEffect(() => {
     console.log("User state updated:", user);
+    console.log("now to connect!")
+    if(user)
+    {
+      connectSocket();
+    }
 }, [user]);
 
 
@@ -27,6 +32,7 @@ useEffect(() => {
 
 useEffect(() => {
   if (user) {
+    console.log("user changed!");
     connectSocket();
   }
 }, [user]);
@@ -35,6 +41,7 @@ useEffect(() => {
   const connectSocket = () => {
 
     if (!user?.userId) {
+      
       console.error("Cannot connect socket: User ID is not available.");
       return;
     }
@@ -48,8 +55,11 @@ useEffect(() => {
 
     const newSocket = io(backendBaseUrl,{
       query:{
-        userId:user?.userId,
-      }
+        userId:user.userId,
+      },
+      // reconnection: true,        // Enable reconnection
+      // reconnectionAttempts: 5,   // Number of reconnection attempts
+      // reconnectionDelay: 1000, 
     });
 
     // newSocket.connect();
@@ -67,8 +77,9 @@ useEffect(() => {
     
     newSocket.on("getOnlineUsers",(userIds) => {
       // setOnlineUsers(userIds);
+      console.log("setting online users !");
       setOnlineUsers([...new Set(userIds)]);
-    })
+    })    
     
     setSocket(newSocket); // Set the new socket reference
 
@@ -84,6 +95,8 @@ useEffect(() => {
     if (socket?.connected) {
       console.log("Disconnecting socket:", socket.id);
       socket.disconnect();
+      setSocket(null);
+      console.log("socket cleaned up");
       console.log("Socket disconnected successfully.");
     } else {
       console.log("Socket is not connected or already null.");

@@ -3,12 +3,16 @@ import Navbar from "./Navbar";
 import Dashboard from "./Dashboard";
 import SuggestionsSidebar from "./Suggestions";
 import PostsComponent from "./Posts";
+import {useSocket} from "./useSocket";
+import axios from "axios";
+
 import { fetchUserDetails } from "./userPosts.js";
 
 const Home = () => {
-  const [user, setUser] = useState({ username: "", profilePic: "" });
+  const [currentuser, setCurrentUser] = useState({ username: "", profilePic: "" });
   const [isSidebarVisible, setIsSidebarVisible] = useState(false); // Default to `false` for smaller screens
-
+  const {user,setUser,socket,connectSocket}= useSocket();
+  const backendBaseUrl="http://localhost:7000"; 
   // Determine sidebar visibility based on screen width
   useEffect(() => {
     const handleResize = () => {
@@ -35,12 +39,61 @@ const Home = () => {
     const getUserDetails = async () => {
       const userDetails = await fetchUserDetails(token);
       if (userDetails) {
-        setUser({ username: userDetails.username, profilePic: userDetails.profilePic });
+        setCurrentUser({ username: userDetails.username, profilePic: userDetails.profilePic });
+        console.log("landed homepage");
+        // if(currentuser)
+        // {
+        //   if(!socket)
+        //     connectSocket();
+        //   else  
+        //     console.log("socket exists!")
+        // }
+        // else
+        //   console.log("no user existss bro!");
       }
     };
 
     getUserDetails();
   }, []);
+
+
+  async function getUser(){
+    try{
+        const token=localStorage.getItem("token");
+        const res=await axios.get(`${backendBaseUrl}/user/getUser`,{
+            headers: {
+                Authorization:`Bearer ${token}`,
+            },
+
+        })
+        // console.log("get userdetails request this");
+        // console.log(res);
+        console.log(res.data);
+        setUser(res.data);
+    }
+    catch(e){
+        console.log(e);
+    }
+}
+
+useEffect(()=>{
+    console.log("loading home page!");
+    getUser();
+},[]);
+
+
+//   useEffect(()=>{
+//     console.log("landed home page !");
+//     // connectSocket();
+//     if(!socket)
+//     {
+//       console.log("refreshed home page bro");
+//       connectSocket();
+//     }
+//     else{
+//       console.log("refreshed but socket exists");
+//     }
+// },[user]);
 
   const toggleSidebar = () => {
     setIsSidebarVisible(!isSidebarVisible);
@@ -56,7 +109,7 @@ const Home = () => {
     <div style={styles.container}>
       {/* Navbar */}
       <div style={styles.navbar}>
-        <Navbar username={user.username} profilePic={user.profilePic} />
+        <Navbar username={currentuser.username} profilePic={currentuser.profilePic} />
       </div>
 
       {/* Main content */}

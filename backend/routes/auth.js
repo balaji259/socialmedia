@@ -173,4 +173,8 @@ router.get("/userId",authenticateUser,async(req,res)=>{
     res.status(200).json(req.user.userId);
 })
 
+router.get("/user",authenticateUser,async(req,res)=>{
+    res.status(200).json(req.user);
+})
+
 module.exports = router;

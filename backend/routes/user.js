@@ -302,6 +302,51 @@ async function getUserProfile(req,res){
     }
 }
 
+async function getUser(req,res){
+  try{
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      return res.status(401).json({ message: 'Authorization header is missing' });
+    }
+
+    // Split the header to extract the token
+    const tokenParts = authHeader.split(' ');
+    if (tokenParts.length !== 2 || tokenParts[0] !== 'Bearer') {
+      return res.status(401).json({ message: 'Invalid Authorization format' });
+    }
+
+    // Extract the token
+    const token = tokenParts[1];
+
+    // Verify the token
+    let decoded;
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET); // Ensure JWT_SECRET is set correctly
+    } catch (err) {
+      return res.status(401).json({ message: 'Token verification failed', error: err.message });
+    }
+
+    // Fetch the user from the database
+    const user = await User.findById(decoded.userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Send relevant user data
+    res.json({
+      userId:user._id,
+      username: user.username,
+      email:user.email,
+      // fullname: user.fullname,
+      // profilePic: user.profilePic,
+    });
+  } catch (err) {
+    // Catch any server errors
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
+
 
 
 
@@ -311,6 +356,7 @@ router.get('/search/suggestions',authenticateUser,getSearchSuggestions);
 router.post('/search/follow',followUser);
 router.post('/search/unfollow',unfollowUser);
 router.get('/viewProfile/:userId',getUserProfile);
+router.get('/getuser',getUser);
 
 module.exports = router;
 

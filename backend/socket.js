@@ -29,7 +29,7 @@ io.on("connection", (socket) => {
 
     if (!userId) {
         console.warn("Connection attempt with missing userId:", socket.id);
-        return;
+        // return;
       }
 
 
@@ -46,8 +46,22 @@ io.on("connection", (socket) => {
 
     socket.on("disconnect", () => {
         console.log("A user disconnected:", socket.id);
-        delete userSocketMap[userId];
-        io.emit("getOnlineUsers",Object.keys(userSocketMap)); 
+        // delete userSocketMap[userId];
+        // io.emit("getOnlineUsers",Object.keys(userSocketMap)); 
+
+        if (userSocketMap[userId]) {
+            userSocketMap[userId] = userSocketMap[userId].filter(
+              (id) => id !== socket.id
+            );
+      
+            // If no sockets are left for the user, remove the user from the map
+            if (userSocketMap[userId].length === 0) {
+              delete userSocketMap[userId];
+            }
+          }
+      
+          // Emit updated online users
+          io.emit("getOnlineUsers", Object.keys(userSocketMap));
     });
 });
 
