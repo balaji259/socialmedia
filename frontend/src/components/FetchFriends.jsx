@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import {useNavigate} from "react-router-dom";
 import axios from 'axios';
 
 const FriendsList = () => {
   const [friends, setFriends] = useState([]);
   const [userId, setUserId] = useState(null); // Initialize with `null` to avoid premature API calls
   const backendBaseUrl = "http://localhost:7000";
-
+  const navigate=useNavigate();
   const getUserIdFromToken = () => {
     const token = localStorage.getItem("token");
     if (!token) return null;
@@ -59,7 +60,7 @@ const FriendsList = () => {
               <button
                 className="mt-3 w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition"
                 onClick={() => {
-                  console.log("clicked chat option!");
+                  navigate('/chats');
                 }}
               >
                 Chat

@@ -26,6 +26,7 @@ function UserDetails() {
     const [modalContent, setModalContent] = useState([]);
 
 
+    const token=localStorage.getItem('token');
     const backendBaseUrl = 'http://localhost:7000';
 
     // const openModal = (type) => {
@@ -106,13 +107,13 @@ function UserDetails() {
             // Update the saved posts list
             setSavedData((prevData) => prevData.filter((post) => post._id !== postId));
 
-            alert("Post removed from savedPosts!");
+            toast.success("Post removed from savedPosts!");
           } else {
-            alert("Failed to delete the post. Please try again.");
+            toast.success("Failed to delete the post. Please try again.");
           }
         } catch (error) {
           console.error("Error deleting post:", error);
-          alert("An error occurred. Please try again.");
+          // alert("An error occurred. Please try again.");
         }
       };
       
@@ -299,6 +300,28 @@ function UserDetails() {
         }
     };
 
+
+    async function unlikePost(postId) {
+      try {
+        const response = await fetch(`${backendBaseUrl}/posts/${postId}/unlike`, {
+          method: 'PATCH',
+          headers: { Authorization: `Bearer ${token}` },
+        });
+    
+        if (response.ok) {
+          setLikedData((prevData) => prevData.filter((post) => post._id !== postId));
+          toast.success('Post unliked successfully');
+        } else {
+          const errorData = await response.json();
+          toast.error(`Error: ${errorData.message}`);
+        }
+      } catch (error) {
+        console.error('Error unliking post:', error);
+        console.log('An error occurred. Please try again.');
+      }
+    }
+    
+
     useEffect(() => {
         console.log("Updated likedData:", likedData);
     }, [likedData]);
@@ -467,7 +490,7 @@ function UserDetails() {
                         <>
                         {console.log("userData")}
                         {console.log(userData)}
-                        <h2 className="username">{userData.username || "User's Name"}</h2>
+                        <h2 className="username">{`@${userData.username}` || "User's Name"}</h2>
                         <p className="fullname">{userData.fullname || 'Full Name'}</p>
                       
                         {/* New Row for Posts, Following, and Followers */}
@@ -487,7 +510,7 @@ function UserDetails() {
                         </div>
                       
                         <p className="additionalInfo">Date of Birth: {userData.dateOfBirth ? userData.dateOfBirth.split('T')[0] : 'Not specified'}</p>
-                        <p className="additionalInfo">College: {userData.collegeName || 'Not specified'}</p>
+                        <p className="additionalInfo">College Name: {userData.collegeName || 'Not specified'}</p>
                         <p className="additionalInfo">Relationship Status: {userData.relationshipStatus || 'Single'}</p>
                         <p className="additionalInfo">Best Friend: {userData.bestFriend?.username || 'Not specified'}</p>
                         <p className="additionalInfo">Interests: {userData.interests || 'Not specified'}</p>
@@ -548,7 +571,11 @@ function UserDetails() {
       <div
         key={post._id}
         className="relative bg-white rounded-lg shadow-md cursor-pointer overflow-hidden"
-        onClick={() => setSelectedPost(post)} // Open modal on click
+        onClick={() => 
+          {
+            console.log("clicked post",post);
+            setSelectedPost(post)
+        } } // Open modal on click
         style={{ aspectRatio: "4 / 3" }} // Ensures consistent dimensions
       >
         {/* Post content */}
@@ -577,6 +604,96 @@ function UserDetails() {
     ))}
 </div>
 
+
+{/* //saved */}
+
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
+{activeSection === "saved" &&
+  savedData.map((post, index) => (
+    <div
+      key={post._id}
+      className="relative bg-white rounded-lg shadow-md cursor-pointer overflow-hidden"
+       onClick={() =>{ console.log("clicked post:",post);setSelectedPost(post)}} // Open modal on click
+        style={{ aspectRatio: "4 / 3" }}
+    >
+    {post.postId?.postType === "image" && post.postId?.content.mediaUrl && (
+          <img
+            src={`${backendBaseUrl}/${post.postId?.content.mediaUrl}`}
+            alt="Post content"
+            className="w-full h-full object-cover "
+          />
+        )}
+        {post.postId?.postType === "video" && post.postId?.content.mediaUrl && (
+          <video className="w-full h-full object-cover muted">
+            <source
+              src={`${backendBaseUrl}/${post.postId?.content.mediaUrl}`}
+              type="video/mp4"
+            />
+            Your browser does not support the video tag.
+          </video>
+        )}
+        {post.postId?.postType === "text" && (
+          <div className="p-4 flex items-center justify-center text-center">
+            <p className="text-gray-700">{post.postId?.caption}</p>
+          </div>
+        )}
+
+        
+        
+      </div>
+
+      
+  ))} 
+</div>
+
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
+  {activeSection === "liked" &&
+    likedData.map((post) => (
+      <div
+        key={post._id}
+        className="relative bg-white rounded-lg shadow-md cursor-pointer overflow-hidden"
+        // Optionally, handle post selection or other actions here
+        onClick={() => {console.log("licked post",post);setSelectedPost(post)}} // Open modal on click
+        style={{ aspectRatio: "4 / 3" }}
+      >
+     
+      
+
+      
+        {post.postType === "image" && post.content.mediaUrl && (
+          <img
+            src={`${backendBaseUrl}/${post.content.mediaUrl}`}
+            alt="Post content"
+            className="w-full h-full object-cover "
+          />
+        )}
+        {post.postType === "video" && post.content.mediaUrl && (
+          <video className="w-full h-full object-cover muted">
+            <source
+              src={`${backendBaseUrl}/${post.content.mediaUrl}`}
+              type="video/mp4"
+            />
+            Your browser does not support the video tag.
+          </video>
+        )}
+        {post.postType === "text" && (
+          <div className="p-4 flex items-center justify-center text-center">
+            <p className="text-gray-700">{post.caption}</p>
+          </div>
+        )}
+
+        
+        
+      </div>
+    ))} 
+</div>
+
+
+
+
+
+
+
 {/* Modal for Enlarged Post */}
 {selectedPost && (
   <div
@@ -586,8 +703,8 @@ function UserDetails() {
     <div
       className="bg-white rounded-lg shadow-lg p-4 relative max-w-4xl w-full mx-4"
       style={{
-        maxHeight: "90vh", // Ensures the modal content fits within the viewport
-        overflow: "hidden",
+        maxHeight: "90vh", 
+        overflow: "auto",
       }}
     >
 {/* added */}
@@ -598,7 +715,7 @@ function UserDetails() {
       deletePost(selectedPost._id);
       setSelectedPost(null);
     } else if (activeSection === "liked") {
-      // unlikePost(selectedPost._id);
+      unlikePost(selectedPost._id);
       setSelectedPost(null);
     } else if (activeSection === "saved") {
       handleUnsavePost(selectedPost._id);
@@ -623,68 +740,47 @@ function UserDetails() {
       <div className="flex flex-col">
         {/* User Info (Side-by-Side) */}
         <div className="flex items-center mb-4">
-          {/* <img
-            src={`${backendBaseUrl}${selectedPost.user.profilePic}`}
-            alt="Profile"
-            className="w-10 h-10 rounded-mid mr-3"
-          /> */}
-          <img
-          src={`${
-                  activeSection === "liked"
-                    ? `${backendBaseUrl}${selectedPost.user.profilePic}`
-                    : activeSection === "posts"
-                    ? `${backendBaseUrl}${selectedPost.user.profilePic}`
-                    : activeSection === "saved"
-                    ? `${backendBaseUrl}${selectedPost.postId.user.profilePic}`
-                    : "/default_profile_pic.jpeg" // Fallback if no section matches
-                }`}
-              alt="Profile"
-              className="w-10 h-10 rounded-md mr-3"
-            />
+        
+          
+
+            <img
+  src={
+    activeSection === "liked" || activeSection === "posts"
+      ? selectedPost.user.profilePic === "/images/default_profile.jpeg"
+        ? selectedPost.user.profilePic // Use the default profile pic as is
+        : `${backendBaseUrl}${selectedPost.user.profilePic}`
+      : activeSection === "saved"
+      ? selectedPost.postId.user.profilePic === "/images/default_profile.jpeg"
+        ? selectedPost.postId?.user.profilePic // Use the default profile pic as is
+        : `${backendBaseUrl}${selectedPost.postId.user.profilePic}`
+      : "/default_profile_pic.jpeg" // Fallback if no section matches
+  }
+  alt="Profile"
+  className="w-10 h-10 rounded-md mr-3"
+/>
+
+
 
           <strong className="text-lg text-gray-800">
             {activeSection==="saved"?selectedPost.postId.user.username:selectedPost.user.username}
           </strong>
         </div>
 
-        {/* Post Caption */}
-        {/* {selectedPost.caption && (
-          <p className="text-gray-700 mb-4 text-left">{selectedPost.caption}</p>
-        )}
-
-  
-        <div className="flex justify-center items-center">
-          {selectedPost.content.mediaUrl && selectedPost.postType === "image" && (
-            <img
-              src={`${backendBaseUrl}/${selectedPost.content.mediaUrl}`}
-              alt="Post content"
-              className="max-w-full max-h-[75vh] object-contain rounded-lg"
-            />
-          )}
-          {selectedPost.content.mediaUrl &&
-            selectedPost.postType === "video" && (
-              <video
-                controls
-                className="max-w-full max-h-[75vh] object-contain rounded-lg"
-              >
-                <source
-                  type="video/mp4"
-                  src={`${backendBaseUrl}/${selectedPost.content.mediaUrl}`}
-                />
-                Your browser does not support the video tag.
-              </video>
-            )}
-        </div> */}
+        
 
 {activeSection !== "saved" ? (
   // For "liked" and "posts"
   <>
+
+
+
+
     {selectedPost.caption && (
       <p className="text-gray-700 mb-4 text-left">{selectedPost.caption}</p>
     )}
 
-    {/* Post Media */}
-    <div className="flex justify-center items-center">
+  
+     <div className="flex justify-center items-center">
       {selectedPost.content.mediaUrl && selectedPost.postType === "image" && (
         <img
           src={`${backendBaseUrl}/${selectedPost.content.mediaUrl}`}
@@ -695,7 +791,7 @@ function UserDetails() {
       {selectedPost.content.mediaUrl && selectedPost.postType === "video" && (
         <video
           controls
-          className="max-w-full max-h-[75vh] object-contain rounded-lg"
+          className="w-full h-auto max-w-full max-h-[75vh] object-contain rounded-lg"
         >
           <source
             type="video/mp4"
@@ -704,7 +800,7 @@ function UserDetails() {
           Your browser does not support the video tag.
         </video>
       )}
-    </div>
+    </div> 
   </>
 ) : (
   // For "saved"
@@ -729,7 +825,7 @@ function UserDetails() {
         selectedPost.postId.postType === "video" && (
           <video
             controls
-            className="max-w-full max-h-[75vh] object-contain rounded-lg"
+            className="w-full h-auto max-w-full max-h-[75vh] object-contain rounded-lg"
           >
             <source
               type="video/mp4"
@@ -752,193 +848,10 @@ function UserDetails() {
 
 
 
-            {/* //saved */}
+            
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
-{activeSection === "saved" &&
-  savedData.map((post, index) => (
-    <div
-      key={post._id}
-      className="relative bg-white rounded-lg shadow-md cursor-pointer overflow-hidden"
-       onClick={() => setSelectedPost(post)} // Open modal on click
-        style={{ aspectRatio: "4 / 3" }}
-    >
-    {post.postId.postType === "image" && post.content.mediaUrl && (
-          <img
-            src={`${backendBaseUrl}/${post.postId.content.mediaUrl}`}
-            alt="Post content"
-            className="w-full h-full object-cover "
-          />
-        )}
-        {post.postId.postType === "video" && post.postId.content.mediaUrl && (
-          <video className="w-full h-full object-cover muted" controls>
-            <source
-              src={`${backendBaseUrl}/${post.postId.content.mediaUrl}`}
-              type="video/mp4"
-            />
-            Your browser does not support the video tag.
-          </video>
-        )}
-        {post.postId.postType === "text" && (
-          <div className="p-4 flex items-center justify-center text-center">
-            <p className="text-gray-700">{post.postId.caption}</p>
-          </div>
-        )}
+           
 
-        
-        
-      </div>
-
-      
-  ))} 
-</div>
-
-
-            {/* {activeSection === "saved" &&
-  savedData.map((post, index) => (
-    <div
-      key={post._id}
-      className="bg-white rounded-lg shadow-md p-8 mb-4 relative"
-    //   style={{ minWidth: '800px' }}
-    >
-      <button
-        className="absolute top-4 right-4 text-gray-500 hover:text-red-600"
-        onClick={() => handleDeletePost(post._id)}
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={1.5}
-          stroke="currentColor"
-          className="w-6 h-6"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M6 18L18 6M6 6l12 12"
-          />
-        </svg>
-      </button>
-
-      <div className="flex items-center mb-4">
-        <img
-          src={`${backendBaseUrl}${userData.profilePic}`} 
-          alt="Profile"
-          className="w-14 h-14 rounded-md mr-2"
-        />
-        <strong className="text-lg ml-4">{post.postId.user.username}</strong>
-      </div>
-
-      
-      {post.postId.caption && (
-        <p className="text-gray-700 mb-4">{post.postId.caption}</p>
-      )}
-
-      {post.postId.content.mediaUrl && post.postId.postType === "image" && (
-        <img
-          src={`${backendBaseUrl}/${post.postId.content.mediaUrl}`}
-          alt="Post content"
-          className="w-full rounded-lg mt-2"
-        />
-      )}
-      {post.postId.content.mediaUrl && post.postId.postType === "video" && (
-        <video controls className="w-full rounded-lg mt-2">
-          <source
-            type="video/mp4"
-            src={`${backendBaseUrl}/${post.postId.content.mediaUrl}`}
-          />
-          Your browser does not support the video tag.
-        </video>
-      )}
-    </div>
-  ))} */}
-
-            {/* liked */}
-            {/* {activeSection === "liked" &&
-  likedData.map((post, index) => (
-    <div
-      key={post._id}
-      className="bg-white rounded-lg shadow-md p-8 mb-4"
-    //   style={{ minWidth: '800px' }}
-    >
-      
-      <div className="flex items-center mb-4">
-        <img
-          src={`${backendBaseUrl}${userData.profilePic}`} 
-          alt="Profile"
-          className="w-14 h-14 rounded-md mr-2"
-        />
-        <strong className="text-lg ml-4">{post.user.username}</strong>
-      </div>
-
-     
-      {post.caption && (
-        <p className="text-gray-700 mb-4">{post.caption}</p>
-      )}
-
-      
-      {post.content.mediaUrl && post.postType === "image" && (
-        <img
-          src={`${backendBaseUrl}/${post.content.mediaUrl}`}
-          alt="Post content"
-          className="w-full rounded-lg mt-2"
-        />
-      )}
-      {post.content.mediaUrl && post.postType === "video" && (
-        <video controls className="w-full rounded-lg mt-2">
-          <source
-            type="video/mp4"
-            src={`${backendBaseUrl}/${post.content.mediaUrl}`}
-          />
-          Your browser does not support the video tag.
-        </video>
-      )}
-    </div>
-  ))} */}
-
-<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
-  {/* Liked Section */}
-  {activeSection === "liked" &&
-    likedData.map((post) => (
-      <div
-        key={post._id}
-        className="relative bg-white rounded-lg shadow-md cursor-pointer overflow-hidden"
-        // Optionally, handle post selection or other actions here
-        onClick={() => setSelectedPost(post)} // Open modal on click
-        style={{ aspectRatio: "4 / 3" }}
-      >
-        {/* Profile picture and username */}
-      
-
-        {/* Post content */}
-        {post.postType === "image" && post.content.mediaUrl && (
-          <img
-            src={`${backendBaseUrl}/${post.content.mediaUrl}`}
-            alt="Post content"
-            className="w-full h-full object-cover "
-          />
-        )}
-        {post.postType === "video" && post.content.mediaUrl && (
-          <video className="w-full h-full object-cover muted" controls>
-            <source
-              src={`${backendBaseUrl}/${post.content.mediaUrl}`}
-              type="video/mp4"
-            />
-            Your browser does not support the video tag.
-          </video>
-        )}
-        {post.postType === "text" && (
-          <div className="p-4 flex items-center justify-center text-center">
-            <p className="text-gray-700">{post.caption}</p>
-          </div>
-        )}
-
-        
-        
-      </div>
-    ))}
-</div>
 
   
 

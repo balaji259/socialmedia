@@ -346,6 +346,20 @@ async function getUser(req,res){
   }
 };
 
+router.post('/check-email', async (req, res) => {
+  const { email } = req.body;
+  try {
+      const user = await User.findOne({ email }); // Replace with your DB logic
+      if (user) {
+          return res.json({ exists: true });
+      }
+      res.json({ exists: false });
+  } catch (err) {
+      console.error('Error checking email:', err);
+      res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 
 
 

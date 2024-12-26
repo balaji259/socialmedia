@@ -1,15 +1,11 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-// import { create } from "zustand";
+
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { GoogleLogin } from "@react-oauth/google";
 import  {jwtDecode}  from "jwt-decode";
 import {useSocket} from "./useSocket";
-// import { useSocketStore } from "./useSocket";
-
-
-// const [user,setUser]=useState(null);
 
 
 
@@ -17,17 +13,7 @@ const Login = ({ onSwitch }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
-    // const {isLogin,setIsLogin}=useState();
-    // const {user, setUser ,socket, connectSocket,isLogin,setIsLogin}= useSocket();
 
-    // const { connectSocket, setAuthUser, isLoggingIn, setIsLoggingIn } = useSocketStore(
-    //     (state) => ({
-    //       connectSocket: state.connectSocket,
-    //       setAuthUser: state.setAuthUser,
-    //       isLoggingIn: state.isLoggingIn,
-    //       setIsLoggingIn: state.setIsLoggingIn,
-    //     })
-    //   );
     
     const {user, setUser ,socket, connectSocket}= useSocket();
     
@@ -54,7 +40,8 @@ const Login = ({ onSwitch }) => {
                 }, 1000);
             })
             .catch((error) => {
-                const errorMessage = error.response?.data?.error || 'Login failed: Server error.';
+                console.log(error.message);
+                const errorMessage = error?.message;
                 toast.error(errorMessage, { duration: 2000 });
             })
             .finally(() => {
@@ -82,7 +69,7 @@ const Login = ({ onSwitch }) => {
                     }, 1000);
                 })
                 .catch((error) => {
-                    const errorMessage = error.response?.data?.error || 'Login failed: Server error.';
+                    const errorMessage = error.response?.data?.error;
                     toast.error(errorMessage, { duration: 2000 });
                 });
          

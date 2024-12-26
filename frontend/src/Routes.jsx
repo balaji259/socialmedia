@@ -24,6 +24,7 @@ import Friends from "./components/Friends.jsx";
 import FriendList from "./components/FetchFriends";
 // import chatsection from './components/chatsection'
 import { SocketProvider } from "./components/useSocket";
+// import ChatFriend from "./components/ChatFriend";
 
 const RoutesComponent = () => {
     return (
@@ -51,6 +52,7 @@ const RoutesComponent = () => {
                 <Route path="/chats" element={<ChatHomePage />} />
                 <Route path="/friends" element={<Friends /> } />
                 <Route path="/friendlist" element={<FriendList />} />
+                {/* <Route path="/chat/:friendId" element={<ChatFriend /> } /> */}
                 {/* <Route path='./chat' element={<chatsection />} />             */}
             </Routes>
         </Router>

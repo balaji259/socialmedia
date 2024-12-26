@@ -16,6 +16,7 @@ const postSchema = new Schema({
     caption: { type: String },
     content: { mediaUrl: { type: String } },
     likes: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    likesCount: { type: Number, default: 0 }, 
     comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }],
     shares: { type: Number, default: 0 },
     createdAt: { type: Date, default: Date.now }

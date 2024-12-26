@@ -234,18 +234,16 @@ function formatNestedReply(nestedReply) {
     };
 }
 
-// POST route to like/unlike a post
 
-// Like/Unlike Post
-    router.post('/like/:userId/:postId', async (req, res) => {
+router.post('/like/:userId/:postId', async (req, res) => {
     const { postId, userId } = req.params;
 
-    console.log(`postid ${postId}`);
-    console.log(`userid ${userId}`);
+    console.log(`postId: ${postId}`);
+    console.log(`userId: ${userId}`);
 
     try {
         // Convert userId to ObjectId
-        // const userIdObject = mongoose.Types.ObjectId(userId);
+        // const userObjectId = mongoose.Types.ObjectId(userId);
 
         const post = await Post.findById(postId);
         if (!post) {
@@ -263,8 +261,15 @@ function formatNestedReply(nestedReply) {
             post.likes.splice(userIndex, 1);
         }
 
+        // Save the updated post
         await post.save();
-        res.status(200).json({ message: 'Like status updated', likesCount: post.likes.length });
+
+        // Send response with updated likes count
+        res.status(200).json({
+            message: 'Like status updated',
+            likesCount: post.likes.length,
+            liked: userIndex === -1  // Send the new liked status
+        });
     } catch (error) {
         console.error('Error updating like status:', error);
         res.status(500).json({ error: 'Failed to update like status' });
@@ -467,6 +472,9 @@ router.delete('/:id',authenticateUser, async (req, res) => {
   
       // Delete the post
       await Post.findByIdAndDelete(postId);
+
+      await SavedPost.deleteMany({ postId });
+
       console.log("post deleted!");
   
       return res.status(200).json({ message: 'Post deleted successfully' });
@@ -509,6 +517,38 @@ router.get('/:postId', async (req, res) => {
 });
 
 
+router.patch('/:id/unlike', authenticateUser, async (req, res) => {
+    const postId = req.params.id;
+    const { userId } = req.user; // User ID from authentication middleware
+  
+    console.log(postId);
+    console.log(userId);
+
+    try {
+      const post = await Post.findById(postId);
+  
+      if (!post) {
+        return res.status(404).json({ message: 'Post not found' });
+      }
+  
+      // Check if the user has already liked the post
+      const userIndex = post.likes.indexOf(userId);
+      if (userIndex === -1) {
+        return res.status(400).json({ message: 'Post is not liked by the user' });
+      }
+  
+      // Remove the user from the likes array
+      post.likes.splice(userIndex, 1);
+      post.likesCount = Math.max(post.likesCount - 1, 0); // Ensure it doesn't go below 0
+  
+      await post.save();
+  
+      return res.status(200).json({ message: 'Post unliked successfully', likesCount: post.likesCount });
+    } catch (error) {
+      console.error('Error unliking post:', error);
+      return res.status(500).json({ message: 'Internal Server Error' });
+    }
+  });
 
 
 

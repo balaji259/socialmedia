@@ -13,9 +13,10 @@
   background-color: #f3f4f6; 
   /* background-color:blue; */
   /* border-right: 1px solid #d1d5db;  */
-  padding: 1.5rem;
-  /* width:100%;//byme */
-  /* width:100%; */
+  padding-top: 1.5rem ;
+  padding-bottom:1.5rem;
+  padding-left:0rem;
+  padding-right:0rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -26,6 +27,7 @@
 .menu {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 1.5rem;
 }
 
@@ -46,6 +48,13 @@
 
 .logout {
   margin-top: 2rem;
+  /* display:flex; */
+  /* justify-content: flex-start; */
+}
+
+.logout{
+  display: flex;
+  justify-content: center;
 }
 
 .logout-btn {
@@ -79,6 +88,11 @@
     font-size: 0.9rem;
   }
 
+  .logout{
+    display: flex;
+    justify-content: center;
+  }
+
   .logout-btn {
     font-size: 0.9rem;
     padding: 0.6rem;
@@ -110,6 +124,13 @@
     padding: 1rem;
   }
 
+  .menu {
+    gap: 0.8rem; /* Reduced gap */
+    display:flex;
+    flex-direction: column;
+    align-items:flex-start;
+  }
+
   .menu-item {
     font-size: 0.85rem;
     padding: 0.4rem ;
@@ -131,6 +152,9 @@
 
   .menu {
     gap: 0.8rem; /* Reduced gap */
+    display:flex;
+    flex-direction: column;
+    align-items:flex-start;
   }
 
   .menu-item {
@@ -138,9 +162,16 @@
     padding: 0.3rem 0.4rem; /* Compact padding */
   }
 
+  .logout{
+    display:flex;
+    padding-left: 0px;
+    justify-content: flex-start;
+  }
+
   .logout-btn {
-    font-size: 0.4rem; /* Smaller font for compactness */
-    padding: 0.4rem; /* Compact padding */
+    font-size: 0.4rem;
+    padding-left:0px;
+    /* border:2px solid red; */
   }
 }
 

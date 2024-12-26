@@ -8,7 +8,7 @@ const backendBaseUrl = 'http://localhost:7000';
 const SinglePost = () => {
   const [post, setPost] = useState(null);
   const [showMenus, setShowMenus] = useState({});
-  const { postId } = useParams(); // Retrieve postId from URL params
+  const { postId } = useParams();
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -27,17 +27,14 @@ const SinglePost = () => {
   };
 
   const savePost = (id) => {
-    // Implement save post logic
     console.log(`Post ${id} saved`);
   };
 
   const reportPost = (id) => {
-    // Implement report post logic
     console.log(`Post ${id} reported`);
   };
 
   const handleLikeToggle = (id) => {
-    // Implement like toggle logic
     console.log(`Toggled like for post ${id}`);
   };
 
@@ -49,144 +46,149 @@ const SinglePost = () => {
   if (!post) return <div>Loading...</div>;
 
   return (
-    <div style={singlePostContainerStyle}>
-      <div style={postHeaderStyle}>
+    <div style={styles.container}>
+      <div style={styles.header}>
         <img
           src={post.user.profilePic === '/images/default_profile.jpeg' ? '/images/default_profile.jpeg' : `${backendBaseUrl}${post.user.profilePic}`}
           alt={post.user.username}
-          style={profilePicStyle}
+          style={styles.profilePic}
         />
-        <div style={postUserInfoStyle}>
-          <span style={usernameStyle}>{post.user.username}</span>
-          <span style={createdAtStyle}>{new Date(post.createdAt).toLocaleString()}</span>
+        <div style={styles.userInfo}>
+          <span style={styles.username}>{post.user.username}</span>
+          <span style={styles.createdAt}>{new Date(post.createdAt).toLocaleString()}</span>
         </div>
-        <button style={toggleButtonStyle} onClick={() => handleToggleMenu(post.postId)}>⋮</button>
+        {/* <button style={styles.menuButton} onClick={() => handleToggleMenu(post.postId)}>⋮</button>
 
         {showMenus[post.postId] && (
-          <div style={dropdownMenuStyle}>
-            <div style={menuItemStyle} onClick={() => savePost(post.postId)}>Save Post</div>
-            <div style={menuItemStyle} onClick={() => reportPost(post.postId)}>Report</div>
+          <div style={styles.dropdownMenu}>
+            <div style={styles.menuItem} onClick={() => savePost(post.postId)}>Save Post</div>
+            <div style={styles.menuItem} onClick={() => reportPost(post.postId)}>Report</div>
           </div>
-        )}
+        )} */}
       </div>
 
-      <div style={postContentStyle}>
+      <div style={styles.content}>
         {post.postType === "image" && post.content.mediaUrl && (
-          <img src={`${backendBaseUrl}/${post.content.mediaUrl}`} alt="Post media" style={postMediaStyle} />
+          <img src={`${backendBaseUrl}/${post.content.mediaUrl}`} alt="Post media" style={styles.media} />
         )}
-        <p style={captionStyle}>{post.caption}</p>
+        <p style={styles.caption}>{post.caption}</p>
       </div>
 
-      <div style={postActionsStyle}>
-        <button style={postButtonStyle} onClick={() => handleLikeToggle(post.postId)}>
+      {/* <div style={styles.actions}>
+        <button style={styles.actionButton} onClick={() => handleLikeToggle(post.postId)}>
           {post.liked ? '👎 Dislike' : '👍 Like'} {post.likesCount}
         </button>
-        <button style={postButtonStyle}>💬 Comment</button>
-        <button style={postButtonStyle} onClick={() => copyPostIdToClipboard(post.postId)}>
+        <button style={styles.actionButton}>💬 Comment</button>
+        <button style={styles.actionButton} onClick={() => copyPostIdToClipboard(post.postId)}>
           🔗 Share
         </button>
-      </div>
+      </div> */}
 
-      <div style={commentsSectionStyle}>
+      {/* <div style={styles.commentsSection}>
         {post.comments.map((comment, i) => (
-          <div key={i} style={commentStyle}>
+          <div key={i} style={styles.comment}>
             <strong>{comment.user?.username || "Anonymous"}:</strong> {comment.text}
           </div>
         ))}
-      </div>
+      </div> */}
     </div>
   );
 };
 
-const singlePostContainerStyle = {
-  backgroundColor: '#fff',
-  border: '1px solid #ddd',
-  borderRadius: '5px',
-  padding: '15px',
-  margin: '20px auto',
-  maxWidth: '600px',
-};
-
-const postHeaderStyle = {
-  display: 'flex',
-  alignItems: 'center',
-  marginBottom: '10px',
-  position: 'relative',
-};
-
-const profilePicStyle = {
-  width: '50px',
-  height: '50px',
-  borderRadius: '50%',
-  marginRight: '10px',
-};
-
-const postUserInfoStyle = {
-  flexGrow: 1,
-};
-
-const usernameStyle = {
-  fontWeight: 'bold',
-};
-
-const createdAtStyle = {
-  fontSize: '0.9em',
-  color: '#777',
-};
-
-const toggleButtonStyle = {
-  background: 'none',
-  border: 'none',
-  cursor: 'pointer',
-};
-
-const dropdownMenuStyle = {
-  position: 'absolute',
-  background: '#fff',
-  boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
-  zIndex: 1,
-};
-
-const menuItemStyle = {
-  padding: '10px',
-  cursor: 'pointer',
-};
-
-const postContentStyle = {
-  marginBottom: '15px',
-};
-
-const postMediaStyle = {
-  width: '100%',
-  borderRadius: '5px',
-};
-
-const captionStyle = {
-  margin: '10px 0',
-};
-
-const postActionsStyle = {
-  display: 'flex',
-  justifyContent: 'space-between',
-};
-
-const postButtonStyle = {
-  backgroundColor: '#007bff',
-  color: '#fff',
-  border: 'none',
-  borderRadius: '5px',
-  padding: '10px 15px',
-  cursor: 'pointer',
-};
-
-const commentsSectionStyle = {
-  marginTop: '10px',
-  borderTop: '1px solid #ddd',
-  paddingTop: '10px',
-};
-
-const commentStyle = {
-  marginBottom: '5px',
+const styles = {
+  container: {
+    backgroundColor: '#fff',
+    border: '1px solid #ddd',
+    borderRadius: '8px',
+    padding: '16px',
+    margin: '16px auto',
+    maxWidth: '600px',
+    boxSizing: 'border-box',
+  },
+  header: {
+    display: 'flex',
+    alignItems: 'center',
+    marginBottom: '12px',
+    position: 'relative',
+  },
+  profilePic: {
+    width: '50px',
+    height: '50px',
+    borderRadius: '50%',
+    marginRight: '12px',
+  },
+  userInfo: {
+    flexGrow: 1,
+    overflow: 'hidden',
+  },
+  username: {
+    fontWeight: 'bold',
+    display: 'block',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+  },
+  createdAt: {
+    fontSize: '0.9em',
+    color: '#555',
+  },
+  menuButton: {
+    background: 'none',
+    border: 'none',
+    cursor: 'pointer',
+  },
+  dropdownMenu: {
+    position: 'absolute',
+    top: '100%',
+    right: '0',
+    background: '#fff',
+    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+    zIndex: 1000,
+    borderRadius: '4px',
+  },
+  menuItem: {
+    padding: '10px',
+    cursor: 'pointer',
+    whiteSpace: 'nowrap',
+  },
+  content: {
+    marginBottom: '16px',
+    wordWrap: 'break-word',
+  },
+  media: {
+    width: '100%',
+    borderRadius: '6px',
+    maxHeight: '300px',
+    objectFit: 'cover',
+  },
+  caption: {
+    marginTop: '12px',
+  },
+  actions: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    flexWrap: 'wrap',
+    gap: '10px',
+  },
+  actionButton: {
+    flex: '1 1 auto',
+    textAlign: 'center',
+    backgroundColor: '#007bff',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '4px',
+    padding: '10px',
+    cursor: 'pointer',
+  },
+  commentsSection: {
+    marginTop: '12px',
+    borderTop: '1px solid #ddd',
+    paddingTop: '12px',
+  },
+  comment: {
+    marginBottom: '8px',
+    wordWrap: 'break-word',
+  },
 };
 
 export default SinglePost;

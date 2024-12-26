@@ -30,6 +30,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use(express.static(path.join(__dirname, '..','frontend','dist')));
 
 // app.use(cors({
 //   origin: 'http://localhost:8000', // Replace with your frontend URL
@@ -59,6 +60,9 @@ app.use('/messages',chatRouter);
 //   res.status(500).send('Something went wrong!');
 // });
 
+// app.get('*',(req,res)=>{
+//   res.sendFile(path.join(__dirname,'..','frontend','dist','index.html'));
+// })
 // Start the server
 const PORT = process.env.PORT || 7000;
 server.listen(PORT, () => {

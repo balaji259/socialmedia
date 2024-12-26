@@ -5,7 +5,7 @@ import axios from "axios";
 import {useSocket} from "./useSocket";
 // import {axiosInstance} from "../lib/axios";
 const backendBaseUrl = "http://localhost:7000";
-const token=localStorage.getItem('token');
+
 
 
 export const useChatStore = create((set,get)=>({
@@ -23,14 +23,16 @@ export const useChatStore = create((set,get)=>({
     getUsers: async()=>{
         set({isUsersLoading: true});
         try{
+          
+            const token=localStorage.getItem('token');
             const res=await axios.get(`${backendBaseUrl}/messages/getusers`,{
             
                 headers: {
                   Authorization: `Bearer ${token}`,
                 },
               });
-            // console.log("sidebar user data");
-            // console.log(res.data);
+            console.log("sidebar user data for check");
+            console.log(res.data);
             set({users:res.data});
 
         }
@@ -47,16 +49,13 @@ export const useChatStore = create((set,get)=>({
     getMessages: async(userId) => {
         set({isMessagesLoading: true});
         try{
+            const token=localStorage.getItem('token');
             const res=await axios.get(`${backendBaseUrl}/messages/get/${userId}`,{
                 headers:{
                     Authorization:`Bearer ${token}`
                 }
             });
-            // set({messages:res.data});
-            // console.log("getmessages checking");
-            // console.log(res);
-            // console.log("res.data.messages")
-            // console.log(res.data);
+      
             set({ messages: Array.isArray(res.data) ? res.data: [] });
 
         }
@@ -77,6 +76,7 @@ export const useChatStore = create((set,get)=>({
         try{
             console.log("checking msg at star5t");
             console.log(messages);
+            const token=localStorage.getItem('token');
             const res=await axios.post(`${backendBaseUrl}/messages/send/${selectedUser._id}`,messageData,{
             
                 headers: {
@@ -115,5 +115,10 @@ export const useChatStore = create((set,get)=>({
     //optimise this one later
     setSelectedUser:(selectedUser)=> set({selectedUser}),
 
+    clearUsers: () => {
+        set({ users: [], selectedUser: null });
+        console.log("clearing Users");
+        },
+    clearMessages: () => set({ messages: [] })
     
 }));

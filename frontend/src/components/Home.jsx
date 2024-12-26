@@ -16,7 +16,7 @@ const Home = () => {
   // Determine sidebar visibility based on screen width
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth >= 900) {
+      if (window.innerWidth >= 1200) {
         setIsSidebarVisible(true); // Open by default for larger screens
       } else {
         setIsSidebarVisible(false); // Closed by default for medium and smaller screens
@@ -100,7 +100,7 @@ useEffect(()=>{
   };
 
   const getSidebarWidth = () => {
-    if (window.innerWidth < 600) return "20%";
+    if (window.innerWidth < 600) return "11%";
     if (window.innerWidth < 900) return "15%";
     return "17%";
   };

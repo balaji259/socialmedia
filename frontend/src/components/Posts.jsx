@@ -21,7 +21,8 @@ const postInputContainerStyle = {
   padding: '10px',
   borderRadius: '5px',
   boxShadow: '0 1px 3px rgba(0, 0, 0, 0.2)',
-  border:'2px solid black'
+  border:'2px solid black',
+  marginTop:'15px'
 };
 
 const textareaStyle = {
@@ -43,6 +44,8 @@ const submitButtonStyle = {
   borderRadius:'5px',
   cursor: 'pointer',
   marginTop: '10px',
+  // position:'relative',
+  // right:'-180px'
 };
 
 const userPostStyle = {
@@ -117,6 +120,7 @@ const postFooterStyle = {
   display: 'flex',
   justifyContent: 'space-around',
   marginTop: '15px',
+  marginBottom:'15px'
 };
 
 const postButtonStyle = {
@@ -213,7 +217,7 @@ const PostComponent = () => {
   const [currentuserId,setcurrentuserId]=useState({});
 
   const backendBaseUrl = 'http://localhost:7000';
-
+  const frontendBaseUrl='http://localhost:3000';
   const fetchPosts = async () => {
     const token = localStorage.getItem("token");
     try {
@@ -310,12 +314,13 @@ const PostComponent = () => {
 
   const handleLikeToggle = async (postId) => {
     const token = localStorage.getItem("token");
-
+  
     if (!token) {
       alert("No token found. Please log in again.");
       return;
     }
-
+  
+    // Decode the token to get userId
     const base64Url = token.split(".")[1];
     const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
     const jsonPayload = decodeURIComponent(
@@ -325,34 +330,38 @@ const PostComponent = () => {
         .join("")
     );
     const { userId } = JSON.parse(jsonPayload);
-
+  
     try {
       const response = await fetch(`${backendBaseUrl}/posts/like/${userId}/${postId}`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
       });
-
+  
       if (response.ok) {
-        const data = await response.json();
+        const data = await response.json();  // Response includes updated likes count and liked status
+  
+        // Update the post state with the new like status and count
         setPosts((prevPosts) =>
           prevPosts.map((post) => {
             if (post.postId === postId) {
-              const isLiked = !post.liked;
-              const updatedLikesCount = isLiked ? post.likesCount + 1 : post.likesCount - 1;
-              
-              return { ...post, liked: isLiked, likesCount: updatedLikesCount };
+              return {
+                ...post,
+                liked: data.liked,  // Update liked status based on backend response
+                likesCount: data.likesCount,  // Update likes count
+              };
             }
             return post;
           })
         );
       } else {
-        alert("Failed to update like status");
+        console.log("Failed to update like status");
       }
     } catch (error) {
       console.error("Error updating like status:", error);
-      alert("Error updating like status");
+      // alert("Error updating like status");
     }
   };
+  
 
   const handleToggleMenu = (postId) => {
     setShowMenus((prevMenus) => ({
@@ -420,7 +429,7 @@ const userId = payload.userId;
       if (data.success) {
           toast.success("Post saved successfully!",{duration:2500});
       } else {
-          toast.error("Failed to save post. " + data.message,{duration:2500});
+          toast.error(data.message,{duration:2500});
       }
   })
   .catch(error => {
@@ -430,9 +439,9 @@ const userId = payload.userId;
 }
 
 const copyPostIdToClipboard = (postId) => {
-  const postUrl = `http://localhost:5174/posts/${postId}`; // Adjust URL structure
+  const postUrl = `${frontendBaseUrl}/posts/${postId}`; // Adjust URL structure
   navigator.clipboard.writeText(postUrl)
-    .then(() => alert("Post link copied to clipboard! Share it anywhere."))
+    .then(() => toast.success("Post link copied! Share it anywhere."))
     .catch(err => console.error('Failed to copy:', err));
 };
 
@@ -626,7 +635,14 @@ return (
                 alt="User Profile"
                 style={profilePicStyle}
               />
+              {/* <div>
               <span style={usernameStyle}>{post.user?.username || "Anonymous"}</span>
+              <span style={usernameStyle}>{new Date(post.createdAt).toLocaleString()}</span>
+
+              </div> */}
+              <span style={usernameStyle}>{post.user?.username || "Anonymous"}</span>
+              {/* <span >{new Date(post.createdAt).toLocaleString()}</span> */}
+
             </div>
             <button style={toggleButtonStyle} onClick={() => handleToggleMenu(post.postId)}>⋮</button>
             {showMenus[post.postId] && (
@@ -677,8 +693,12 @@ return (
               style={postButtonStyle}
               onClick={() => handleLikeToggle(post.postId)}
             >
+             <div className="flex items-center justify-center">
+    <img src="/images/like.jpg" className="h-6 w-6 mr-2" alt="Like" />
+    {post.likesCount}
+  </div>
               {/* {post.liked ? '👎' : '👍'} {post.likesCount} */}
-              {post.liked ? (
+              {/* {post.liked ? (
   <div className="flex items-center justify-center">
     <img src="/images/like.jpg" className="h-6 w-6 mr-2" alt="Like" /> 
     {post.likesCount}
@@ -688,7 +708,8 @@ return (
     <img src="/images/like.jpg" className="h-6 w-6 mr-2" alt="Like" />
     {post.likesCount}
   </div>
-)}
+)} */}
+
 
 
             </button>
@@ -716,7 +737,9 @@ return (
             <div style={{ padding: "10px", border: "1px solid #ccc" }}>
               {post.comments.map((comment) => (
                 <div key={comment.commentId} style={{ margin: "10px 0" }}>
-                  <strong>{comment.user?.username || "Anonymous"}:</strong> {comment.text}
+                  <strong>{comment.user?.username || "Anonymous"}:</strong> 
+                  
+                  {comment.text}
 
                   <div>
                     <button onClick={() => toggleCommentLike(comment.commentId)}>
@@ -728,30 +751,40 @@ return (
                   {/* Display replies */}
                   <div style={{ marginLeft: "20px" }}>
                     {comment.replies.map((reply) => (
-                      <div key={reply.replyId} >
+                      <div key={reply.replyId} class="mb-1" >
                         {console.log("reply")}
                         {console.log(reply)}
-                        <strong>{reply.user?.username || "Anonymous"}:</strong> {reply.text}
+                        <strong>{reply.user?.username || "Anonymous"}:</strong> 
+                        {reply.text}
                         <div>
-                          <button onClick={() => toggleCommentLike(reply.replyId)}>
+                          {/* <button onClick={() => toggleCommentLike(reply.replyId)}> */}
                             {/* Like button content */}
-                          </button>
+                          {/* </button> */}
                           {/* <button onClick={() => toggleReplyInput(reply.replyId)}>Reply</button> */}
                         </div>
 
                         {/* Reply input for each reply */}
                       
-                        {replyingTo[reply.replyId] && (
-                          <div style={{ marginLeft: "20px" }}>
-                            <textarea
-                              placeholder="Write a reply..."
-                              value={replyTexts[reply.replyId] || ""}
-                              onChange={(e) => handleReplyChange(reply.replyId, e.target.value)}
-                              style={{ width: "90%", margin: "5px 0" }}
-                            />
-                            <button onClick={() => handleAddReply(reply.replyId)}>Reply</button>
-                          </div>
-                        )}
+                   
+
+{replyingTo[reply.replyId] && (
+  <div style={{ marginLeft: "20px" }}>
+    <textarea
+      class="w-full my-1 border-2 border-black"
+      placeholder="Write a reply..."
+      value={replyTexts[reply.replyId] || ""}
+      onChange={(e) => handleReplyChange(reply.replyId, e.target.value)}
+    />
+    <div class="flex justify-end">
+      <button 
+        class="mt-2 bg-blue-500 text-white py-1 px-3 rounded hover:bg-blue-600 transition"
+        onClick={() => handleAddReply(reply.replyId)}
+      >
+        Reply
+      </button>
+    </div>
+  </div>
+)}
                       </div>
                     ))}
                   </div>
@@ -761,25 +794,32 @@ return (
                   {replyingTo[comment.commentId] && (
                     <div style={{ marginLeft: "20px" }}>
                       <textarea
-                        placeholder="Write a reply..."
+                        placeholder="  Write a reply..."
                         value={replyTexts[comment.commentId] || ""}
                         onChange={(e) => handleReplyChange(comment.commentId, e.target.value)}
-                        style={{ width: "90%", margin: "5px 0" }}
+                        style={{ width: "100%", margin: "5px 0",border:"2px solid black" }}
                       />
+                      <div class="flex justify-end">
                       <button onClick={() => handleAddReply(comment.commentId)}>Reply</button>
-                    </div>
+
+                      </div>
+                        </div>
                   )}
                 </div>
               ))}
 
               {/* New comment input */}
               <textarea
-                placeholder="Write a comment..."
+                class="border-2 border-black"
+                placeholder="  Write a comment..."
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
                 style={{ width: "100%", margin: "5px 0" }}
               />
-              <button onClick={() => handleAddComment(post.postId)}>Comment</button>
+              <div class="flex justify-end">
+              <button class="text-right   pl-2 pr-2" onClick={() => handleAddComment(post.postId)}>Comment</button>
+              </div>
+              {/* <button class="text-right" onClick={() => handleAddComment(post.postId)}>Comment</button> */}
             </div>
           )}
         </div>

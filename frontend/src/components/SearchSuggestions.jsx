@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import {useNavigate} from "react-router-dom";
 import axios from "axios";
 
 const SearchSuggestions = () => {
@@ -7,6 +8,7 @@ const SearchSuggestions = () => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const backendBaseUrl = "http://localhost:7000";
+  const navigate=useNavigate();
 
   const getUserIdFromToken = () => {
     const token = localStorage.getItem("token");
@@ -144,7 +146,7 @@ const SearchSuggestions = () => {
         >
           {user.followStatus === "follow" ? "Follow" : "Unfollow"}
         </button>
-        <button className="flex-1 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-md shadow-md transition duration-200">
+        <button className="flex-1 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-md shadow-md transition duration-200" onClick={() => navigate(`/chats`)}>
           Chat
         </button>
       </div>

@@ -6,7 +6,7 @@ import {useSocket} from "./useSocket";
 
 
 const Sidebar=() => {
-    const {getUsers,users,selectedUser,setSelectedUser,isUsersLoading}=useChatStore();
+    const {getUsers,clearUsers, users,selectedUser,setSelectedUser,isUsersLoading, resetState}=useChatStore();
     const {onlineUsers} =useSocket();
     const backendBaseUrl = "http://localhost:7000";
     
@@ -14,9 +14,14 @@ const Sidebar=() => {
     const [showOnlineOnly, setShowOnlineOnly] = useState(false);
 
     useEffect(()=>{
+        
+        clearUsers();
+
         console.log("getting users!");
+
         getUsers();
-    },[getUsers]); 
+        console.log(users); //added
+    },[getUsers,clearUsers]); 
 
     useEffect(()=>{
         console.log("Online User in sidebar");
@@ -38,7 +43,7 @@ const Sidebar=() => {
     if(isUsersLoading) return <SidebarSkeleton />
 
     return (
-        <aside className="h-full w-20 lg:w-72 border-base-300 flex flex-col transition-all duration-200">
+        <aside className="h-full w-20 lg:w-72 border-base-300 flex flex-col transition-all duration-200 border-r-2">
             <div className="border-b border-base-300 w-full p-5">
                 <div className="flex items-center gap-2">
                     <Users className="size-6" />

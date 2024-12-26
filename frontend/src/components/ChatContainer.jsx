@@ -74,6 +74,9 @@ const  ChatContainer=() =>{
         messageEndRef.current.scrollIntoView({behavior: "smooth"});
       }
 
+      console.log("check user");
+      console.log(user);
+
       console.log("messages");
       console.log(messages);
 
@@ -128,18 +131,24 @@ const  ChatContainer=() =>{
         {/* Profile Picture */}
         <div className="flex-shrink-0">
           <div className="w-10 h-10 rounded-full border overflow-hidden">
+    
             <img
-              // src={
-              //   message.senderId === userId
-              //     ? user.profilePic
-              //       ? `${backendBaseUrl}${user.profilePic}`
-              //       : "/avatar.png"
-              //     : selectedUser.profilePic
-              //     ? `${backendBaseUrl}${selectedUser.profilePic}`
-              //     : "/avatar.png"
-              // }
-              alt="profile pic"
-            />
+  src={
+    message.senderId === userId
+      ? user?.profilePic === "/images/default_profile.jpeg"
+        ? "/images/default_profile.jpeg"
+        : user?.profilePic
+        ? `${backendBaseUrl}${user?.profilePic}`
+        : "/avatar.png"
+      : selectedUser.profilePic === "/images/default_profile.jpeg"
+      ? "/images/default_profile.jpeg"
+      : selectedUser.profilePic
+      ? `${backendBaseUrl}${selectedUser.profilePic}`
+      : "/avatar.png"
+  }
+  alt="profile pic"
+/>
+
           </div>
         </div>
 
