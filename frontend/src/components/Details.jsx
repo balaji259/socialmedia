@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Trash, HeartOff, BookmarkMinus } from "lucide-react";
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import "./details.css";
+import LoadingPage from './Loading';
 function UserDetails() {
     const [userData, setUserData] = useState(null);
     const [sectionData, setSectionData] = useState([]);
@@ -25,6 +27,7 @@ function UserDetails() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalContent, setModalContent] = useState([]);
 
+    const navigate=useNavigate();
 
     const token=localStorage.getItem('token');
     const backendBaseUrl = 'http://localhost:7000';
@@ -57,8 +60,17 @@ function UserDetails() {
           console.log("userbyids");
           console.log(userDetails);
           // Map user details
-          const usernames = userDetails.map(user => user.username);
-          setModalContent(usernames); // Set modal content with usernames
+          // const usernames = userDetails.map(user => user.username);
+          // setModalContent(usernames);
+
+          const userDetailsForModal = userDetails.map(user => ({
+            userId: user._id, // Assuming `_id` is the user's ID field
+            username: user.username,
+          }));
+          setModalContent(userDetailsForModal);
+      
+          
+          
           setIsModalOpen(true);
       } catch (error) {
           console.error('Error fetching user details:', error);
@@ -141,6 +153,7 @@ function UserDetails() {
 
             const data = await response.json();
             console.log("data");
+            console.log("this is me id");
             console.log(data);
             // console.log(userData._id);
             setUserData(data);
@@ -395,13 +408,22 @@ function UserDetails() {
         else if (section === 'saved') fetchUserSaved();
     };
 
+    const goToUserProfile = (id) => {
+      
+      // id===userData._id?navigate(`/profile`):navigate(`/profile/${id}`);
+      navigate(`/profile/${id}`)
+    };
+
     if (error) {
         return <div>{error}</div>;
     }
 
     if (!userData) {
-        return <div>Loading...</div>;
+        // return <div>Loading...</div>;
+        return <LoadingPage />;
     }
+
+
 
       
     
@@ -528,16 +550,14 @@ function UserDetails() {
     <div className="modalContent">
       <h3 className="modalTitle">{modalContent.length > 0 ? 'Users List' : 'No Users Found'}</h3>
       <ul className="modalList">
-        {modalContent.map((username, index) => (
-          <li key={index} className="modalListItem">
-            <img
-              src={`https://via.placeholder.com/40`} // Replace with actual user avatar URL if available
-              alt={username}
-              className="userAvatar"
-            />
-            <span className="username">{username}</span>
+   
+          {modalContent.map(user => (
+          <li key={user.userId} className="modalListItem" onClick={()=>{goToUserProfile(user.userId)}}>
+
+           <span className="username">{user.username}</span>
           </li>
-        ))}
+        
+          ))}
       </ul>
       <button className="closeButton" onClick={closeModal}>
         Close

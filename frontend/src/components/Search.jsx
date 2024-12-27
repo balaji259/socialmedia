@@ -5,6 +5,7 @@ import SearchSuggestions from "./SearchSuggestions";
 import { fetchUserDetails } from "./userPosts.js";
 import {useSocket} from "./useSocket";
 import axios from "axios";
+import LoadingPage from "./Loading.jsx";
 
 const Search = () => {
   const [currentuser, setCurrentUser] = useState({ username: "", profilePic: "" });
@@ -27,6 +28,11 @@ const Search = () => {
 
     getUserDetails();
   }, []);
+
+  if(!currentuser)
+  {
+    return <LoadingPage />
+  }
 
   // Styles for layout and responsiveness
   const styles = {

@@ -90,6 +90,10 @@
     color: #777;
 }
 
+.followers,.following{
+    cursor:pointer;
+}
+
 .additionalInfo {
     font-size: 1rem;
     color: #555;
@@ -289,6 +293,7 @@
     padding: 10px;
     border-bottom: 1px solid #f0f0f0;
     transition: background-color 0.2s;
+    cursor: pointer;
   }
   
   .modalListItem:hover {

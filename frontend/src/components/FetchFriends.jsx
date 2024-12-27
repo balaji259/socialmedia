@@ -27,12 +27,15 @@ const FriendsList = () => {
   useEffect(() => {
     if (!userId) return; // Avoid API call until userId is available
 
+
+
     const fetchFriends = async () => {
       try {
         console.log("Fetching friends for userId:", userId);
         const response = await axios.get(`${backendBaseUrl}/user/${userId}/friends`);
         console.log("API Response:", response.data);
         setFriends(response.data.friends);
+      
       } catch (error) {
         console.error("Error fetching friends:", error);
       }
@@ -41,27 +44,45 @@ const FriendsList = () => {
     fetchFriends();
   }, [userId]);
 
+  const goToUserProfile = (id) => {
+    // navigate(`/profile/${userId}`); 
+    id===userId?navigate(`/profile`):navigate(`/profile/${id}`);
+  };
+
   return (
-    <div className="container mx-auto p-4 min-h-screen flex flex-col overflow-auto">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <div className="w-full max-w-4xl lg:max-w-6xl xl:max-w-7xl mx-auto p-4 sm:p-8 bg-[#d5d5d5] min-h-screen">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {friends.map((friend) => (
-          <div key={friend._id} className="bg-white shadow-md rounded-lg overflow-hidden">
+          <div
+            key={friend._id}
+            className="bg-white p-4 sm:p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1 text-center"
+            
+          >
+            {/* Profile Picture */}
             <img
               src={
                 friend.profilePic === "/images/default_profile.jpeg"
                   ? "/images/default_profile.jpeg"
                   : `${backendBaseUrl}${friend.profilePic}`
+
               }
+              onClick={()=>{goToUserProfile(friend._id)}}
               alt={friend.username}
-              className="w-full h-40 object-cover"
+              className="w-full h-48 object-cover rounded-md"
             />
-            <div className="p-4">
-              <h3 className="text-lg font-semibold text-left">{friend.username}</h3>
+
+            {/* Username */}
+            <h3 className="mt-4 text-lg font-semibold text-gray-800">{friend.username}</h3>
+            <p className="mt-2 text-gray-600 text-sm">
+        {friend.bio ? friend.bio : "-"}
+      </p>
+
+
+            {/* Chat Button */}
+            <div className="mt-4">
               <button
-                className="mt-3 w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition"
-                onClick={() => {
-                  navigate('/chats');
-                }}
+                className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md shadow-md transition duration-200"
+                onClick={() => navigate('/chats')}
               >
                 Chat
               </button>

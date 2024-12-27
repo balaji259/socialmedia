@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from "axios";
+import { useNavigate } from 'react-router-dom';
 import "./details.css";
 
 const UserProfile = () => {
@@ -12,8 +13,9 @@ const UserProfile = () => {
     const [selectedPost, setSelectedPost] = useState(null);
     const [savedData, setSavedData] = useState([]);
     const [likedData,setLikedData]=useState([]);
-    const [activeSection, setActiveSection] = useState('posts');
+    const [activeSection, setActiveSection] = useState('');
     const backendBaseUrl = "http://localhost:7000";
+    const navigate=useNavigate();
 
     const handleSectionChange = (section) => {
         setActiveSection(section);
@@ -110,11 +112,49 @@ const UserProfile = () => {
             });
     }, [userId]);
 
-    const openModal = (type) => {
-        const content = type === 'following' ? userData.following : userData.followers;
-        setModalContent(content);
-        setIsModalOpen(true);
+    // const openModal = (type) => {
+    //     const content = type === 'following' ? userData.following : userData.followers;
+    //     setModalContent(content);
+    //     setIsModalOpen(true);
+    // };
+
+    const openModal = async (type) => {
+        let userIds = [];
+        
+        // Determine the IDs to fetch based on the modal type
+        if (type === 'followers') {
+            userIds = userData.followers; // Assuming `userData.followers` contains an array of user IDs
+        } else if (type === 'following') {
+            userIds = userData.following; // Assuming `userData.following` contains an array of user IDs
+        }
+    
+        try {
+            // Fetch user details from the backend
+            const response = await fetch(`${backendBaseUrl}/user/getUsersByIds`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userIds }),
+            });
+    
+            // Parse the response
+            const userDetails = await response.json(); // Assuming response contains an array of user objects [{ _id, username }, ...]
+    
+            // Map user details into the desired format for the modal
+            const userDetailsForModal = userDetails.map(user => ({
+                userId: user._id, // User ID from the backend
+                username: user.username, // Username from the backend
+            }));
+    
+            // Set modal content with user details
+            setModalContent(userDetailsForModal);
+    
+            // Open the modal
+            setIsModalOpen(true);
+        } catch (error) {
+            console.error('Error fetching user details:', error);
+        }
     };
+    
 
     const closeModal = () => {
         setIsModalOpen(false);
@@ -124,6 +164,15 @@ const UserProfile = () => {
     const toggleEditMode = () => {
         console.log("Edit mode toggled");
     };
+
+
+    const goToUserProfile = (id) => {
+        
+        setIsModalOpen(false);
+        navigate(`/profile/${id}`);
+
+    
+      };
 
     if (!userData) return <p>Loading...</p>;
 
@@ -150,11 +199,11 @@ const UserProfile = () => {
                             <span className="statCount">{userData.postsCount || 0}</span>
                             <span className="statLabel">Posts</span>
                         </div>
-                        <div className="statItem" onClick={() => openModal('following')}>
+                        <div className="statItem following" onClick={() => openModal('following')}>
                             <span className="statCount">{userData.following.length || 0}</span>
                             <span className="statLabel">Following</span>
                         </div>
-                        <div className="statItem" onClick={() => openModal('followers')}>
+                        <div className="statItem followers" onClick={() => openModal('followers')}>
                             <span className="statCount">{userData.followers.length || 0}</span>
                             <span className="statLabel">Followers</span>
                         </div>
@@ -182,14 +231,10 @@ const UserProfile = () => {
                     <div className="modalContent">
                         <h3 className="modalTitle">{modalContent.length > 0 ? 'Users List' : 'No Users Found'}</h3>
                         <ul className="modalList">
-                            {modalContent.map((username, index) => (
-                                <li key={index} className="modalListItem">
-                                    <img
-                                        src={`https://via.placeholder.com/40`} // Replace with actual user avatar URL if available
-                                        alt={username}
-                                        className="userAvatar"
-                                    />
-                                    <span className="username">{username}</span>
+                            {modalContent.map((user) => (
+                                <li key={user.userId} className="modalListItem" onClick={()=>goToUserProfile(user.userId)}>
+                                
+                                    <span className="username">{user.username}</span>
                                 </li>
                             ))}
                         </ul>
@@ -200,9 +245,7 @@ const UserProfile = () => {
 
 <div className="buttonContainer">
     <button style={activeSection === 'posts' ? styles.activeButton : styles.inactiveButton} onClick={() => handleSectionChange('posts')}>Posts</button>
-    {/* <button style={activeSection === 'saved' ? styles.activeButton : styles.inactiveButton} onClick={() => handleSectionChange('saved')}>Saved</button>
-    <button style={activeSection === 'liked' ? styles.activeButton : styles.inactiveButton} onClick={() => handleSectionChange('liked')}>Liked</button> */}
-</div>
+    </div>
 
 <div className="sectionContent">
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
@@ -217,6 +260,7 @@ const UserProfile = () => {
                     {post.postType === "image" && post.content.mediaUrl && (
                         <img
                             src={`${backendBaseUrl}/${post.content.mediaUrl}`}
+                         
                             alt="Post media"
                             className="w-full h-full object-cover"
                         />
@@ -260,7 +304,12 @@ const UserProfile = () => {
                 <div className="flex flex-col">
                     <div className="flex items-center mb-4">
                         <img
-                            src={`${backendBaseUrl}${selectedPost.user.profilePic}`}
+                            // src={`${backendBaseUrl}${selectedPost.user.profilePic}`}
+                            src={
+                                selectedPost.user.profilePic === "/images/default_profile.jpeg"
+                                  ? "/images/default_profile.jpeg"
+                                  : `${backendBaseUrl}${selectedPost.user.profilePic}`
+                              }
                             alt="Profile"
                             className="w-10 h-10 rounded-mid mr-3"
                         />
@@ -298,102 +347,13 @@ const UserProfile = () => {
         </div>
     )}
 
-    {/* {activeSection === "saved" &&
-        savedData.map((post, index) => (
-            <div
-                key={post._id}
-                className="bg-white rounded-lg shadow-md p-8 mb-4 relative"
-            >
-                <button
-                    className="absolute top-4 right-4 text-gray-500 hover:text-red-600"
-                    onClick={() => handleDeletePost(post._id)}
-                >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="w-6 h-6"
-                    >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M6 18L18 6M6 6l12 12"
-                        />
-                    </svg>
-                </button>
-                <div className="flex items-center mb-4">
-                    <img
-                        src={`${backendBaseUrl}${userData.profilePic}`}
-                        alt="Profile"
-                        className="w-14 h-14 rounded-md mr-2"
-                    />
-                    <strong className="text-lg ml-4">{post.postId.user.username}</strong>
-                </div>
-                {post.postId.caption && (
-                    <p className="text-gray-700 mb-4">{post.postId.caption}</p>
-                )}
-                {post.postId.content.mediaUrl && post.postId.postType === "image" && (
-                    <img
-                        src={`${backendBaseUrl}/${post.postId.content.mediaUrl}`}
-                        alt="Post content"
-                        className="w-full rounded-lg mt-2"
-                    />
-                )}
-                {post.postId.content.mediaUrl && post.postId.postType === "video" && (
-                    <video controls className="w-full rounded-lg mt-2">
-                        <source
-                            type="video/mp4"
-                            src={`${backendBaseUrl}/${post.postId.content.mediaUrl}`}
-                        />
-                        Your browser does not support the video tag.
-                    </video>
-                )}
-            </div>
-        ))}
-
-    {activeSection === "liked" &&
-        likedData.map((post, index) => (
-            <div
-                key={post._id}
-                className="bg-white rounded-lg shadow-md p-8 mb-4"
-            >
-                <div className="flex items-center mb-4">
-                    <img
-                        src={`${backendBaseUrl}${userData.profilePic}`}
-                        alt="Profile"
-                        className="w-14 h-14 rounded-md mr-2"
-                    />
-                    <strong className="text-lg ml-4">{post.user.username}</strong>
-                </div>
-                {post.caption && (
-                    <p className="text-gray-700 mb-4">{post.caption}</p>
-                )}
-                {post.content.mediaUrl && post.postType === "image" && (
-                    <img
-                        src={`${backendBaseUrl}/${post.content.mediaUrl}`}
-                        alt="Post content"
-                        className="w-full rounded-lg mt-2"
-                    />
-                )}
-                {post.content.mediaUrl && post.postType === "video" && (
-                    <video controls className="w-full rounded-lg mt-2">
-                        <source
-                            type="video/mp4"
-                            src={`${backendBaseUrl}/${post.content.mediaUrl}`}
-                        />
-                        Your browser does not support the video tag.
-                    </video>
-                )}
-            </div>
-        ))} */}
+    
 </div>
 
 
 
 
-        {/* //container     */}
+     
         </div>
     );
 };
@@ -402,7 +362,13 @@ const UserProfile = () => {
 
 
 const styles = {
+
+
     //     
+        container:{
+            width:'100%',
+        },
+
         activeButton: {
             padding: '12px 25px',
             backgroundColor: '#28a745',

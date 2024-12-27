@@ -91,6 +91,11 @@ const SearchSuggestions = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [hasMore]);
 
+  const goToUserProfile = (id) => {
+    // navigate(`/profile/${userId}`); 
+    id===currentUserId?navigate(`/profile`):navigate(`/profile/${id}`);
+  };
+
   useEffect(() => {
     if (page > 1) fetchUsers();
   }, [page]);
@@ -122,6 +127,7 @@ const SearchSuggestions = () => {
         }
         alt={user.username}
         className="w-full h-48 object-cover rounded-md"
+        onClick={()=>{goToUserProfile(user._id)}}
       />
 
       {/* Username */}
