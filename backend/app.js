@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
+const verifyToken =require("./middleware/verify.js");
 const connectDB = require('./db/db');
 const authRouter = require('./routes/auth');
 const postRouter=require("./routes/postRoutes");
@@ -32,11 +33,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(express.static(path.join(__dirname, '..','frontend','dist')));
 
-// app.use(cors({
-//   origin: 'http://localhost:8000', // Replace with your frontend URL
-//   credentials: true, // Allow cookies to be sent
-// }));
-// Connect to MongoDB
+
 
 app.use(cors());
 
@@ -49,20 +46,18 @@ app.use('/user',userRouter);
 app.use('/profile',profileRouter);
 app.use('/streak',streakRouter);
 app.use('/messages',chatRouter);
-// app.use('/chat',chatRouter);
-// app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
 
 
-// Media Upload Route
+app.get('/verify',verifyToken,(req,res)=>{
+  console.log("Token Verified");
+  res.status(200).json({
+    message:"Token Verified",
+    token:req.token,
+    user:req.user
+  })
+});
 
-// app.use((err, req, res, next) => {
-//   console.error(err.stack);
-//   res.status(500).send('Something went wrong!');
-// });
 
-// app.get('*',(req,res)=>{
-//   res.sendFile(path.join(__dirname,'..','frontend','dist','index.html'));
-// })
 // Start the server
 const PORT = process.env.PORT || 7000;
 server.listen(PORT, () => {

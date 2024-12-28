@@ -162,6 +162,7 @@ const sidebarStyle = {
   top: '60px',
   height: 'calc(100vh - 60px)', // Full height minus top offset
   backgroundColor: '#f1f3f5',
+  // backgroundColor:"red",
   padding: '15px',
   paddingTop: '50px',
   display: 'flex',

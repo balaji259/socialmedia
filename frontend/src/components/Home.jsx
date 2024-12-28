@@ -203,7 +203,7 @@ const styles = {
   },
   suggestionsSidebar: {
     backgroundColor: "#d5d5d5",
-    boxShadow: "-2px 0 5px rgba(0, 0, 0, 0.1)",
+   
     height: "calc(100vh - 60px)",
     position: "relative",
     display: "flex",

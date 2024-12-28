@@ -599,6 +599,7 @@ return (
 
 
   <div className="post-component-container" style={postComponentContainerStyle}>
+  
     <div style={postInputContainerStyle}>
       <form onSubmit={handleSubmit}>
         <textarea

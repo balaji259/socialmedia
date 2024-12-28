@@ -1,6 +1,8 @@
 import React from 'react';
+import {useEffect} from "react";
 import { useNavigate } from 'react-router-dom';
 import { useSocket } from './useSocket';
+import axios from "axios";
 
 const WelcomeOverlay = () => {
     const navigate = useNavigate();
@@ -13,6 +15,33 @@ const WelcomeOverlay = () => {
     function onLogin() {
         navigate('/login');
     }
+
+  const checkUser=async ()=>{
+    const token=localStorage.getItem("token");
+    if(token){
+        axios.get("/verify",{
+            headers: {Authorization:`Bearer ${token}` },
+        })
+        .then((res)=> {
+            // setUser(res.data.user);
+            navigate('/home');
+            console.log("success");
+        })
+        .catch((e) => {
+            // setUser(null);
+        
+            localStorage.removeItem('token');
+        })
+        
+    }
+    else{
+        console.log("no token");
+    }
+  }
+
+    useEffect(()=>{
+        checkUser();
+    },[])
 
     return (
         <div className="relative w-screen h-screen flex items-center justify-center bg-gray-800 text-white p-4 sm:p-8">
