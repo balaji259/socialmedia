@@ -435,10 +435,12 @@ function UserDetails() {
                         <div>
                             <label htmlFor="profilePicUpload">
                                 <img
-                                    src={previewImage || editableData.profilePic || '/images/default_profile.jpeg'}
-                                    alt="Profile Pic"
+                                    // src={previewImage || editableData.profilePic || '/images/default_profile.jpeg'}
+                                    src='/images/default_profile.jpeg'
+                                    alt="Click to add ProfilePic"
                                     className="profilePic"
                                 />
+                               
                             </label>
                             <input
                                 type="file"
@@ -448,6 +450,8 @@ function UserDetails() {
                                 style={{ display: 'none' }}
                                 onChange={handleImageUpload}
                             />
+                            <br />
+                            <span>Click image to add a picture</span>
                         </div>
                     ) : (
                         <img

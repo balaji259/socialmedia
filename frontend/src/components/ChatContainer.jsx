@@ -130,7 +130,7 @@ const  ChatContainer=() =>{
       >
         {/* Profile Picture */}
         <div className="flex-shrink-0">
-          <div className="w-10 h-10 rounded-full border overflow-hidden">
+          <div className="w-10 h-10 rounded-md border overflow-hidden">
     
             <img
   src={

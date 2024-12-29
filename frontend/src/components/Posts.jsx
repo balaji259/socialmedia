@@ -67,7 +67,8 @@ const postHeaderStyle = {
 
 const userInfoStyle = {
   display: 'flex',
-  alignItems: 'center',
+  // alignItems: 'center',
+  alignItems: 'flex-start'
 };
 
 const profilePicStyle = {
@@ -80,7 +81,8 @@ const profilePicStyle = {
 
 const usernameStyle = {
   fontWeight: 'bold',
-  marginLeft:'4px'
+  marginLeft:'4px',
+  marginTop:'8px'
 };
 
 const toggleButtonStyle = {
