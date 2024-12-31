@@ -239,11 +239,10 @@ function UserDetails() {
             formData.append('profilePic', editableData.profilePic);
         }
 
-        console.log("formData");
-        console.log(formData);
+     
 
         try {
-            console.log(formData);
+            
             const response = await axios.patch(`/profile/update`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
