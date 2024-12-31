@@ -35,7 +35,14 @@ app.use(express.static(path.join(__dirname, '..','frontend','dist')));
 
 
 
-app.use(cors());
+// app.use(cors(*));
+
+app.use(
+  cors({
+    origin: "https://friendsbook-cy0f.onrender.com", // Your deployed frontend URL
+    methods: ["GET", "POST"],
+  })
+);
 
 connectDB();
 
@@ -63,7 +70,7 @@ app.get('*',(req,res)=>{
 
 
 // Start the server
-const PORT = process.env.PORT || 7000;
+const PORT = 7000;
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

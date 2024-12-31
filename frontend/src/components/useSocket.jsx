@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { io } from "socket.io-client";
 
-const backendBaseUrl = "http://localhost:7000";
+const backendBaseUrl = "https://friendsbook-cy0f.onrender.com";
 
 // Create Context
 const SocketContext = createContext();
@@ -56,6 +56,7 @@ useEffect(() => {
       query:{
         userId:user.userId,
       },
+      
       // reconnection: true,        // Enable reconnection
       // reconnectionAttempts: 5,   // Number of reconnection attempts
       // reconnectionDelay: 1000, 
