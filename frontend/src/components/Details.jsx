@@ -481,7 +481,7 @@ function UserDetails() {
                                         placeholder="Type username of your best friend"
                                     />
                                     {suggestions.length > 0 && (
-                                        <ul>
+                                        <ul className="bg-black text-white">
                                         {suggestions.map((user) => (
                                             <li key={user._id} onClick={() => handleSuggestionClick(user)} style={{
                                                 ...styles.suggestionItem,

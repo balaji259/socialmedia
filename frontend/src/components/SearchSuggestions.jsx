@@ -100,6 +100,12 @@ const SearchSuggestions = () => {
     if (page > 1) fetchUsers();
   }, [page]);
 
+  const handleChat = (searchId) => {
+    navigate(`/chats?chatUserId=${searchId}`); // Pass the friendId as a query parameter
+  };
+
+
+
   return (
     <div className="w-full max-w-4xl lg:max-w-6xl xl:max-w-7xl mx-auto p-4 sm:p-8 bg-[#d5d5d5] min-h-screen">
       <div className="relative mb-8">
@@ -152,7 +158,7 @@ const SearchSuggestions = () => {
         >
           {user.followStatus === "follow" ? "Follow" : "Unfollow"}
         </button>
-        <button className="flex-1 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-md shadow-md transition duration-200" onClick={() => navigate(`/chats`)}>
+        <button className="flex-1 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-md shadow-md transition duration-200" onClick={() => handleChat(user._id)}>
           Chat
         </button>
       </div>

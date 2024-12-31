@@ -49,6 +49,11 @@ const FriendsList = () => {
     id===userId?navigate(`/profile`):navigate(`/profile/${id}`);
   };
 
+    const handleChat = (friendId) => {
+    navigate(`/chats?chatUserId=${friendId}`); // Pass the friendId as a query parameter
+  };
+
+
   return (
     <div className="w-full max-w-4xl lg:max-w-6xl xl:max-w-7xl mx-auto p-4 sm:p-8 bg-[#d5d5d5] min-h-screen">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
@@ -82,7 +87,7 @@ const FriendsList = () => {
             <div className="mt-4">
               <button
                 className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md shadow-md transition duration-200"
-                onClick={() => navigate('/chats')}
+                onClick={() => handlechat(friend._id)}
               >
                 Chat
               </button>

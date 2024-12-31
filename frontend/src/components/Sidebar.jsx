@@ -4,38 +4,56 @@ import SidebarSkeleton from "./skeletons/SidebarSkeleton";
 import { Users } from "lucide-react";
 import {useSocket} from "./useSocket";
 
+import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
+
 
 const Sidebar=() => {
-    const {getUsers,clearUsers, users,selectedUser,setSelectedUser,isUsersLoading, resetState}=useChatStore();
+    const {getUsers,clearUsers, users,selectedUser,setSelectedUser,isUsersLoading}=useChatStore();
     const {onlineUsers} =useSocket();
     const backendBaseUrl = "http://localhost:7000";
     
     // const onlineUsers=[];
     const [showOnlineOnly, setShowOnlineOnly] = useState(false);
 
+
+    const [searchQuery, setSearchQuery] = useState("");
+    const navigate = useNavigate();
+    const location = useLocation();
+    const [searchParams] = useSearchParams();
+
     useEffect(()=>{
         
         clearUsers();
-
-        console.log("getting users!");
-
         getUsers();
-        console.log(users); //added
+        
     },[getUsers,clearUsers]); 
 
-    useEffect(()=>{
-        console.log("Online User in sidebar");
-        console.log(onlineUsers);
-    },[onlineUsers])
-
+   
+    useEffect(() => {
+        const chatUserId = searchParams.get("chatUserId");
+        if (chatUserId && users.length > 0) {
+          const userToSelect = users.find((user) => user._id === chatUserId);
+          if (userToSelect) setSelectedUser(userToSelect);
+        }
+      }, [searchParams, users, setSelectedUser]);
     
 
-    const filteredUsers = showOnlineOnly
-    ? users.filter((user) => onlineUsers.includes(user._id))
-    : users;
+      const handleUserSelect = (user) => {
+        setSelectedUser(user);
+        const newUrl = new URLSearchParams(location.search);
+        newUrl.set("chatUserId", user._id); // Add `chatUserId` to URL
+        navigate(`${location.pathname}?${newUrl.toString()}`); // Preserve current path
+      };
 
-    console.log(users);
-    console.log("it is sidebar !");
+    // const filteredUsers = showOnlineOnly
+    // ? users.filter((user) => onlineUsers.includes(user._id))
+    // : users;
+
+    const filteredUsers = users
+    .filter((user) =>
+      user.fullname.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    .filter((user) => (showOnlineOnly ? onlineUsers.includes(user._id) : true));
 
     const onlineUsersCount = onlineUsers?.length ? onlineUsers.length - 1 : 0;
 
@@ -50,6 +68,19 @@ const Sidebar=() => {
                     <span className="font-medium hidden lg:block">Contacts</span>
 
                 </div>
+
+               {/* Search Bar */}
+        <div className="mt-3">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search users..."
+            className="w-full px-3 py-2 border border-zinc-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+          />
+        </div>
+
+
                 {/*todo :online filter toggle */}
 
                 <div className="mt-3 hidden lg:flex items-center gap-2">
@@ -71,7 +102,7 @@ const Sidebar=() => {
                 {filteredUsers.map((user) => (
                     <button
                         key={user._id}
-                        onClick={()=>setSelectedUser(user)}
+                        onClick={()=>handleUserSelect(user)}
                         className={
                             `w-full p-3 flex items-center gap-3 hover:bg-base-300 transition-colors ${selectedUser?._id===user._id ? "bg-base-300 ring-1 ring-base-300" : ""}`
                         }
@@ -106,7 +137,7 @@ const Sidebar=() => {
                 ))}
 
 {filteredUsers.length === 0 && (
-          <div className="text-center text-zinc-500 py-4">No online users</div>
+          <div className="text-center text-zinc-500 py-4">No users</div>
         )}
 
 
