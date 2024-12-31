@@ -441,7 +441,7 @@ const userId = payload.userId;
 
 const copyPostIdToClipboard = (postId) => {
   const postUrl = `/posts/${postId}`; // Adjust URL structure
-  navigator.clipboard.writeText(postUrl)
+  navigator.clipboard.writeText(`${window.location.href}postUrl`)
     .then(() => toast.success("Post link copied! Share it anywhere."))
     .catch(err => console.error('Failed to copy:', err));
 };
