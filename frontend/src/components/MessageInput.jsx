@@ -145,7 +145,7 @@ const MessageInput = () => {
                         <Send size={22} />
                     )}
                 </button>
-                {isSending && (
+                {/* {isSending && (
                     <button
                         type="button"
                         onClick={cancelSending}
@@ -154,7 +154,7 @@ const MessageInput = () => {
                     >
                         Cancel
                     </button>
-                )}
+                )} */}
             </form>
         </div>
     );

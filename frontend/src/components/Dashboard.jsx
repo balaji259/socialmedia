@@ -42,7 +42,9 @@ const Dashboard = () => {
           <button className="menu-item" onClick={() => navigate("/search")}>
             Search
           </button>
-          <button className="menu-item" onClick={() => navigate("/friends")}>Friends</button>
+          <button className="menu-item" onClick={() => navigate("/friends")}> <span className="stacked-text">
+       Friend<br />Circle
+          </span></button>
           <button className="menu-item" onClick={()=> navigate("/chats")}>Chats</button>
           
           <button className="menu-item" onClick={() => navigate("/profile")}>

@@ -51,7 +51,7 @@ const Sidebar=() => {
 
     const filteredUsers = users
     .filter((user) =>
-      user.fullname.toLowerCase().includes(searchQuery.toLowerCase())
+      user.username.toLowerCase().includes(searchQuery.toLowerCase())
     )
     .filter((user) => (showOnlineOnly ? onlineUsers.includes(user._id) : true));
 
@@ -75,7 +75,7 @@ const Sidebar=() => {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search users..."
+            placeholder="Enter a user name..."
             className="w-full px-3 py-2 border border-zinc-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
@@ -125,7 +125,7 @@ const Sidebar=() => {
 
                     {/*userinfo -nly visible on larger screens */}
                     <div className="hidden lg:block text-left min-w-0" >
-                        <div className="font-medium truncate text-red">{user.fullname}</div>
+                        <div className="font-medium truncate text-red">{user.username || user.fullname}</div>
                         <div className="text-sm text-zinc-400">
                             { onlineUsers && Array.isArray(onlineUsers) && onlineUsers.includes(user._id) ? "Online" :"Offline"}
 

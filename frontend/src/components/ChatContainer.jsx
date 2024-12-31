@@ -4,7 +4,7 @@ import ChatHeader from "./ChatHeader";
 import MessageInput from "./MessageInput";
 import MessageSkeleton from "./skeletons/MessageSkeleton";
 import {useSocket} from "./useSocket";
-
+import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 const backendBaseUrl="http://localhost:7000";
 
@@ -16,6 +16,15 @@ const  ChatContainer=() =>{
     const {socket} =useSocket();
 
     const messageEndRef=useRef(null);
+
+    const [searchParams] = useSearchParams();
+
+
+    const [showModal, setShowModal] = useState(false); // To track modal visibility
+  const [modalMedia, setModalMedia] = useState(""); // To store the media URL for the modal
+  const [modalMediaType, setModalMediaType] = useState(""); // To store media type (image/video)
+
+  if (!selectedUser) return <MessageSkeleton />;
 
 
     const formatMessageTime=(date) => {
@@ -69,7 +78,16 @@ const  ChatContainer=() =>{
 
   
 
-    },[messages])
+    },[messages]);
+
+
+    useEffect(() => {
+      const chatUserId = searchParams.get("chatUserId");
+      if (chatUserId) {
+        // Set selected user based on URL
+        getMessages(chatUserId);
+      }
+    }, [searchParams, getMessages]);
 
 
 
@@ -98,7 +116,13 @@ const  ChatContainer=() =>{
             <MessageInput />    
         </div>
         
-    )
+    );
+
+    const handleMediaClick = (mediaUrl, mediaType) => {
+      setModalMedia(mediaUrl);
+      setModalMediaType(mediaType);
+      setShowModal(true); // Open the modal
+    };
 
 
     return (
@@ -146,43 +170,82 @@ const  ChatContainer=() =>{
           </div>
 
           {/* Chat Bubble */}
-          <div className={`inline-block bg-primary text-white px-4 py-2 rounded-lg ${message.senderId === userId ? "bg-blue-500 text-white" : "bg-blue-500 text-white"}`}>
-            
-            {message.media && (
+          <div
+                className={`inline-block rounded-lg ${
+                  message.senderId === userId
+                    ? "bg-blue-500 text-white"
+                    : "bg-blue-500 text-white"
+                } ${
+                  message.text && !message.media ? "px-4 py-2" : "px-1.5 py-1.5"
+                }`}
+              >
+                {message.media && (
                   <>
                     {message.mediaType === "image" && (
-                      <img
-                        src={message.media}
-                        alt="Attachment"
-                        className="sm:max-w-[200px] rounded-md mb-2"
-                      />
+                      <div className="relative">
+                        <img
+                          src={message.media}
+                          alt="Attachment"
+                          className="sm:max-w-[200px] rounded-md mb-2"
+                          onClick={() => handleMediaClick(message.media, "image")} // Pass type "image"
+                        />
+                      </div>
                     )}
                     {message.mediaType === "video" && (
-                      <video
-                        src={message.media}
-                        controls
-                        className="sm:max-w-[200px] rounded-md mb-2"
-                      />
+                      <div className="relative">
+                        <video
+                          src={message.media}
+                          controls
+                          className="sm:max-w-[200px] rounded-md mb-2"
+                          onClick={() => handleMediaClick(message.media, "video")} // Pass type "video"
+                        />
+                      </div>
                     )}
                   </>
                 )}
                 {/* Text Message */}
                 {message.text && <p>{message.text}</p>}
+              </div>            
               </div>
-            </div>
           </div>
         ))}
       </div>
 
   <MessageInput />
+
+        {/* Modal for media */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="relative bg-white p-4 rounded-lg">
+            {/* Close Button */}
+            <button
+              onClick={() => setShowModal(false)} // Close modal
+            >
+              <span className="text-lg font-bold pt-0">X</span>
+            </button>
+
+            {/* Display the modal content */}
+            {modalMediaType === "image" && (
+              <img
+                src={modalMedia}
+                alt="Modal Attachment"
+                className="max-w-full max-h-[90vh] object-contain"
+              />
+            )}
+
+            {modalMediaType === "video" && (
+              <video
+                src={modalMedia}
+                
+                className="max-w-full max-h-[90vh] object-contain"
+              />
+            )}
+          </div>
+        </div>
+      )}
+
 </div>
-
-    )
-
-    
-
-
-
+    );
 };
 
 export default ChatContainer;

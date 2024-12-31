@@ -23,6 +23,11 @@
   transition: all 0.3s ease-in-out;
 }
 
+.stacked-text {
+  display: inline-block;
+  text-align: center; /* Ensures proper alignment */
+  line-height: 1.2;  /* Adjust spacing between lines */
+}
 /* Top Menu */
 .menu {
   display: flex;

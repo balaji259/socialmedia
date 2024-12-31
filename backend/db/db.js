@@ -1,8 +1,8 @@
 
-
+require('dotenv').config();
 const mongoose = require("mongoose");
 
-const url = "mongodb+srv://balajipuneti259:balaji%40521@friendsbook.xlide.mongodb.net/test?retryWrites=true&w=majority";
+const url = process.env.MONGO_URI;
 
 mongoose.connect
 
@@ -12,10 +12,9 @@ const connectDB = async () => {
     await mongoose.connect(url, {
       
     });
-    console.log("MongoDB connected successfully");
+    console.log("MongoDB connected successfully!");
   } catch (error) {
     console.error("MongoDB connection failed", error);
-    process.exit(1);
   }
 };
 
