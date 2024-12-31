@@ -21,14 +21,13 @@ const Login = ({ onSwitch }) => {
          
             e.preventDefault();
            
-        axios.post("http://localhost:7000/user/login", { email, password })
+        axios.post("/user/login", { email, password })
             .then((response) => {
                 const token = response.data.token;
                 localStorage.setItem('token', token);
                 
                 setUser(response.data.payload);
-                // console.log("user",user);
-                console.log(response.data.payload);
+                
                 toast.success('Login Successful', { duration: 2000 });
  
                
@@ -54,7 +53,7 @@ const Login = ({ onSwitch }) => {
     const handleGoogleLogin = async (x) => {
         
             console.log(x.email);
-            axios.post("http://localhost:7000/user/login", { email: x.email })
+            axios.post("/user/login", { email: x.email })
                 .then((response) => {
                     const token = response.data.token;
                     localStorage.setItem('token', token);

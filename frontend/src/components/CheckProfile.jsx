@@ -30,10 +30,10 @@ const UserProfile = () => {
             console.log(userId);
     
             if (userData) {
-                const response = await axios.get(`${backendBaseUrl}/profile/userPosts/${userId}`);
+                const response = await axios.get(`/profile/userPosts/${userId}`);
                 
     
-                console.log(response);
+                
                 
                 setSectionData(response.data.posts || []);
             } else {
@@ -44,11 +44,7 @@ const UserProfile = () => {
             setSectionData([]);
         }
     };
-    
-    // Log sectionData when it updates
-    // useEffect(() => {
-    //     console.log("Updated sectionData:", sectionData);
-    // }, [sectionData]);
+   
 
 
 
@@ -57,8 +53,8 @@ const UserProfile = () => {
             const userId=userData._id;
             console.log(userId);
 
-            const response = await axios.get(`${backendBaseUrl}/profile/likedPosts/${userId}`);
-            console.log(response);
+            const response = await axios.get(`/profile/likedPosts/${userId}`);
+           
             setLikedData(response.data);
         } catch (error) {
             console.error('Error fetching liked posts:', error);
@@ -66,10 +62,7 @@ const UserProfile = () => {
         }
     };
 
-    // useEffect(() => {
-    //     console.log("Updated likedData:", likedData);
-    // }, [likedData]);
-
+  
     const fetchUserSaved = async () => {
         try {
             console.log("entered fetch User Saved");
@@ -77,11 +70,9 @@ const UserProfile = () => {
             console.log(userId);
     
             if (userData) {
-                const response = await axios.get(`${backendBaseUrl}/profile/savedPosts/${userId}`);
+                const response = await axios.get(`/profile/savedPosts/${userId}`);
                 
-                console.log("response");
-                console.log(response);
-                console.log("setting savedData");
+               
                 
                 setSavedData(response.data || []);
                 
@@ -94,16 +85,12 @@ const UserProfile = () => {
         }
     };
     
-    // useEffect(() => {
-    //     console.log("Updated saved Data:");
-    //     console.log(savedData);
-        
+    
 
-    // }, [savedData]);
 
     useEffect(() => {
         // Fetch user data by userId
-        axios.get(`${backendBaseUrl}/user/viewProfile/${userId}`)
+        axios.get(`/user/viewProfile/${userId}`)
             .then((response) => {
                 setUserData(response.data);
             })
@@ -112,11 +99,7 @@ const UserProfile = () => {
             });
     }, [userId]);
 
-    // const openModal = (type) => {
-    //     const content = type === 'following' ? userData.following : userData.followers;
-    //     setModalContent(content);
-    //     setIsModalOpen(true);
-    // };
+    
 
     const openModal = async (type) => {
         let userIds = [];
@@ -130,7 +113,7 @@ const UserProfile = () => {
     
         try {
             // Fetch user details from the backend
-            const response = await fetch(`${backendBaseUrl}/user/getUsersByIds`, {
+            const response = await fetch(`/user/getUsersByIds`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ userIds }),
@@ -182,7 +165,7 @@ const UserProfile = () => {
                 {/* Left Section: Profile Picture */}
                 <div className="profilePicContainer">
                     <img
-                        src={userData.profilePic === '/images/default_profile.jpeg' ? '/images/default_profile.jpeg' : `${backendBaseUrl}${userData.profilePic}`}
+                        src={userData.profilePic === '/images/default_profile.jpeg' ? '/images/default_profile.jpeg' : `${userData.profilePic}`}
                         alt="Profile Pic"
                         className="profilePic"
                     />
@@ -259,7 +242,7 @@ const UserProfile = () => {
                 >
                     {post.postType === "image" && post.content.mediaUrl && (
                         <img
-                            src={`${backendBaseUrl}/${post.content.mediaUrl}`}
+                            src={`/${post.content.mediaUrl}`}
                          
                             alt="Post media"
                             className="w-full h-full object-cover"
@@ -268,7 +251,7 @@ const UserProfile = () => {
                     {post.postType === "video" && post.content.mediaUrl && (
                         <video className="w-full h-full object-cover" muted>
                             <source
-                                src={`${backendBaseUrl}/${post.content.mediaUrl}`}
+                                src={`/${post.content.mediaUrl}`}
                                 type="video/mp4"
                             />
                             Your browser does not support the video tag.
@@ -308,7 +291,7 @@ const UserProfile = () => {
                             src={
                                 selectedPost.user.profilePic === "/images/default_profile.jpeg"
                                   ? "/images/default_profile.jpeg"
-                                  : `${backendBaseUrl}${selectedPost.user.profilePic}`
+                                  : `${selectedPost.user.profilePic}`
                               }
                             alt="Profile"
                             className="w-10 h-10 rounded-mid mr-3"
@@ -323,7 +306,7 @@ const UserProfile = () => {
                     <div className="flex justify-center items-center">
                         {selectedPost.content.mediaUrl && selectedPost.postType === "image" && (
                             <img
-                                src={`${backendBaseUrl}/${selectedPost.content.mediaUrl}`}
+                                src={`/${selectedPost.content.mediaUrl}`}
                                 alt="Post content"
                                 className="max-w-full max-h-[75vh] object-contain rounded-lg"
                             />
@@ -336,7 +319,7 @@ const UserProfile = () => {
                                 >
                                     <source
                                         type="video/mp4"
-                                        src={`${backendBaseUrl}/${selectedPost.content.mediaUrl}`}
+                                        src={`/${selectedPost.content.mediaUrl}`}
                                     />
                                     Your browser does not support the video tag.
                                 </video>

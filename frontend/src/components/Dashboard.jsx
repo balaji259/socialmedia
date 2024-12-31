@@ -8,21 +8,13 @@ import {useSocket} from "./useSocket";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  //  const {user, setUser ,socket, connectSocket,Socket,isLogout,setIsLogout} =useSocket();
+  
   const {user, setUser ,socket, connectSocket,disconnectSocket} =useSocket();
 
-  // useEffect(()=>{
-  //   if(socket)
-
-  //     console.log(socket,"in dashboard");
-  //   else  
-  //     console.log("no socket exisyts bro! in dshboard")
-  // },[socket])
 
   const handleLogout = () => {
     
-    console.log("loggingout!");
-    // disconnectSocket();
+    
 
     if (socket) {
            console.log("socket value before unmount in dashbaor5r",socket.id);

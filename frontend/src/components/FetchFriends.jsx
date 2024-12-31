@@ -32,8 +32,8 @@ const FriendsList = () => {
     const fetchFriends = async () => {
       try {
         console.log("Fetching friends for userId:", userId);
-        const response = await axios.get(`${backendBaseUrl}/user/${userId}/friends`);
-        console.log("API Response:", response.data);
+        const response = await axios.get(`/user/${userId}/friends`);
+        
         setFriends(response.data.friends);
       
       } catch (error) {
@@ -68,7 +68,7 @@ const FriendsList = () => {
               src={
                 friend.profilePic === "/images/default_profile.jpeg"
                   ? "/images/default_profile.jpeg"
-                  : `${backendBaseUrl}${friend.profilePic}`
+                  : `${friend.profilePic}`
 
               }
               onClick={()=>{goToUserProfile(friend._id)}}
@@ -87,7 +87,7 @@ const FriendsList = () => {
             <div className="mt-4">
               <button
                 className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md shadow-md transition duration-200"
-                onClick={() => handlechat(friend._id)}
+                onClick={() => handleChat(friend._id)}
               >
                 Chat
               </button>
@@ -100,5 +100,3 @@ const FriendsList = () => {
 };
 
 export default FriendsList;
-console.log("FriendsList component mounted");
-console.log("FriendsList component rendered");

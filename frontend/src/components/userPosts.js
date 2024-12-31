@@ -6,7 +6,7 @@ async function fetchUserDetails(token) {
     }
   
     try {
-      const response = await fetch("http://localhost:7000/user/getdetails", {
+      const response = await fetch("/user/getdetails", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`, // Send token in Authorization header

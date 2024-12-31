@@ -2,7 +2,7 @@ async function fetchUserSuggestions() {
     try {
         const token = localStorage.getItem('token');
         
-        const response = await fetch('http://localhost:7000/user/suggestions', {
+        const response = await fetch('/user/suggestions', {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,

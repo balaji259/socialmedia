@@ -14,8 +14,7 @@ export const SocketProvider = ({ children }) => {
 
 
   useEffect(() => {
-    console.log("User state updated:", user);
-    console.log("now to connect!")
+ 
     if(user)
     {
       connectSocket();
@@ -24,7 +23,7 @@ export const SocketProvider = ({ children }) => {
 
 
 useEffect(() => {
-  console.log("Online users updated:");
+  
   if (onlineUsers.length > 0) {
     console.log(onlineUsers);
   }
@@ -32,7 +31,7 @@ useEffect(() => {
 
 useEffect(() => {
   if (user) {
-    console.log("user changed!");
+   
     connectSocket();
   }
 }, [user]);
@@ -49,7 +48,7 @@ useEffect(() => {
 
 
     if (socket?.connected) {
-      console.log("Socket is already connected.");
+      // console.log("Socket is already connected.");
       return;
     }
 
@@ -64,7 +63,7 @@ useEffect(() => {
 
     // newSocket.connect();
 
-    console.log("Connecting socket...");
+    // console.log("Connecting socket...");
 
     newSocket.on("connect", () => {
       console.log("Socket connected:", newSocket.id);
@@ -93,11 +92,11 @@ useEffect(() => {
   // Disconnect Socket
   const disconnectSocket = () => {
     if (socket?.connected) {
-      console.log("Disconnecting socket:", socket.id);
+      // console.log("Disconnecting socket:", socket.id);
       socket.disconnect();
       setSocket(null);
-      console.log("socket cleaned up");
-      console.log("Socket disconnected successfully.");
+      // console.log("socket cleaned up");
+      // console.log("Socket disconnected successfully.");
     } else {
       console.log("Socket is not connected or already null.");
     }
@@ -107,7 +106,7 @@ useEffect(() => {
   useEffect(() => {
     return () => {
       if (socket?.connected) {
-        console.log("Cleaning up socket during unmount.");
+        // console.log("Cleaning up socket during unmount.");
         disconnectSocket();
       }
     };

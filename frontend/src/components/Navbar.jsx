@@ -7,7 +7,7 @@ const Navbar = ({ username, profilePic }) => {
   const profilePicUrl =
     profilePic === '/images/default_profile.jpeg'
       ? '/images/default_profile.jpeg'
-      : `${BACKEND_URL}${profilePic}`;
+      : `${profilePic}`;
 
     const navigate=useNavigate();
 

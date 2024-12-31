@@ -21,12 +21,12 @@ const Register = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            const { data } = await axios.post(`${backendBaseUrl}/user/check-email`, { email });
+            const { data } = await axios.post(`/user/check-email`, { email });
             if (data.exists) {
                 toast.error('Email already exists!');
                 return;
             }
-            await axios.post(`${backendBaseUrl}/user/send-otp`, { email });
+            await axios.post(`/user/send-otp`, { email });
             toast.success('OTP sent to your email!');
             setIsOtpSent(true);
         } catch (error) {
@@ -40,7 +40,7 @@ const Register = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            await axios.post(`${backendBaseUrl}/user/validate-otp`, { email, otp });
+            await axios.post(`/user/validate-otp`, { email, otp });
             toast.success('OTP validated successfully!');
             await handleRegister();
         } catch (error) {
@@ -53,7 +53,7 @@ const Register = () => {
     const handleRegister = async () => {
         setLoading(true);
         try {
-            const { data } = await axios.post(`${backendBaseUrl}/user/register`, {
+            const { data } = await axios.post(`/user/register`, {
                 username,
                 fullname,
                 email,

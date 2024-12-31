@@ -29,7 +29,7 @@ const SearchSuggestions = () => {
   const fetchUsers = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.get(`${backendBaseUrl}/user/search/suggestions`, {
+      const response = await axios.get(`/user/search/suggestions`, {
         params: { query, page },
         headers: {
           Authorization: `Bearer ${token}`,
@@ -56,7 +56,7 @@ const SearchSuggestions = () => {
       console.log(currentUserId,userId);
       const token = localStorage.getItem("token");
       await axios.post(
-        `${backendBaseUrl}/user/search/${action}`,
+        `/user/search/${action}`,
         { userId: currentUserId, targetId: userId },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -129,7 +129,7 @@ const SearchSuggestions = () => {
         src={
           user.profilePic === "/images/default_profile.jpeg"
             ? "/images/default_profile.jpeg"
-            : `${backendBaseUrl}${user.profilePic}`
+            : `${user.profilePic}`
         }
         alt={user.username}
         className="w-full h-48 object-cover rounded-md"

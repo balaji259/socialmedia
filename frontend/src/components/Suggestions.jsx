@@ -27,13 +27,9 @@ const SuggestionsSidebar = () => {
     const handleFollow = async (followId) => {
       try {
           const token = localStorage.getItem('token');
-          console.log("suggestions object")
-          console.log(suggestions);
-          console.log(currentUserId);
-          console.log("followId");
-          console.log(followId);
+          
           await axios.post(
-              `${backendBaseUrl}/user/search/followsug`,
+              `/user/search/followsug`,
               { userId: currentUserId, followId },
               { headers: { Authorization: `Bearer ${token}` } }
           );
@@ -54,7 +50,7 @@ const SuggestionsSidebar = () => {
         return;
       }
 
-      const response = await fetch(`http://localhost:7000/profile/me`, {
+      const response = await fetch(`/profile/me`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -76,7 +72,7 @@ const SuggestionsSidebar = () => {
   const fetchUserSuggestions = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:7000/user/suggestions', {
+      const response = await fetch('/user/suggestions', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -89,8 +85,7 @@ const SuggestionsSidebar = () => {
       }
 
       const data = await response.json();
-      console.log("user suggestions");
-      console.log(data);
+
       if (data.users && Array.isArray(data.users)) {
         setSuggestions(data.users);
       } else {
@@ -107,7 +102,7 @@ const SuggestionsSidebar = () => {
   }, []);
 
   useEffect(() => {
-    axios.get('http://localhost:7000/streak/top-streaks')
+    axios.get('/streak/top-streaks')
       .then(response => {
         console.log(response);
         setTopStreakUsers(response.data);
@@ -120,7 +115,7 @@ const SuggestionsSidebar = () => {
         <h3 style={streakTableHeaderStyle}>Popular Streaker</h3>
         {topStreakUsers.map((user, index) => (
           <div key={user._id} style={streakUserStyle}>
-            <img src={user.profilePic === '/images/default_profile.jpeg' ? '/images/default_profile.jpeg' : `${backendBaseUrl}${user.profilePic}`} alt='profilePic' style={profilePicStyle} />
+            <img src={user.profilePic === '/images/default_profile.jpeg' ? '/images/default_profile.jpeg' : `${user.profilePic}`} alt='profilePic' style={profilePicStyle} />
             <div style={userInfoStyle}>
               <span style={usernameStyle}>{user.username}</span>
               <div style={streakInfoStyle}>
@@ -138,10 +133,9 @@ const SuggestionsSidebar = () => {
       <div style={suggestionsContainerStyle}>
         {suggestions.map((user) => (
           <div key={user.username} style={suggestionStyle}>
-            {console.log("userid")}
-            {console.log(user._id)}
+            
             <div style={suggestionTopStyle}>
-              <img src={user.profilePic === '/images/default_profile.jpeg' ? '/images/default_profile.jpeg' : `${backendBaseUrl}${user.profilePic}`} alt={user.username} style={profilePicStyle} />
+              <img src={user.profilePic === '/images/default_profile.jpeg' ? '/images/default_profile.jpeg' : `${user.profilePic}`} alt={user.username} style={profilePicStyle} />
               <p style={usernameTextStyle}>@{user.username}</p>
               <p style={bioTextStyle}>{user.bio || 'No Bio'}</p>
             </div>

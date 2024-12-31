@@ -21,9 +21,7 @@ const ChatHomePage=()=>{
                 },
 
             })
-            // console.log("get userdetails request this");
-            // console.log(res);
-            console.log(res.data);
+            
             setUser(res.data);
         }
         catch(e){
@@ -33,7 +31,7 @@ const ChatHomePage=()=>{
 
     useEffect(()=>{
     
-        console.log("loading chat hom page!");
+    
         getUser();
     },[]);
 

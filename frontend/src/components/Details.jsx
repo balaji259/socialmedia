@@ -32,14 +32,7 @@ function UserDetails() {
     const token=localStorage.getItem('token');
     const backendBaseUrl = 'http://localhost:7000';
 
-    // const openModal = (type) => {
-    //   if (type === 'followers') {
-    //     setModalContent(userData.followers);
-    //   } else if (type === 'following') {
-    //     setModalContent(userData.following);
-    //   }
-    //   setIsModalOpen(true);
-    // };
+ 
 
     const openModal = async (type) => {
       let userIds = [];
@@ -51,17 +44,14 @@ function UserDetails() {
   
       try {
           // Fetch user details from backend
-          const response = await fetch(`${backendBaseUrl}/user/getUsersByIds`, {
+          const response = await fetch(`/user/getUsersByIds`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ userIds }),
           });
           const userDetails = await response.json(); // [{ _id, username }, ...]
-          console.log("userbyids");
-          console.log(userDetails);
-          // Map user details
-          // const usernames = userDetails.map(user => user.username);
-          // setModalContent(usernames);
+        
+         
 
           const userDetailsForModal = userDetails.map(user => ({
             userId: user._id, // Assuming `_id` is the user's ID field
@@ -112,7 +102,7 @@ function UserDetails() {
     const handleUnsavePost = async (postId) => {
         try {
             console.log("handledeletepost fucntion");
-          const response = await fetch(`${backendBaseUrl}/profile/deleteSavedPost/${postId}`, {
+          const response = await fetch(`/profile/deleteSavedPost/${postId}`, {
             method: "DELETE",
           });
           if (response.ok) {
@@ -134,12 +124,12 @@ function UserDetails() {
         try {
             const token = localStorage.getItem('token');
             if (!token) {
-                alert('You are not logged in. Please log in to view your profile.');
+                toast.error('You are not logged in. Please log in to view your profile.');
                 window.location.href = 'index.html';
                 return;
             }
 
-            const response = await fetch(`${backendBaseUrl}/profile/me`, {
+            const response = await fetch(`/profile/me`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -152,10 +142,7 @@ function UserDetails() {
             }
 
             const data = await response.json();
-            console.log("data");
-            console.log("this is me id");
-            console.log(data);
-            // console.log(userData._id);
+          
             setUserData(data);
            
             
@@ -184,7 +171,7 @@ function UserDetails() {
     const fetchSuggestions = async (query) => {
         if (query.length >= 2) {
             try {
-                const response = await fetch(`${backendBaseUrl}/profile/bestfriend/search?username=${query}`);
+                const response = await fetch(`/profile/bestfriend/search?username=${query}`);
                 const data = await response.json();
                 setSuggestions(data.length ? data : []); // Clear suggestions if no data
             } catch (error) {
@@ -257,7 +244,7 @@ function UserDetails() {
 
         try {
             console.log(formData);
-            const response = await axios.patch(`${backendBaseUrl}/profile/update`, formData, {
+            const response = await axios.patch(`/profile/update`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -277,11 +264,11 @@ function UserDetails() {
             console.log(userId);
     
             if (userData) {
-                const response = await axios.get(`${backendBaseUrl}/profile/userPosts/${userId}`);
+                const response = await axios.get(`/profile/userPosts/${userId}`);
                 
     
-                console.log(response);
-                
+
+               
                 setSectionData(response.data.posts || []);
             } else {
                 console.log("No user data!");
@@ -304,8 +291,8 @@ function UserDetails() {
             const userId=userData._id;
             console.log(userId);
 
-            const response = await axios.get(`${backendBaseUrl}/profile/likedPosts/${userId}`);
-            console.log(response);
+            const response = await axios.get(`/profile/likedPosts/${userId}`);
+           
             setLikedData(response.data);
         } catch (error) {
             console.error('Error fetching liked posts:', error);
@@ -316,7 +303,7 @@ function UserDetails() {
 
     async function unlikePost(postId) {
       try {
-        const response = await fetch(`${backendBaseUrl}/posts/${postId}/unlike`, {
+        const response = await fetch(`/posts/${postId}/unlike`, {
           method: 'PATCH',
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -341,13 +328,12 @@ function UserDetails() {
 
     const deletePost = async (postId) => {
         try {
-          console.log("delete called");
-          console.log(postId);
+          
           const token=localStorage.getItem('token');
-          const response = await fetch(`${backendBaseUrl}/posts/${postId}`, {
+          const response = await fetch(`/posts/${postId}`, {
             method: 'DELETE',
             headers: {
-              Authorization: `Bearer ${token}`, // Replace with your actual token
+              Authorization: `Bearer ${token}`, 
             },
           });
       
@@ -356,8 +342,7 @@ function UserDetails() {
             toast.success('Post deleted successfully!',{duration:1500});
             setSectionData((prevData) => prevData.filter((post) => post._id !== postId));
       
-            // Refresh or update the UI
-            // fetchPosts();
+            
           } else {
             toast.error(data.message,{duration:2500});
           }
@@ -370,16 +355,13 @@ function UserDetails() {
 
     const fetchUserSaved = async () => {
         try {
-            console.log("entered fetch User Saved");
+            
             const userId = userData._id;
-            console.log(userId);
-    
+           
             if (userData) {
-                const response = await axios.get(`${backendBaseUrl}/profile/savedPosts/${userId}`);
+                const response = await axios.get(`/profile/savedPosts/${userId}`);
                 
-                console.log("response");
-                console.log(response);
-                console.log("setting savedData");
+              
                 
                 setSavedData(response.data || []);
                 
@@ -394,7 +376,6 @@ function UserDetails() {
     
     useEffect(() => {
         console.log("Updated saved Data:");
-        console.log(savedData);
         
 
     }, [savedData]);
@@ -455,7 +436,7 @@ function UserDetails() {
                         </div>
                     ) : (
                         <img
-                            src={userData.profilePic === '/images/default_profile.jpeg' ? '/images/default_profile.jpeg' : `${backendBaseUrl}${userData.profilePic}`}
+                            src={userData.profilePic === '/images/default_profile.jpeg' ? '/images/default_profile.jpeg' : `${userData.profilePic}`}
                             alt="Profile Pic"
                             className="profilePic"
                         />
@@ -597,7 +578,7 @@ function UserDetails() {
         className="relative bg-white rounded-lg shadow-md cursor-pointer overflow-hidden"
         onClick={() => 
           {
-            console.log("clicked post",post);
+            
             setSelectedPost(post)
         } } // Open modal on click
         style={{ aspectRatio: "4 / 3" }} // Ensures consistent dimensions
@@ -605,7 +586,7 @@ function UserDetails() {
         {/* Post content */}
         {post.postType === "image" && post.content.mediaUrl && (
           <img
-            src={`${backendBaseUrl}/${post.content.mediaUrl}`}
+            src={`/${post.content.mediaUrl}`}
             alt="Post media"
             className="w-full h-full object-cover"
           />
@@ -613,7 +594,7 @@ function UserDetails() {
         {post.postType === "video" && post.content.mediaUrl && (
           <video className="w-full h-full object-cover" muted>
             <source
-              src={`${backendBaseUrl}/${post.content.mediaUrl}`}
+              src={`/${post.content.mediaUrl}`}
               type="video/mp4"
             />
             Your browser does not support the video tag.
@@ -642,7 +623,7 @@ function UserDetails() {
     >
     {post.postId?.postType === "image" && post.postId?.content.mediaUrl && (
           <img
-            src={`${backendBaseUrl}/${post.postId?.content.mediaUrl}`}
+            src={`/${post.postId?.content.mediaUrl}`}
             alt="Post content"
             className="w-full h-full object-cover "
           />
@@ -650,7 +631,7 @@ function UserDetails() {
         {post.postId?.postType === "video" && post.postId?.content.mediaUrl && (
           <video className="w-full h-full object-cover muted">
             <source
-              src={`${backendBaseUrl}/${post.postId?.content.mediaUrl}`}
+              src={`/${post.postId?.content.mediaUrl}`}
               type="video/mp4"
             />
             Your browser does not support the video tag.
@@ -686,7 +667,7 @@ function UserDetails() {
       
         {post.postType === "image" && post.content.mediaUrl && (
           <img
-            src={`${backendBaseUrl}/${post.content.mediaUrl}`}
+            src={`/${post.content.mediaUrl}`}
             alt="Post content"
             className="w-full h-full object-cover "
           />
@@ -694,7 +675,7 @@ function UserDetails() {
         {post.postType === "video" && post.content.mediaUrl && (
           <video className="w-full h-full object-cover muted">
             <source
-              src={`${backendBaseUrl}/${post.content.mediaUrl}`}
+              src={`/${post.content.mediaUrl}`}
               type="video/mp4"
             />
             Your browser does not support the video tag.
@@ -772,11 +753,11 @@ function UserDetails() {
     activeSection === "liked" || activeSection === "posts"
       ? selectedPost.user.profilePic === "/images/default_profile.jpeg"
         ? selectedPost.user.profilePic // Use the default profile pic as is
-        : `${backendBaseUrl}${selectedPost.user.profilePic}`
+        : `${selectedPost.user.profilePic}`
       : activeSection === "saved"
       ? selectedPost.postId.user.profilePic === "/images/default_profile.jpeg"
         ? selectedPost.postId?.user.profilePic // Use the default profile pic as is
-        : `${backendBaseUrl}${selectedPost.postId.user.profilePic}`
+        : `${selectedPost.postId.user.profilePic}`
       : "/default_profile_pic.jpeg" // Fallback if no section matches
   }
   alt="Profile"
@@ -807,7 +788,7 @@ function UserDetails() {
      <div className="flex justify-center items-center">
       {selectedPost.content.mediaUrl && selectedPost.postType === "image" && (
         <img
-          src={`${backendBaseUrl}/${selectedPost.content.mediaUrl}`}
+          src={`/${selectedPost.content.mediaUrl}`}
           alt="Post content"
           className="max-w-full max-h-[75vh] object-contain rounded-lg"
         />
@@ -819,7 +800,7 @@ function UserDetails() {
         >
           <source
             type="video/mp4"
-            src={`${backendBaseUrl}/${selectedPost.content.mediaUrl}`}
+            src={`/${selectedPost.content.mediaUrl}`}
           />
           Your browser does not support the video tag.
         </video>
@@ -840,7 +821,7 @@ function UserDetails() {
       {selectedPost.postId.content.mediaUrl &&
         selectedPost.postId.postType === "image" && (
           <img
-            src={`${backendBaseUrl}/${selectedPost.postId.content.mediaUrl}`}
+            src={`/${selectedPost.postId.content.mediaUrl}`}
             alt="Post content"
             className="max-w-full max-h-[75vh] object-contain rounded-lg"
           />
@@ -853,7 +834,7 @@ function UserDetails() {
           >
             <source
               type="video/mp4"
-              src={`${backendBaseUrl}/${selectedPost.postId.content.mediaUrl}`}
+              src={`/${selectedPost.postId.content.mediaUrl}`}
             />
             Your browser does not support the video tag.
           </video>

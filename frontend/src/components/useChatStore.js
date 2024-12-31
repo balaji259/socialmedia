@@ -25,14 +25,13 @@ export const useChatStore = create((set,get)=>({
         try{
           
             const token=localStorage.getItem('token');
-            const res=await axios.get(`${backendBaseUrl}/messages/getusers`,{
+            const res=await axios.get(`/messages/getusers`,{
             
                 headers: {
                   Authorization: `Bearer ${token}`,
                 },
               });
-            console.log("sidebar user data for check");
-            console.log(res.data);
+            
             set({users:res.data});
 
         }
@@ -50,7 +49,7 @@ export const useChatStore = create((set,get)=>({
         set({isMessagesLoading: true});
         try{
             const token=localStorage.getItem('token');
-            const res=await axios.get(`${backendBaseUrl}/messages/get/${userId}`,{
+            const res=await axios.get(`/messages/get/${userId}`,{
                 headers:{
                     Authorization:`Bearer ${token}`
                 }
@@ -77,7 +76,7 @@ export const useChatStore = create((set,get)=>({
             console.log("checking msg at star5t");
             console.log(messages);
             const token=localStorage.getItem('token');
-            const res=await axios.post(`${backendBaseUrl}/messages/send/${selectedUser._id}`,messageData,{
+            const res=await axios.post(`/messages/send/${selectedUser._id}`,messageData,{
             
                 headers: {
                   Authorization: `Bearer ${token}`,

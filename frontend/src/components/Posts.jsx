@@ -223,7 +223,7 @@ const PostComponent = () => {
   const fetchPosts = async () => {
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch(`${backendBaseUrl}/posts/get`, {
+      const response = await fetch(`/posts/get`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (!response.ok) {
@@ -232,7 +232,7 @@ const PostComponent = () => {
       
       const data = await response.json();
       setPosts(data);
-      console.log(data);
+     
     } catch (error) {
       console.error("Error fetching posts:", error);
     }
@@ -250,8 +250,7 @@ const PostComponent = () => {
       }
   
         setcurrentuserId(payload.userId);
-        console.log("currentuserId");
-        console.log(currentuserId);
+      
     }
     catch(e){
       console.log(e);
@@ -293,7 +292,7 @@ const PostComponent = () => {
 
       formData.append("userId", userId);
 
-      const response = await fetch(`${backendBaseUrl}/posts/create`, {
+      const response = await fetch(`/posts/create`, {
         method: "POST",
         body: formData,
         headers: {
@@ -334,7 +333,7 @@ const PostComponent = () => {
     const { userId } = JSON.parse(jsonPayload);
   
     try {
-      const response = await fetch(`${backendBaseUrl}/posts/like/${userId}/${postId}`, {
+      const response = await fetch(`/posts/like/${userId}/${postId}`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -419,7 +418,7 @@ const userId = payload.userId;
 
   console.log(saveData);
 
-  fetch(`${backendBaseUrl}/posts/save`, {
+  fetch(`/posts/save`, {
       method: 'POST',
       headers: {
           'Content-Type': 'application/json'
@@ -441,7 +440,7 @@ const userId = payload.userId;
 }
 
 const copyPostIdToClipboard = (postId) => {
-  const postUrl = `${frontendBaseUrl}/posts/${postId}`; // Adjust URL structure
+  const postUrl = `/posts/${postId}`; // Adjust URL structure
   navigator.clipboard.writeText(postUrl)
     .then(() => toast.success("Post link copied! Share it anywhere."))
     .catch(err => console.error('Failed to copy:', err));
@@ -453,7 +452,7 @@ const deletePost = async (postId) => {
   try {
     console.log("delete called");
     const token=localStorage.getItem('token');
-    const response = await fetch(`${backendBaseUrl}/posts/${postId}`, {
+    const response = await fetch(`/posts/${postId}`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${token}`, // Replace with your actual token
@@ -487,7 +486,7 @@ const deletePost = async (postId) => {
   }
 
   try {
-    const response = await fetch(`${backendBaseUrl}/posts/comment/${postId}`, {
+    const response = await fetch(`/posts/comment/${postId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -517,7 +516,7 @@ const handleAddReply = async (replyId) => {
   }
 
   try {
-    const response = await fetch(`${backendBaseUrl}/posts/comment/reply/${replyId}`, {
+    const response = await fetch(`/posts/comment/reply/${replyId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -545,12 +544,6 @@ const toggleComments = (postId) => {
   }));
 };
 
-// const handleReplyChange = (commentId, text) => {
-//   setReplyTexts((prevReplies) => ({
-//     ...prevReplies,
-//     [commentId]: text,
-//   }));
-// };
 
 const handleReplyChange = (replyId, text) => {
   setReplyTexts((prev) => ({
@@ -560,12 +553,7 @@ const handleReplyChange = (replyId, text) => {
 };
 
 
-// const clearReplyText = (commentId) => {
-//   setReplyTexts((prevReplies) => ({
-//     ...prevReplies,
-//     [commentId]: "",
-//   }));
-// };
+
 
 const clearReplyText = (replyId) => {
   setReplyTexts((prev) => ({
@@ -574,13 +562,6 @@ const clearReplyText = (replyId) => {
   }));
 };
 
-
-// const toggleReplyInput = (commentId) => {
-//   setReplyingTo((prev) => ({
-//     ...prev,
-//     [commentId]: !prev[commentId],
-//   }));
-// };
 
 const toggleReplyInput = (replyId) => {
   setReplyingTo((prev) => ({
@@ -618,13 +599,7 @@ return (
         />
 
         <button type="submit" style={submitButtonStyle}>Post</button>
-        {/* <button type="submit" style={submitButtonStyle} >
-            <div className="flex items-center justify-center">
-            <img src="/images/send.jpeg" className=" w-6 h-6 mr-4" />
-            <span>Post</span>
-            </div>
-            
-        </button> */}
+        
       </form>
     </div>
 
@@ -634,17 +609,13 @@ return (
           <div style={postHeaderStyle}>
             <div style={userInfoStyle}  onClick={() => goToUserProfile(post.userId._id)}>
               <img
-                src={post.user.profilePic === '/images/default_profile.jpeg' ? '/images/default_profile.jpeg' : `${backendBaseUrl}${post.user.profilePic}`}
+                src={post.user.profilePic === '/images/default_profile.jpeg' ? '/images/default_profile.jpeg' : `${post.user.profilePic}`}
                 alt="User Profile"
                 style={profilePicStyle}
               />
-              {/* <div>
+              
               <span style={usernameStyle}>{post.user?.username || "Anonymous"}</span>
-              <span style={usernameStyle}>{new Date(post.createdAt).toLocaleString()}</span>
-
-              </div> */}
-              <span style={usernameStyle}>{post.user?.username || "Anonymous"}</span>
-              {/* <span >{new Date(post.createdAt).toLocaleString()}</span> */}
+             
 
             </div>
             <button style={toggleButtonStyle} onClick={() => handleToggleMenu(post.postId)}>⋮</button>
@@ -678,13 +649,13 @@ return (
           {post.content && post.content.mediaUrl && (
             post.postType === 'video' ? (
               <video
-                src={`${backendBaseUrl}/${post.content.mediaUrl}`}
+                src={`/${post.content.mediaUrl}`}
                 controls
                 style={postMediaStyle}
               />
             ) : (
               <img
-                src={`${backendBaseUrl}/${post.content.mediaUrl}`}
+                src={`/${post.content.mediaUrl}`}
                 alt="Post Media"
                 style={postMediaStyle}
               />
@@ -700,18 +671,7 @@ return (
     <img src="/images/like.jpg" className="h-6 w-6 mr-2" alt="Like" />
     {post.likesCount}
   </div>
-              {/* {post.liked ? '👎' : '👍'} {post.likesCount} */}
-              {/* {post.liked ? (
-  <div className="flex items-center justify-center">
-    <img src="/images/like.jpg" className="h-6 w-6 mr-2" alt="Like" /> 
-    {post.likesCount}
-  </div>
-) : (
-  <div className="flex items-center justify-center">
-    <img src="/images/like.jpg" className="h-6 w-6 mr-2" alt="Like" />
-    {post.likesCount}
-  </div>
-)} */}
+              
 
 
 
@@ -760,10 +720,7 @@ return (
                         <strong>{reply.user?.username || "Anonymous"}:</strong> 
                         {reply.text}
                         <div>
-                          {/* <button onClick={() => toggleCommentLike(reply.replyId)}> */}
-                            {/* Like button content */}
-                          {/* </button> */}
-                          {/* <button onClick={() => toggleReplyInput(reply.replyId)}>Reply</button> */}
+                          
                         </div>
 
                         {/* Reply input for each reply */}

@@ -8,9 +8,6 @@ import {useSocket} from "./useSocket";
 import axios from "axios";
 const backendBaseUrl="http://localhost:7000";
 
-
-// const authenticateUser=require("../../../backend/routes/authenticate_user");
-
 const  ChatContainer=() =>{
     const {messages,getMessages,isMessagesLoading,selectedUser,subscribeToMessages,unsubscribeFromMessages}=useChatStore();
     const [userId,setUserId]=useState();
@@ -33,16 +30,14 @@ const  ChatContainer=() =>{
     const getUserId=async() =>{
         try{
             const token=localStorage.getItem("token");
-            const res=await axios.get(`${backendBaseUrl}/user/userId`,{
+            const res=await axios.get(`/user/userId`,{
             
                 headers: {
                   Authorization: `Bearer ${token}`,
                 },
 
               })
-              console.log("get userId request");
-              console.log(res);
-              console.log(res.data);
+             
               setUserId(res.data);
         }
         catch(e){
@@ -53,15 +48,13 @@ const  ChatContainer=() =>{
     const getUserData= async () =>{
         try{
             const token=localStorage.getItem("token");
-            const res=await axios.get(`${backendBaseUrl}/user/getdetails`,{
+            const res=await axios.get(`/user/getdetails`,{
                 headers: {
                     Authorization:`Bearer ${token}`,
                 },
 
             })
-            console.log("get userdetails request this");
-            console.log(res);
-            console.log(res.data);
+            
             setUser(res.data);
         }
         catch(e){
@@ -74,33 +67,24 @@ const  ChatContainer=() =>{
         messageEndRef.current.scrollIntoView({behavior: "smooth"});
       }
 
-      console.log("check user");
-      console.log(user);
-
-      console.log("messages");
-      console.log(messages);
+  
 
     },[messages])
 
 
 
     useEffect(() => {
-        // console.log(req.user.userId);
-        // console.log(selectedUser._id);
+        
         getMessages(selectedUser._id);
         
 
         getUserId();
         getUserData();
 
-        console.log("socketvaklue");
-        console.log(socket);
+ 
 
         subscribeToMessages(socket);
-        console.log("user");
-        console.log(user);
-        console.log("this is userid bro");
-        console.log(userId);
+       
 
         return () => unsubscribeFromMessages(socket);
 
@@ -138,12 +122,12 @@ const  ChatContainer=() =>{
       ? user?.profilePic === "/images/default_profile.jpeg"
         ? "/images/default_profile.jpeg"
         : user?.profilePic
-        ? `${backendBaseUrl}${user?.profilePic}`
+        ? `${user?.profilePic}`
         : "/avatar.png"
       : selectedUser.profilePic === "/images/default_profile.jpeg"
       ? "/images/default_profile.jpeg"
       : selectedUser.profilePic
-      ? `${backendBaseUrl}${selectedUser.profilePic}`
+      ? `${selectedUser.profilePic}`
       : "/avatar.png"
   }
   alt="profile pic"

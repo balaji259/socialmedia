@@ -17,7 +17,7 @@ const ChatHeader = () => {
           <div className="avatar">
             <div className="size-8  relative">
               {/* <img src={selectedUser.profilePic || "/avatar.png"} alt={selectedUser.fullName} /> */}
-              <img className="rounded-md" src={selectedUser.profilePic === '/images/default_profile.jpeg' ? '/images/default_profile.jpeg' : `${backendBaseUrl}${selectedUser.profilePic}`} alt={selectedUser.fullName} />
+              <img className="rounded-md" src={selectedUser.profilePic === '/images/default_profile.jpeg' ? '/images/default_profile.jpeg' : `${selectedUser.profilePic}`} alt={selectedUser.fullName} />
 
             </div>
           </div>

@@ -13,7 +13,7 @@ const SinglePost = () => {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await axios.get(`${backendBaseUrl}/posts/${postId}`);
+        const response = await axios.get(`/posts/${postId}`);
         setPost(response.data);
       } catch (error) {
         console.error("Error fetching post:", error);
@@ -49,7 +49,7 @@ const SinglePost = () => {
     <div style={styles.container}>
       <div style={styles.header}>
         <img
-          src={post.user.profilePic === '/images/default_profile.jpeg' ? '/images/default_profile.jpeg' : `${backendBaseUrl}${post.user.profilePic}`}
+          src={post.user.profilePic === '/images/default_profile.jpeg' ? '/images/default_profile.jpeg' : `${post.user.profilePic}`}
           alt={post.user.username}
           style={styles.profilePic}
         />
@@ -57,40 +57,17 @@ const SinglePost = () => {
           <span style={styles.username}>{post.user.username}</span>
           <span style={styles.createdAt}>{new Date(post.createdAt).toLocaleString()}</span>
         </div>
-        {/* <button style={styles.menuButton} onClick={() => handleToggleMenu(post.postId)}>⋮</button>
-
-        {showMenus[post.postId] && (
-          <div style={styles.dropdownMenu}>
-            <div style={styles.menuItem} onClick={() => savePost(post.postId)}>Save Post</div>
-            <div style={styles.menuItem} onClick={() => reportPost(post.postId)}>Report</div>
-          </div>
-        )} */}
+       
       </div>
 
       <div style={styles.content}>
         {post.postType === "image" && post.content.mediaUrl && (
-          <img src={`${backendBaseUrl}/${post.content.mediaUrl}`} alt="Post media" style={styles.media} />
+          <img src={`/${post.content.mediaUrl}`} alt="Post media" style={styles.media} />
         )}
         <p style={styles.caption}>{post.caption}</p>
       </div>
 
-      {/* <div style={styles.actions}>
-        <button style={styles.actionButton} onClick={() => handleLikeToggle(post.postId)}>
-          {post.liked ? '👎 Dislike' : '👍 Like'} {post.likesCount}
-        </button>
-        <button style={styles.actionButton}>💬 Comment</button>
-        <button style={styles.actionButton} onClick={() => copyPostIdToClipboard(post.postId)}>
-          🔗 Share
-        </button>
-      </div> */}
-
-      {/* <div style={styles.commentsSection}>
-        {post.comments.map((comment, i) => (
-          <div key={i} style={styles.comment}>
-            <strong>{comment.user?.username || "Anonymous"}:</strong> {comment.text}
-          </div>
-        ))}
-      </div> */}
+     
     </div>
   );
 };

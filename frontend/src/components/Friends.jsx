@@ -31,15 +31,13 @@ const Friends = () => {
   async function getUser(){
     try{
         const token=localStorage.getItem("token");
-        const res=await axios.get(`${backendBaseUrl}/user/getUser`,{
+        const res=await axios.get(`/user/getUser`,{
             headers: {
                 Authorization:`Bearer ${token}`,
             },
 
         })
-        // console.log("get userdetails request this");
-        // console.log(res);
-        console.log(res.data);
+     
         setUser(res.data);
     }
     catch(e){
@@ -48,7 +46,7 @@ const Friends = () => {
 }
 
 useEffect(()=>{
-    console.log("loading home page!");
+    
     getUser();
 },[]);
 

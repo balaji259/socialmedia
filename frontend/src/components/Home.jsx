@@ -40,16 +40,7 @@ const Home = () => {
       const userDetails = await fetchUserDetails(token);
       if (userDetails) {
         setCurrentUser({ username: userDetails.username, profilePic: userDetails.profilePic });
-        console.log("landed homepage");
-        // if(currentuser)
-        // {
-        //   if(!socket)
-        //     connectSocket();
-        //   else  
-        //     console.log("socket exists!")
-        // }
-        // else
-        //   console.log("no user existss bro!");
+      
       }
     };
 
@@ -60,15 +51,13 @@ const Home = () => {
   async function getUser(){
     try{
         const token=localStorage.getItem("token");
-        const res=await axios.get(`${backendBaseUrl}/user/getUser`,{
+        const res=await axios.get(`/user/getUser`,{
             headers: {
                 Authorization:`Bearer ${token}`,
             },
 
         })
-        // console.log("get userdetails request this");
-        // console.log(res);
-        console.log(res.data);
+       
         setUser(res.data);
     }
     catch(e){
@@ -77,23 +66,12 @@ const Home = () => {
 }
 
 useEffect(()=>{
-    console.log("loading home page!");
+    // console.log("loading home page!");
     getUser();
 },[]);
 
 
-//   useEffect(()=>{
-//     console.log("landed home page !");
-//     // connectSocket();
-//     if(!socket)
-//     {
-//       console.log("refreshed home page bro");
-//       connectSocket();
-//     }
-//     else{
-//       console.log("refreshed but socket exists");
-//     }
-// },[user]);
+
 
   const toggleSidebar = () => {
     setIsSidebarVisible(!isSidebarVisible);

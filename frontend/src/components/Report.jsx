@@ -22,7 +22,7 @@ const ReportPost = () => {
         console.log(reportData);
 
         try {
-            const response = await fetch(`${backendBaseUrl}/posts/report`, {
+            const response = await fetch(`/posts/report`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
