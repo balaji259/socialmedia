@@ -417,7 +417,7 @@ function UserDetails() {
                             <label htmlFor="profilePicUpload">
                                 <img
                                     // src={previewImage || editableData.profilePic || '/images/default_profile.jpeg'}
-                                    src={previewimage}
+                                    src={previewImage}
                                     alt="Click to add ProfilePic"
                                     className="profilePic"
                                 />

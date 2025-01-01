@@ -13,14 +13,25 @@ const { checkStreakOnLoad, updateStreakOnPost } = require("./streak");
 
 
 // Multer configuration for file uploads
+// Helper function to sanitize filenames
+const sanitizeFilename = (filename) => {
+    return filename
+        .replace(/\s+/g, '_') // Replace spaces with underscores
+        .replace(/[^a-zA-Z0-9_.-]/g, ''); // Remove special characters
+};
+
+// Multer storage configuration
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, path.join(__dirname, '../uploads'));  // Path to save uploads
+        cb(null, path.join(__dirname, '../uploads')); // Path to save uploads
     },
     filename: (req, file, cb) => {
-        cb(null, Date.now() + '-' + file.originalname);  // Unique filename
+        const sanitizedFilename = sanitizeFilename(file.originalname);
+        cb(null, `${Date.now()}-${sanitizedFilename}`); // Unique sanitized filename
     }
 });
+
+// Create multer instance
 const upload = multer({ storage });
 
 const getISTDate = () => {
