@@ -235,10 +235,25 @@ function UserDetails() {
         formData.append('favoriteAnime', editableData.favoriteAnime);
         formData.append('favoriteActor', editableData.favoriteActor);
 
-        if (editableData.profilePic instanceof File) {
-            formData.append('profilePic', editableData.profilePic);
-        }
+        // if (editableData.profilePic instanceof File) {
+        //     formData.append('profilePic', editableData.profilePic);
+        // }
 
+        if (editableData.profilePic instanceof File) {
+          const sanitizedFilename = editableData.profilePic.name
+              .replace(/\s+/g, '_') // Replace spaces with underscores
+              .replace(/[^a-zA-Z0-9_.-]/g, ''); // Remove special characters
+  
+          // Create a new sanitized file
+          const sanitizedFile = new File(
+              [editableData.profilePic],
+              sanitizedFilename,
+              { type: editableData.profilePic.type }
+          );
+  
+          formData.append('profilePic', sanitizedFile);
+      }
+  
      
 
         try {
