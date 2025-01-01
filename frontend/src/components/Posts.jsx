@@ -264,22 +264,100 @@ const PostComponent = () => {
     
   }, []);
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   const token = localStorage.getItem("token");
+
+  //   if (!token) {
+  //     alert("No token found. Please log in again.");
+  //     return;
+  //   }
+
+  //   const formData = new FormData();
+  //   formData.append("captionOrText", postContent);
+  //   if (mediaContent) {
+  //     formData.append("mediaContent", mediaContent);
+  //   }
+
+  //   try {
+  //     const base64Url = token.split(".")[1];
+  //     const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+  //     const jsonPayload = decodeURIComponent(
+  //       atob(base64)
+  //         .split("")
+  //         .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+  //         .join("")
+  //     );
+  //     const { userId } = JSON.parse(jsonPayload);
+
+  //     formData.append("userId", userId);
+
+  //     const response = await fetch(`/posts/create`, {
+  //       method: "POST",
+  //       body: formData,
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //     });
+
+  //     if (response.ok) {
+  //       setPostContent("");
+  //       setMediaContent(null);
+  //       await fetchPosts(); // Refresh posts
+  //     } else {
+  //       alert("Failed to create post");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error submitting form:", error);
+  //     alert("Error submitting form");
+  //   }
+  // };
+
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem("token");
-
+  
     if (!token) {
       alert("No token found. Please log in again.");
       return;
     }
-
+  
     const formData = new FormData();
     formData.append("captionOrText", postContent);
-    if (mediaContent) {
-      formData.append("mediaContent", mediaContent);
-    }
-
+  
     try {
+      let mediaUrl = null;
+  
+      // Step 1: Handle media upload to Cloudinary if `mediaContent` is provided
+      if (mediaContent) {
+        const cloudinaryData = new FormData();
+        cloudinaryData.append("file", mediaContent);
+        cloudinaryData.append("upload_preset", "simpleunsigned"); // Replace with your Cloudinary upload preset
+  
+        const cloudinaryResponse = await fetch(
+          "https://api.cloudinary.com/v1_1/dhtk7vhyv/upload",
+          {
+            method: "POST",
+            body: cloudinaryData,
+          }
+        );
+  
+        if (!cloudinaryResponse.ok) {
+          throw new Error("Failed to upload media to Cloudinary");
+        }
+  
+        const cloudinaryResult = await cloudinaryResponse.json();
+        mediaUrl = cloudinaryResult.secure_url; // Get the Cloudinary secure URL
+      }
+  
+      // Step 2: Add media URL to `formData` if available
+      if (mediaUrl) {
+        formData.append("mediaContent", mediaUrl);
+      }
+  
+      // Step 3: Extract userId from the token and append to `formData`
       const base64Url = token.split(".")[1];
       const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
       const jsonPayload = decodeURIComponent(
@@ -289,9 +367,10 @@ const PostComponent = () => {
           .join("")
       );
       const { userId } = JSON.parse(jsonPayload);
-
+  
       formData.append("userId", userId);
-
+  
+      // Step 4: Send formData to your backend
       const response = await fetch(`/posts/create`, {
         method: "POST",
         body: formData,
@@ -299,7 +378,7 @@ const PostComponent = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-
+  
       if (response.ok) {
         setPostContent("");
         setMediaContent(null);
@@ -312,6 +391,8 @@ const PostComponent = () => {
       alert("Error submitting form");
     }
   };
+  
+
 
   const handleLikeToggle = async (postId) => {
     const token = localStorage.getItem("token");

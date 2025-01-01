@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const router = express.Router();
 const multer = require('multer');
+const cloudinary = require('../cloudinaryConfig');
 // const Post = require('../models/post');
 const { Post, Comment } = require('../models/post');
 const Report = require('../models/report');
@@ -41,36 +42,48 @@ const getISTDate = () => {
 
 
 
-router.post('/create', upload.single('mediaContent'), async (req, res) => {
+router.post('/create', async (req, res) => {
+
+
+
     try {
-        const { captionOrText, userId } = req.body;  // Extract userId from the request body
-
+        const { captionOrText, userId } = req.body;
+    
         if (!userId) {
-            return res.status(400).json({ error: 'User ID is required' });
+          return res.status(400).json({ error: 'User ID is required' });
         }
-
-        // Determine post type
+    
         let postType = 'text';
-        let mediaUrl = null; // Initialize mediaUrl
-        if (req.file) {
-            const mediaType = req.file.mimetype.split('/')[0];
-            postType = mediaType === 'image' ? 'image' : 'video';
-            // mediaUrl = `../uploads/${req.file.filename}`; // Correct media URL
-            mediaUrl = `../uploads/${req.file.filename}`;
+        let mediaUrl = null;
+    
+        // Check if a file was uploaded
+        if (req.files && req.files.mediaContent) {
+          const media = req.files.mediaContent.tempFilePath;
+          const mediaType = req.files.mediaContent.mimetype.split('/')[0]; // Get 'image' or 'video'
+    
+          // Upload to Cloudinary
+          const uploadResponse = await cloudinary.uploader.upload(media, {
+            resource_type: mediaType === 'video' ? 'video' : 'image',
+            folder: 'friendsbook/uploads', // Optional folder in Cloudinary
+          });
+    
+          mediaUrl = uploadResponse.secure_url;
+          postType = mediaType; // Set postType to 'image' or 'video'
         }
-
+    
         // Create a new post
         const post = new Post({
-            user: userId,  // Use userId sent from the client-side
-            postType,
-            caption: captionOrText,
-            content: {
-                mediaUrl, // Use the constructed mediaUrl
-            },
+          user: userId,
+          postType,
+          caption: captionOrText,
+          content: {
+            mediaUrl,
+          },
         });
-
-        // Save the new post to the database
+    
         await post.save();
+
+
 
         // Increment the user's postsCount by 1
         await User.findByIdAndUpdate(userId, { $inc: { postsCount: 1 } });
