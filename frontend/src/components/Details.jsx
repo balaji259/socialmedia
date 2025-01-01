@@ -394,6 +394,7 @@ function UserDetails() {
       navigate(`/profile/${id}`)
     };
 
+    
     if (error) {
         return <div>{error}</div>;
     }
@@ -416,7 +417,7 @@ function UserDetails() {
                             <label htmlFor="profilePicUpload">
                                 <img
                                     // src={previewImage || editableData.profilePic || '/images/default_profile.jpeg'}
-                                    src='/images/default_profile.jpeg'
+                                    src={previewimage}
                                     alt="Click to add ProfilePic"
                                     className="profilePic"
                                 />

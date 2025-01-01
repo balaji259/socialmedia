@@ -109,12 +109,21 @@ const SuggestionsSidebar = () => {
       })
       .catch(error => console.error('Error fetching top streak users:', error));
   }, []);
+
+  const goToUserProfile = (id) => {
+     
+    id===userId?navigate(`/profile`):navigate(`/profile/${id}`);
+  };
+
+
+
+
   return (
     <div  className="sidebar-container" style={sidebarStyle}>
       <div style={streakTableStyle}>
         <h3 style={streakTableHeaderStyle}>Popular Streaker</h3>
         {topStreakUsers.map((user, index) => (
-          <div key={user._id} style={streakUserStyle}>
+          <div key={user._id} style={streakUserStyle} onClick={()=>goToUserProfile(user._id)}>
             <img src={user.profilePic === '/images/default_profile.jpeg' ? '/images/default_profile.jpeg' : `${user.profilePic}`} alt='profilePic' style={profilePicStyle} />
             <div style={userInfoStyle}>
               <span style={usernameStyle}>{user.username}</span>
@@ -134,7 +143,7 @@ const SuggestionsSidebar = () => {
         {suggestions.map((user) => (
           <div key={user.username} style={suggestionStyle}>
             
-            <div style={suggestionTopStyle}>
+            <div style={suggestionTopStyle} onClick={()=> goToUserProfile(user._id)}>
               <img src={user.profilePic === '/images/default_profile.jpeg' ? '/images/default_profile.jpeg' : `${user.profilePic}`} alt={user.username} style={profilePicStyle} />
               <p style={usernameTextStyle}>@{user.username}</p>
               <p style={bioTextStyle}>{user.bio || 'No Bio'}</p>
@@ -184,8 +193,6 @@ const streakUserStyle = {
   display: 'flex',
   alignItems: 'center',
   backgroundColor: '#f5f5f5',
-  // border:'1px solid grey',
-  // borderRadius:'10px',
   padding: '10px',
   margin: '8px 0',
 };

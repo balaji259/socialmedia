@@ -198,12 +198,12 @@ const UserProfile = () => {
                     <p className="additionalInfo">Relationship Status: {userData.relationshipStatus || 'Single'}</p>
                     <p className="additionalInfo">Best Friend: {userData.bestFriend?.username || 'Not specified'}</p>
                     <p className="additionalInfo">Interests: {userData.interests || 'Not specified'}</p>
-                    <p className="additionalInfo">Favorite Sports: {userData.favoriteSports || 'Not specified'}</p>
-                    <p className="additionalInfo">Favorite Game: {userData.favoriteGame || 'Not specified'}</p>
-                    <p className="additionalInfo">Favorite Music: {userData.favoriteMusic || 'Not specified'}</p>
-                    <p className="additionalInfo">Favorite Movie: {userData.favoriteMovie || 'Not specified'}</p>
-                    <p className="additionalInfo">Favorite Anime: {userData.favoriteAnime || 'Not specified'}</p>
-                    <p className="additionalInfo">Favorite Actor: {userData.favoriteActor || 'Not specified'}</p>
+                    <p className="additionalInfo sport">Favorite Sports: {userData.favoriteSports || 'Not specified'}</p>
+                    <p className="additionalInfo game">Favorite Game: {userData.favoriteGame || 'Not specified'}</p>
+                    <p className="additionalInfo music">Favorite Music: {userData.favoriteMusic || 'Not specified'}</p>
+                    <p className="additionalInfo movie">Favorite Movie: {userData.favoriteMovie || 'Not specified'}</p>
+                    <p className="additionalInfo anime">Favorite Anime: {userData.favoriteAnime || 'Not specified'}</p>
+                    <p className="additionalInfo actor">Favorite Actor: {userData.favoriteActor || 'Not specified'}</p>
                     <p className="additionalInfo">Bio: {userData.bio || 'User bio goes here...'}</p>
                     
                 </div>
