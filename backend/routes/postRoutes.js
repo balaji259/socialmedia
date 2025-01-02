@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const router = express.Router();
 const multer = require('multer');
+const formidable=require('formidable');
 const cloudinary = require('../cloudinaryConfig');
 // const Post = require('../models/post');
 const { Post, Comment } = require('../models/post');
@@ -15,25 +16,6 @@ const { checkStreakOnLoad, updateStreakOnPost } = require("./streak");
 
 // Multer configuration for file uploads
 // Helper function to sanitize filenames
-const sanitizeFilename = (filename) => {
-    return filename
-        .replace(/\s+/g, '_') // Replace spaces with underscores
-        .replace(/[^a-zA-Z0-9_.-]/g, ''); // Remove special characters
-};
-
-// Multer storage configuration
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, path.join(__dirname, '../uploads')); // Path to save uploads
-    },
-    filename: (req, file, cb) => {
-        const sanitizedFilename = sanitizeFilename(file.originalname);
-        cb(null, `${Date.now()}-${sanitizedFilename}`); // Unique sanitized filename
-    }
-});
-
-// Create multer instance
-const upload = multer({ storage });
 
 const getISTDate = () => {
     const options = { timeZone: 'Asia/Kolkata' };
@@ -43,117 +25,115 @@ const getISTDate = () => {
 
 
 router.post('/create', async (req, res) => {
-
-
-
     try {
-        const { captionOrText, userId } = req.body;
-    
-        if (!userId) {
-          return res.status(400).json({ error: 'User ID is required' });
-        }
-    
-        let postType = 'text';
-        let mediaUrl = null;
-    
-        // Check if a file was uploaded
-        if (req.files && req.files.mediaContent) {
-          const media = req.files.mediaContent.tempFilePath;
-          const mediaType = req.files.mediaContent.mimetype.split('/')[0]; // Get 'image' or 'video'
-    
-          // Upload to Cloudinary
-          const uploadResponse = await cloudinary.uploader.upload(media, {
-            resource_type: mediaType === 'video' ? 'video' : 'image',
-            folder: 'friendsbook/uploads', // Optional folder in Cloudinary
-          });
-    
-          mediaUrl = uploadResponse.secure_url;
-          postType = mediaType; // Set postType to 'image' or 'video'
-        }
-    
-        // Create a new post
-        const post = new Post({
-          user: userId,
-          postType,
-          caption: captionOrText,
-          content: {
-            mediaUrl,
-          },
-        });
-    
-        await post.save();
+        const form = new formidable.IncomingForm();
 
+        form.parse(req, async (err, fields, files) => {
+            if (err) {
+                console.error('Form parse error:', err);
+                return res.status(500).json({ error: 'Failed to parse form data' });
+            }
 
+            // Log the received fields and files
+            console.log("Received fields:", fields);
+            console.log("Received files:", files);
 
-        // Increment the user's postsCount by 1
-        await User.findByIdAndUpdate(userId, { $inc: { postsCount: 1 } });
+            const { captionOrText, userId, mediaContent } = fields;
 
+            console.log("captionOrText:", captionOrText);
+            console.log("userId:", userId);
+            console.log("mediaContent:", mediaContent);
 
-        //streak logic
+            // Check if userId is provided
+            if (!userId) {
+                return res.status(400).json({ error: "User ID is required" });
+            }
 
-          // Fetch the user to check and update streak
-          const user = await User.findById(userId);
+            // Process captionOrText field
+            let caption = null;
+            if (captionOrText) {
+                caption = Array.isArray(captionOrText) ? captionOrText.join(' ') : captionOrText;
+            }
 
-          if (!user) {
-              return res.status(404).json({ error: 'User not found' });
-          }
-  
-          const currentDate = getISTDate();
+            // Process mediaContent field
+            let mediaUrl = null;
+            if (mediaContent) {
+                mediaUrl = Array.isArray(mediaContent) ? mediaContent[0] : mediaContent;
+            }
 
-          const currentDateOnly = new Date(currentDate.setHours(0, 0, 0, 0));
+            // Determine the post type based on the media URL
+            let postType = "text"; // Default to text if no media
+            if (mediaUrl) {
+                const isImage = mediaUrl.match(/\.(jpeg|jpg|png|gif|bmp|webp|tiff)$/i);
+                const isVideo = mediaUrl.match(/\.(mp4|webm|avi|mkv|mov|flv|wmv)$/i);
+
+                if (!isImage && !isVideo) {
+                    return res.status(400).json({ error: "Invalid media type" });
+                }
+
+                postType = isVideo ? "video" : "image";
+            }
+
+            // Create the post
+            const post = new Post({
+                user: userId,
+                postType,
+                caption,
+                content: { mediaUrl },
+            });
+
+            await post.save();
+
+            // Increment the user's postsCount by 1
+            await User.findByIdAndUpdate(userId, { $inc: { postsCount: 1 } });
+
+            // Streak logic
+            const user = await User.findById(userId);
+            if (!user) {
+                return res.status(404).json({ error: 'User not found' });
+            }
+
+            const currentDate = getISTDate();
+            const currentDateOnly = new Date(currentDate.setHours(0, 0, 0, 0));
             console.log(`current (IST, day-only): ${currentDateOnly}`);
 
-          const lastPostDate = user.streak.lastPostTime;
-  
-          // If there's a last post time, check the difference from today
-          if (lastPostDate) {
-            //   const lastPostDateIST = new Date(lastPostDate);
-            //   const diffInDays = Math.floor((currentDate - lastPostDateIST) / (24 * 60 * 60 * 1000)); // Difference in days
-  
-           
-            const lastPostDateIST = new Date(lastPostDate).toLocaleString("en-US", { timeZone: "Asia/Kolkata" });
-            const lastPostDateInIST = new Date(lastPostDateIST);            
+            const lastPostDate = user.streak.lastPostTime;
+            if (lastPostDate) {
+                const lastPostDateIST = new Date(lastPostDate).toLocaleString("en-US", { timeZone: "Asia/Kolkata" });
+                const lastPostDateInIST = new Date(lastPostDateIST);
+                const lastPostDateOnly = new Date(lastPostDateInIST.setHours(0, 0, 0, 0));
+                console.log(`lastPost (IST, day-only): ${lastPostDateOnly}`);
 
-            const lastPostDateOnly = new Date(lastPostDateInIST.setHours(0, 0, 0, 0));
-            console.log(`lastPost (IST, day-only): ${lastPostDateOnly}`);
-                    
-            
-            const diffInDays = Math.floor((currentDateOnly - lastPostDateOnly) / (24 * 60 * 60 * 1000)); // Difference in days
+                const diffInDays = Math.floor((currentDateOnly - lastPostDateOnly) / (24 * 60 * 60 * 1000));
+                console.log(`difference: ${diffInDays}`);
 
-            console.log(  `  difference: ${diffInDays}`)
+                if (diffInDays === 0) {
+                    await User.findByIdAndUpdate(userId, { 'streak.lastPostTime': currentDate });
+                } else if (diffInDays === 1) {
+                    await User.findByIdAndUpdate(userId, {
+                        'streak.count': user.streak.count + 1,
+                        'streak.lastPostTime': currentDate,
+                    });
+                } else {
+                    await User.findByIdAndUpdate(userId, {
+                        'streak.count': 1,
+                        'streak.lastPostTime': currentDate,
+                    });
+                }
+            } else {
+                await User.findByIdAndUpdate(userId, {
+                    'streak.count': 1,
+                    'streak.lastPostTime': currentDate,
+                });
+            }
 
-              if (diffInDays === 0) {
-                  // User already posted today, no streak increment
-                  await User.findByIdAndUpdate(userId, { 'streak.lastPostTime': currentDate });
-              } else if (diffInDays === 1) {
-                  // User's first post today, increment streak
-                  await User.findByIdAndUpdate(userId, {
-                      'streak.count': user.streak.count + 1, // Increment streak
-                      'streak.lastPostTime': currentDate, // Update last post time
-                  });
-              } else {
-                  // User missed posting for 1 or more days, reset streak to 1
-                  await User.findByIdAndUpdate(userId, {
-                      'streak.count': 1, // Reset streak to 1
-                      'streak.lastPostTime': currentDate, // Update last post time
-                  });
-              }
-          } else {
-              // No previous post time, user is starting fresh, set streak to 1
-              await User.findByIdAndUpdate(userId, {
-                  'streak.count': 1, // Start streak from 1
-                  'streak.lastPostTime': currentDate, // Set last post time
-              });
-          }
-
-
-        res.status(201).json({ message: 'Post created successfully', post });
+            res.status(201).json({ message: 'Post created successfully', post });
+        });
     } catch (error) {
-        console.error('Error creating post:', error); // More specific error logging
+        console.error('Error creating post:', error);
         res.status(500).json({ error: error.message || 'Failed to create post' });
     }
 });
-
 
 
 router.get('/get', async (req, res) => {

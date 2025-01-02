@@ -217,60 +217,50 @@ function UserDetails() {
     };
 
     const saveChanges = async () => {
-        const formData = new FormData();
-       
-       
-        formData.append('username', editableData.username);
-        formData.append('fullname', editableData.fullname);
-        formData.append('relationshipStatus', editableData.relationshipStatus);
-        formData.append('bio', editableData.bio);
-        formData.append('dateOfBirth', editableData.dateOfBirth);
-        formData.append('collegeName', editableData.collegeName);
-        formData.append('bestFriend', editableData.bestFriend); // ID of selected friend
-        formData.append('interests', editableData.interests);
-        formData.append('favoriteSports', editableData.favoriteSports);
-        formData.append('favoriteGame', editableData.favoriteGame);
-        formData.append('favoriteMusic', editableData.favoriteMusic);
-        formData.append('favoriteMovie', editableData.favoriteMovie);
-        formData.append('favoriteAnime', editableData.favoriteAnime);
-        formData.append('favoriteActor', editableData.favoriteActor);
-
-        // if (editableData.profilePic instanceof File) {
-        //     formData.append('profilePic', editableData.profilePic);
-        // }
-
-        if (editableData.profilePic instanceof File) {
-          const sanitizedFilename = editableData.profilePic.name
-              .replace(/\s+/g, '_') // Replace spaces with underscores
-              .replace(/[^a-zA-Z0-9_.-]/g, ''); // Remove special characters
+      const formData = new FormData();
   
-          // Create a new sanitized file
-          const sanitizedFile = new File(
-              [editableData.profilePic],
-              sanitizedFilename,
-              { type: editableData.profilePic.type }
-          );
+      // Append all fields to the formData
+      formData.append('username', editableData.username);
+      formData.append('fullname', editableData.fullname);
+      formData.append('relationshipStatus', editableData.relationshipStatus);
+      formData.append('bio', editableData.bio);
+      formData.append('dateOfBirth', editableData.dateOfBirth);
+      formData.append('collegeName', editableData.collegeName);
+      formData.append('bestFriend', editableData.bestFriend); 
+      formData.append('interests', editableData.interests);
+      formData.append('favoriteSports', editableData.favoriteSports);
+      formData.append('favoriteGame', editableData.favoriteGame);
+      formData.append('favoriteMusic', editableData.favoriteMusic);
+      formData.append('favoriteMovie', editableData.favoriteMovie);
+      formData.append('favoriteAnime', editableData.favoriteAnime);
+      formData.append('favoriteActor', editableData.favoriteActor);
   
-          formData.append('profilePic', sanitizedFile);
+      // if (editableData.profilePic instanceof File) {
+      //     formData.append('profilePic', editableData.profilePic); // Attach image file
+      // }
+
+      if (editableData.profilePic instanceof File) {
+        console.log('Profile picture is a file:', editableData.profilePic); // Debug
+        formData.append('profilePic', editableData.profilePic); // Attach image file
+    } else {
+        console.log('Profile picture is not a file:', editableData.profilePic); // Debug
+    }
+  
+      try {
+          const response = await axios.patch(`/profile/update`, formData, {
+              headers: {
+                  'Content-Type': 'multipart/form-data',
+                  Authorization: `Bearer ${localStorage.getItem('token')}`, // Pass token for authentication
+              },
+          });
+  
+          setUserData(response.data.updatedUser); // Update UI with new user data
+          toggleEditMode(); // Exit edit mode
+      } catch (error) {
+          console.error('Error updating profile:', error);
+          setError('Failed to update profile. Please try again later.');
       }
-  
-     
-
-        try {
-            
-            const response = await axios.patch(`/profile/update`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                    Authorization: `Bearer ${localStorage.getItem('token')}`,
-                },
-            });
-            setUserData(response.data.updatedUser);
-            toggleEditMode();
-        } catch (error) {
-            console.error('Error updating profile:', error);
-            setError('Failed to update profile. Please try again later.');
-        }
-    };
+  };
 
     const fetchUserPosts = async () => {
         try {
@@ -601,7 +591,7 @@ function UserDetails() {
         {/* Post content */}
         {post.postType === "image" && post.content.mediaUrl && (
           <img
-            src={`/${post.content.mediaUrl}`}
+            src={`${post.content.mediaUrl}`}
             alt="Post media"
             className="w-full h-full object-cover"
           />
@@ -609,7 +599,7 @@ function UserDetails() {
         {post.postType === "video" && post.content.mediaUrl && (
           <video className="w-full h-full object-cover" muted>
             <source
-              src={`/${post.content.mediaUrl}`}
+              src={`${post.content.mediaUrl}`}
               type="video/mp4"
             />
             Your browser does not support the video tag.
@@ -638,7 +628,7 @@ function UserDetails() {
     >
     {post.postId?.postType === "image" && post.postId?.content.mediaUrl && (
           <img
-            src={`/${post.postId?.content.mediaUrl}`}
+            src={`${post.postId?.content.mediaUrl}`}
             alt="Post content"
             className="w-full h-full object-cover "
           />
@@ -646,7 +636,7 @@ function UserDetails() {
         {post.postId?.postType === "video" && post.postId?.content.mediaUrl && (
           <video className="w-full h-full object-cover muted">
             <source
-              src={`/${post.postId?.content.mediaUrl}`}
+              src={`${post.postId?.content.mediaUrl}`}
               type="video/mp4"
             />
             Your browser does not support the video tag.
@@ -682,7 +672,7 @@ function UserDetails() {
       
         {post.postType === "image" && post.content.mediaUrl && (
           <img
-            src={`/${post.content.mediaUrl}`}
+            src={`${post.content.mediaUrl}`}
             alt="Post content"
             className="w-full h-full object-cover "
           />
@@ -690,7 +680,7 @@ function UserDetails() {
         {post.postType === "video" && post.content.mediaUrl && (
           <video className="w-full h-full object-cover muted">
             <source
-              src={`/${post.content.mediaUrl}`}
+              src={`${post.content.mediaUrl}`}
               type="video/mp4"
             />
             Your browser does not support the video tag.
@@ -803,7 +793,7 @@ function UserDetails() {
      <div className="flex justify-center items-center">
       {selectedPost.content.mediaUrl && selectedPost.postType === "image" && (
         <img
-          src={`/${selectedPost.content.mediaUrl}`}
+          src={`${selectedPost.content.mediaUrl}`}
           alt="Post content"
           className="max-w-full max-h-[75vh] object-contain rounded-lg"
         />
@@ -815,7 +805,7 @@ function UserDetails() {
         >
           <source
             type="video/mp4"
-            src={`/${selectedPost.content.mediaUrl}`}
+            src={`${selectedPost.content.mediaUrl}`}
           />
           Your browser does not support the video tag.
         </video>
@@ -836,7 +826,7 @@ function UserDetails() {
       {selectedPost.postId.content.mediaUrl &&
         selectedPost.postId.postType === "image" && (
           <img
-            src={`/${selectedPost.postId.content.mediaUrl}`}
+            src={`${selectedPost.postId.content.mediaUrl}`}
             alt="Post content"
             className="max-w-full max-h-[75vh] object-contain rounded-lg"
           />
@@ -849,7 +839,7 @@ function UserDetails() {
           >
             <source
               type="video/mp4"
-              src={`/${selectedPost.postId.content.mediaUrl}`}
+              src={`${selectedPost.postId.content.mediaUrl}`}
             />
             Your browser does not support the video tag.
           </video>

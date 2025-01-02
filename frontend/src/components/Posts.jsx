@@ -232,6 +232,8 @@ const PostComponent = () => {
       
       const data = await response.json();
       setPosts(data);
+      setMediaContent(null); //added
+      setPostContent(" "); //added
      
     } catch (error) {
       console.error("Error fetching posts:", error);
@@ -264,56 +266,7 @@ const PostComponent = () => {
     
   }, []);
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   const token = localStorage.getItem("token");
-
-  //   if (!token) {
-  //     alert("No token found. Please log in again.");
-  //     return;
-  //   }
-
-  //   const formData = new FormData();
-  //   formData.append("captionOrText", postContent);
-  //   if (mediaContent) {
-  //     formData.append("mediaContent", mediaContent);
-  //   }
-
-  //   try {
-  //     const base64Url = token.split(".")[1];
-  //     const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-  //     const jsonPayload = decodeURIComponent(
-  //       atob(base64)
-  //         .split("")
-  //         .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
-  //         .join("")
-  //     );
-  //     const { userId } = JSON.parse(jsonPayload);
-
-  //     formData.append("userId", userId);
-
-  //     const response = await fetch(`/posts/create`, {
-  //       method: "POST",
-  //       body: formData,
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //     });
-
-  //     if (response.ok) {
-  //       setPostContent("");
-  //       setMediaContent(null);
-  //       await fetchPosts(); // Refresh posts
-  //     } else {
-  //       alert("Failed to create post");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error submitting form:", error);
-  //     alert("Error submitting form");
-  //   }
-  // };
-
-
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -324,17 +277,32 @@ const PostComponent = () => {
       return;
     }
   
+    console.log("Initial Token:", token);
+  
     const formData = new FormData();
-    formData.append("captionOrText", postContent);
   
-    try {
-      let mediaUrl = null;
+    // Append text content
+    if (postContent.trim()) {
+      formData.append("captionOrText", postContent.trim());
+      console.log("Caption/Text added to FormData:", postContent.trim());
+    }
+
   
-      // Step 1: Handle media upload to Cloudinary if `mediaContent` is provided
-      if (mediaContent) {
+    // Append media content if exists
+    if (mediaContent) {
+      console.log("Media content detected, preparing for Cloudinary upload:", mediaContent);
+  
+    if(!postContent.trim() && !mediaContent)
+    {
+      toast.error('Post cannot be empty!');
+      return;
+    }
+
+
+      try {
         const cloudinaryData = new FormData();
         cloudinaryData.append("file", mediaContent);
-        cloudinaryData.append("upload_preset", "simpleunsigned"); // Replace with your Cloudinary upload preset
+        cloudinaryData.append("upload_preset", "simpleunsigned"); // Replace with your preset
   
         const cloudinaryResponse = await fetch(
           "https://api.cloudinary.com/v1_1/dhtk7vhyv/upload",
@@ -349,15 +317,21 @@ const PostComponent = () => {
         }
   
         const cloudinaryResult = await cloudinaryResponse.json();
-        mediaUrl = cloudinaryResult.secure_url; // Get the Cloudinary secure URL
-      }
+        const mediaUrl = cloudinaryResult.secure_url;
   
-      // Step 2: Add media URL to `formData` if available
-      if (mediaUrl) {
+        console.log("Media uploaded successfully, URL received:", mediaUrl);
+  
         formData.append("mediaContent", mediaUrl);
+        console.log("Media URL added to FormData:", mediaUrl);
+      } catch (error) {
+        console.error("Media upload error:", error);
+        alert("Failed to upload media. Please try again.");
+        return;
       }
+    }
   
-      // Step 3: Extract userId from the token and append to `formData`
+    try {
+      // Decode userId from token
       const base64Url = token.split(".")[1];
       const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
       const jsonPayload = decodeURIComponent(
@@ -370,7 +344,14 @@ const PostComponent = () => {
   
       formData.append("userId", userId);
   
-      // Step 4: Send formData to your backend
+      // Log the final FormData contents
+      console.log("Final FormData before backend request:");
+      for (let [key, value] of formData.entries()) {
+        console.log(`${key}: ${value}`);
+      }
+  
+      // Backend call
+      console.log("Sending FormData to backend...");
       const response = await fetch(`/posts/create`, {
         method: "POST",
         body: formData,
@@ -380,17 +361,24 @@ const PostComponent = () => {
       });
   
       if (response.ok) {
+      
         setPostContent("");
         setMediaContent(null);
+        toast.success("Post created successfully");
         await fetchPosts(); // Refresh posts
       } else {
-        alert("Failed to create post");
+        const errorData = await response.json();
+        console.error("Backend error response:", errorData);
+        toast.error("Failed to create Post");
       }
     } catch (error) {
       console.error("Error submitting form:", error);
-      alert("Error submitting form");
+      toast.error("Error in creating post. Please try again.");
     }
   };
+  
+
+
   
 
 
@@ -675,6 +663,7 @@ return (
         <input
           type="file"
           accept="image/*,video/*"
+        
           onChange={(e) => setMediaContent(e.target.files[0])}
           style={{ marginTop: '10px' }}
         />
@@ -730,13 +719,13 @@ return (
           {post.content && post.content.mediaUrl && (
             post.postType === 'video' ? (
               <video
-                src={`/${post.content.mediaUrl}`}
+                src={`${post.content.mediaUrl}`}
                 controls
                 style={postMediaStyle}
               />
             ) : (
               <img
-                src={`/${post.content.mediaUrl}`}
+                src={`${post.content.mediaUrl}`}
                 alt="Post Media"
                 style={postMediaStyle}
               />

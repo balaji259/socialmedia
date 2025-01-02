@@ -4,6 +4,9 @@ const User = require('../models/users');
 const authenticateToken = require('./authenticate_user');
 const multer = require('multer');
 // const { Post } = require('../models/post'); 
+const mongoose = require('mongoose');
+const formidable=require('formidable');
+const cloudinary = require('../cloudinaryConfig');
 const { Post, Comment } = require('../models/post');
 const SavedPost=require("../models/savedPost");
 // const Comment=require("../models/post");
@@ -165,63 +168,69 @@ const upload = multer({ storage });
 // });
 
 
-const mongoose = require('mongoose');
 
-router.patch('/update', authenticateToken, upload.single('profilePic'), async (req, res) => {
-  try {
-      let mediaUrl = null;
+router.patch('/update', authenticateToken, async (req, res) => {
+  const form = new formidable.IncomingForm();
 
-      // Check if a new profile picture is uploaded
-      if (req.file) {
-          mediaUrl = `/uploads/${req.file.filename}`; // Set media URL to new file path
-      } else {
-          // Retrieve the current user profile to get the existing profilePic
-          const currentUser = await User.findById(req.user.userId);
-          mediaUrl = currentUser.profilePic; // Retain the existing profile picture URL if none is uploaded
-      }
-
-      console.log("reqbody");
-      console.log(req.body);
-
-      // Prepare update data
-      const updateData = {
-          profilePic: mediaUrl,
-          username: req.body.username,
-          fullname: req.body.fullname,
-          relationshipStatus: req.body.relationshipStatus,
-          bio: req.body.bio,
-          dateOfBirth: req.body.dateOfBirth,
-          collegeName: req.body.collegeName,
-          interests: req.body.interests,
-          favoriteSports: req.body.favoriteSports,
-          favoriteGame: req.body.favoriteGame,
-          favoriteMusic: req.body.favoriteMusic,
-          favoriteMovie: req.body.favoriteMovie,
-          favoriteAnime: req.body.favoriteAnime,
-          favoriteActor: req.body.favoriteActor,
-      };
-
-      // Only add bestFriend if it's a valid MongoDB ObjectId
-      if (req.body.bestFriend === "") {
-        updateData.bestFriend = null; // Set to null if empty string
-    } else if (mongoose.Types.ObjectId.isValid(req.body.bestFriend)) {
-        updateData.bestFriend = req.body.bestFriend; // Set to the valid ObjectId
+  form.parse(req, async (err, fields, files) => {
+    if (err) {
+      console.error('Form parsing error:', err);
+      return res.status(400).json({ error: 'Failed to parse form data' });
     }
 
+    try {
+      let profilePicUrl;
+
+      // Check if a new profile picture is uploaded
+      if (files.profilePic && files.profilePic.length > 0) {
+        const filePath = files.profilePic[0].filepath;
+
+        // Upload the file to Cloudinary
+        const uploadResult = await cloudinary.uploader.upload(filePath, {
+          folder: 'profile_pics', // Folder in Cloudinary
+          allowed_formats: ['jpg', 'jpeg', 'png', 'webp'], // Supported formats
+        });
+
+        profilePicUrl = uploadResult.secure_url; // Cloudinary URL
+      } else {
+        // Retain existing profilePic or set default
+        const currentUser = await User.findById(req.user.userId);
+        profilePicUrl = currentUser.profilePic || '/images/default_profile.jpeg';
+      }
+
+      // Extract values from the arrays
+      const updateData = {
+        profilePic: profilePicUrl,
+        username: fields.username[0], // Extract from array
+        fullname: fields.fullname[0], // Extract from array
+        bio: fields.bio[0] || '', // Extract from array, default to empty if not provided
+        relationshipStatus: fields.relationshipStatus[0], // Extract from array
+        dateOfBirth: fields.dateOfBirth[0] ? new Date(fields.dateOfBirth[0]) : null, // Parse as Date if provided
+        collegeName: fields.collegeName[0] || '', // Extract from array, default to empty if not provided
+        bestFriend: fields.bestFriend[0] === '' ? null : fields.bestFriend[0], // Set to null if empty, or keep ObjectId
+        interests: fields.interests[0] || '', // Extract from array, default to empty if not provided
+        favoriteSports: fields.favoriteSports[0] || '', // Extract from array
+        favoriteGame: fields.favoriteGame[0] || '', // Extract from array
+        favoriteMusic: fields.favoriteMusic[0] || '', // Extract from array
+        favoriteMovie: fields.favoriteMovie[0] || '', // Extract from array
+        favoriteAnime: fields.favoriteAnime[0] || '', // Extract from array
+        favoriteActor: fields.favoriteActor[0] || '', // Extract from array
+      };
+
+      // Handle the case when bestFriend is not valid or empty
+      if (fields.bestFriend[0] && !mongoose.Types.ObjectId.isValid(fields.bestFriend[0])) {
+        updateData.bestFriend = null; // If invalid, set to null
+      }
 
       // Update the user's profile in the database
-      const updatedUser = await User.findByIdAndUpdate(
-          req.user.userId,
-          updateData,
-          { new: true }
-      );
+      const updatedUser = await User.findByIdAndUpdate(req.user.userId, updateData, { new: true });
 
-      console.log("updatedUser", updatedUser);
       res.json({ message: 'Profile updated successfully', updatedUser });
-  } catch (error) {
+    } catch (error) {
       console.error('Error updating profile:', error);
-      res.status(500).send('Failed to update profile');
-  }
+      res.status(500).json({ error: 'Failed to update profile' });
+    }
+  });
 });
 
 
