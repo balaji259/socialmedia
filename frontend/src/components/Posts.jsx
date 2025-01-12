@@ -220,7 +220,7 @@ const PostComponent = () => {
 
   const backendBaseUrl = 'http://localhost:7000';
   const frontendBaseUrl='http://localhost:3000';
-  const baseUrl="http://localhost:7000";
+  const baseUrl="https://friendsbook-cy0f.onrender.com";
 
 
   const fetchPosts = async () => {
