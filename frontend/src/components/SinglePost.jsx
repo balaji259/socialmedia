@@ -5,6 +5,8 @@ import { toast } from 'react-hot-toast';
 
 const backendBaseUrl = 'http://localhost:7000';
 
+
+
 const SinglePost = () => {
   const [post, setPost] = useState(null);
   const [showMenus, setShowMenus] = useState({});
@@ -13,7 +15,7 @@ const SinglePost = () => {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await axios.get(`/posts/${postId}`);
+        const response = await axios.get(`/posts/render-single/${postId}`);
         setPost(response.data);
       } catch (error) {
         console.error("Error fetching post:", error);
@@ -61,10 +63,18 @@ const SinglePost = () => {
       </div>
 
       <div style={styles.content}>
-        {post.postType === "image" && post.content.mediaUrl && (
-          <img src={`/${post.content.mediaUrl}`} alt="Post media" style={styles.media} />
-        )}
         <p style={styles.caption}>{post.caption}</p>
+        {post.postType === "image" && post.content.mediaUrl && (
+          <img src={`${post.content.mediaUrl}`} alt="Post media" style={styles.media} />
+        )}
+        {post.postType === "video" && post.content.mediaUrl && (
+        
+          <video
+                src={`${post.content.mediaUrl}`}
+                controls
+                style={styles.media}
+              />
+        )}
       </div>
 
      

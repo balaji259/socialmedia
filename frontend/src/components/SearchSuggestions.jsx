@@ -93,7 +93,7 @@ const SearchSuggestions = () => {
 
   const goToUserProfile = (id) => {
     // navigate(`/profile/${userId}`); 
-    id===currentUserId?navigate(`/profile`):navigate(`/profile/${id}`);
+    id===currentUserId?navigate(`/profile`):navigate(`/other/${id}`);
   };
 
   useEffect(() => {

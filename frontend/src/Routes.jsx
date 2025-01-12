@@ -25,6 +25,11 @@ import FriendList from "./components/FetchFriends";
 // import chatsection from './components/chatsection'
 import { SocketProvider } from "./components/useSocket";
 // import ChatFriend from "./components/ChatFriend";
+import NewProfile from './components/NewProfile.jsx';
+import EditProfile from "./components/EditNewProfile.jsx";
+import NewPosts from "./components/NewPosts.jsx";
+import OtherProfile from "./components/OtherProfile.jsx";
+import OtherPosts from "./components/OtherPosts.jsx";
 
 const RoutesComponent = () => {
     return (
@@ -44,7 +49,8 @@ const RoutesComponent = () => {
                 <Route path="/report" element={<ReportPost />} />
                 <Route path="/posts/:postId" element={<SinglePost />} />
                 <Route path="/details" element={<UserDetails />} />
-                <Route path="/profile" element={<Profile />} />
+                <Route path="/profile" element={<NewProfile />} />
+                <Route path="/edit" element={<EditProfile />} />
                 <Route path="/profile/:userId" element={<UserProfile />} /> 
                 <Route path="/search" element={<Search />} />
                 <Route path="/searchsug" element={<SearchSuggestions />} />
@@ -52,6 +58,9 @@ const RoutesComponent = () => {
                 <Route path="/chats" element={<ChatHomePage />} />
                 <Route path="/friends" element={<Friends /> } />
                 <Route path="/friendlist" element={<FriendList />} />
+                <Route path="/newposts" element={<NewPosts /> } />
+                <Route path="/other/:userId" element={<OtherProfile />} />
+                <Route path="/viewposts/:userId" element={<OtherPosts />} />
                 {/* <Route path="/chat/:friendId" element={<ChatFriend /> } /> */}
                 {/* <Route path='./chat' element={<chatsection />} />             */}
             </Routes>

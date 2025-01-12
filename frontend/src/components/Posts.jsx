@@ -220,6 +220,9 @@ const PostComponent = () => {
 
   const backendBaseUrl = 'http://localhost:7000';
   const frontendBaseUrl='http://localhost:3000';
+  const baseUrl="http://localhost:7000";
+
+
   const fetchPosts = async () => {
     const token = localStorage.getItem("token");
     try {
@@ -510,7 +513,7 @@ const userId = payload.userId;
 
 const copyPostIdToClipboard = (postId) => {
   const postUrl = `/posts/${postId}`; // Adjust URL structure
-  navigator.clipboard.writeText(`${window.location.href}${postUrl}`)
+  navigator.clipboard.writeText(`${baseUrl}${postUrl}`)
     .then(() => toast.success("Post link copied! Share it anywhere."))
     .catch(err => console.error('Failed to copy:', err));
 };
@@ -642,7 +645,7 @@ const toggleReplyInput = (replyId) => {
 
 const goToUserProfile = (userId) => {
   // navigate(`/profile/${userId}`); 
-  userId===currentuserId?navigate(`/profile`):navigate(`/profile/${userId}`);
+  userId===currentuserId?navigate(`/profile`):navigate(`/other/${userId}`);
 };
 
 

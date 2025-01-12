@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import './scroll.css'
 const SuggestionsSidebar = () => {
   const [suggestions, setSuggestions] = useState([]);
@@ -7,6 +8,7 @@ const SuggestionsSidebar = () => {
   const [topStreakUsers, setTopStreakUsers] = useState([]);
   const backendBaseUrl='http://localhost:7000';
 
+  const navigate=useNavigate();
 
 
   const getUserIdFromToken = () => {
@@ -115,6 +117,14 @@ const SuggestionsSidebar = () => {
     id===userId?navigate(`/profile`):navigate(`/profile/${id}`);
   };
 
+  const handleNavigation=async(userId)=>{
+    console.log("id bro");
+    console.log(userId);
+
+    // navigate(`/other/${userId}`)
+  userId===currentUserId?navigate(`/profile`):navigate(`/other/${userId}`);
+  }
+
 
 
 
@@ -123,7 +133,7 @@ const SuggestionsSidebar = () => {
       <div style={streakTableStyle}>
         <h3 style={streakTableHeaderStyle}>Popular Streaker</h3>
         {topStreakUsers.map((user, index) => (
-          <div key={user._id} style={streakUserStyle} onClick={()=>goToUserProfile(user._id)}>
+          <div key={user._id} style={streakUserStyle} onClick={()=>handleNavigation(user._id)}>
             <img src={user.profilePic === '/images/default_profile.jpeg' ? '/images/default_profile.jpeg' : `${user.profilePic}`} alt='profilePic' style={profilePicStyle} />
             <div style={userInfoStyle}>
               <span style={usernameStyle}>{user.username}</span>
@@ -143,7 +153,7 @@ const SuggestionsSidebar = () => {
         {suggestions.map((user) => (
           <div key={user.username} style={suggestionStyle}>
             
-            <div style={suggestionTopStyle} onClick={()=> goToUserProfile(user._id)}>
+            <div style={suggestionTopStyle} onClick={()=> handleNavigation(user._id)}>
               <img src={user.profilePic === '/images/default_profile.jpeg' ? '/images/default_profile.jpeg' : `${user.profilePic}`} alt={user.username} style={profilePicStyle} />
               <p style={usernameTextStyle}>@{user.username}</p>
               <p style={bioTextStyle}>{user.bio || 'No Bio'}</p>

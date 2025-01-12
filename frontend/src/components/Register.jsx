@@ -99,6 +99,22 @@ const Register = () => {
                     </form>
                 ) : (
                     <form onSubmit={handleSendOtp} className="flex flex-col">
+                        {/* <input
+                            type="text"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            placeholder="Username"
+                            required
+                            className="p-2 sm:p-3 mb-3 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
+                        /> */}
+
+<div className="flex item-start">
+                        <span style={{ color: "red", fontSize: "12px", marginBottom: "4px" }}>
+                            *Username cannot be changed later!
+                        </span>
+                        </div>
+                       
+
                         <input
                             type="text"
                             value={username}
@@ -107,6 +123,7 @@ const Register = () => {
                             required
                             className="p-2 sm:p-3 mb-3 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
                         />
+                       
                         <input
                             type="text"
                             value={fullname}

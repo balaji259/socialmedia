@@ -479,6 +479,8 @@ router.delete('/:id',authenticateUser, async (req, res) => {
 
       await SavedPost.deleteMany({ postId });
 
+      await User.findByIdAndUpdate(userId, { $inc: { postsCount: -1 } });
+
       console.log("post deleted!");
   
       return res.status(200).json({ message: 'Post deleted successfully' });
@@ -490,7 +492,7 @@ router.delete('/:id',authenticateUser, async (req, res) => {
   
 
 
-router.get('/:postId', async (req, res) => {
+router.get('/render-single/:postId', async (req, res) => {
     console.log(req.params);
     const { postId } = req.params;
     console.log(postId);

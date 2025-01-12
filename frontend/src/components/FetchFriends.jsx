@@ -46,7 +46,7 @@ const FriendsList = () => {
 
   const goToUserProfile = (id) => {
     // navigate(`/profile/${userId}`); 
-    id===userId?navigate(`/profile`):navigate(`/profile/${id}`);
+    id===userId?navigate(`/profile`):navigate(`/other/${id}`);
   };
 
     const handleChat = (friendId) => {

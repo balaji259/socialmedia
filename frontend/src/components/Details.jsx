@@ -11,7 +11,7 @@ function UserDetails() {
     const [savedData, setSavedData] = useState([]);
     const [likedData,setLikedData]=useState([]);
     // const [activeSection, setActiveSection] = useState('posts');
-    const [activeSection, setActiveSection] = useState();
+    const [activeSection, setActiveSection] = useState("posts");
     const [error, setError] = useState(null);
     const [friendSuggestions, setFriendSuggestions] = useState([]);
 
@@ -75,6 +75,8 @@ function UserDetails() {
 
     useEffect(() => {
         fetchUserData();
+
+        
     }, []);
 
     useEffect(() => {
@@ -264,6 +266,7 @@ function UserDetails() {
 
     const fetchUserPosts = async () => {
         try {
+          console.log("in fetch user posts");
             const userId = userData._id;
             console.log(userId);
     
@@ -274,6 +277,7 @@ function UserDetails() {
 
                
                 setSectionData(response.data.posts || []);
+                console.log('section data:',sectionData);
             } else {
                 console.log("No user data!");
             }
@@ -384,13 +388,33 @@ function UserDetails() {
 
     }, [savedData]);
     
+    //added
+    // useEffect(()=>{
     
+    //   if(activeSection==="posts"){
+    //     console.log('entered initial setting posts');
+    //     fetchUserPosts();
+    //     console.log(activeSection);
+    //   }
+
+    // },[activeSection])
+
+    // useEffect(()=>{
+    //   console.log("initial state");
+    //   console.log(activeSection);
+    //   fetchUserPosts();
+    // },[])
+
+    // useEffect(()=>{
+    //   if(userData && activeSection==="posts")
+    //     fetchUserPosts();
+    // },[userData])
 
     const handleSectionChange = (section) => {
         setActiveSection(section);
-        if (section === 'posts') fetchUserPosts();
-        else if (section === 'liked') fetchUserLiked();
-        else if (section === 'saved') fetchUserSaved();
+        if (section === "posts") fetchUserPosts();
+        else if (section === "liked") fetchUserLiked();
+        else if (section === "saved") fetchUserSaved();
     };
 
     const goToUserProfile = (id) => {
@@ -502,39 +526,56 @@ function UserDetails() {
                         <>
                         {console.log("userData")}
                         {console.log(userData)}
-                        <h2 className="username">{`@${userData.username}` || "User's Name"}</h2>
-                        <p className="fullname">{userData.fullname || 'Full Name'}</p>
-                      
-                        {/* New Row for Posts, Following, and Followers */}
-                        <div className="statsRow">
-                          <div className="statItem">
-                            <span className="statCount">{userData.postsCount || 0}</span>
-                            <span className="statLabel"> Posts</span>
-                          </div>
-                          <div className="statItem cursor-pointer" onClick={() => openModal('following')}>
-                            <span className="statCount">{userData.following.length || 0}</span>
-                            <span className="statLabel"> Following</span>
-                          </div>
-                          <div className="statItem cursor-pointer" onClick={() => openModal('followers')}>
-                            <span className="statCount">{userData.followers.length || 0}</span>
-                            <span className="statLabel"> Followers</span>
-                          </div>
-                        </div>
-                      
-                        <p className="additionalInfo">Date of Birth: {userData.dateOfBirth ? userData.dateOfBirth.split('T')[0] : 'Not specified'}</p>
-                        <p className="additionalInfo">College Name: {userData.collegeName || 'Not specified'}</p>
-                        <p className="additionalInfo">Relationship Status: {userData.relationshipStatus || 'Single'}</p>
-                        <p className="additionalInfo">Best Friend: {userData.bestFriend?.username || 'Not specified'}</p>
-                        <p className="additionalInfo">Interests: {userData.interests || 'Not specified'}</p>
-                        <p className="additionalInfo sport">Favorite Sports: {userData.favoriteSports || 'Not specified'}</p>
-                        <p className="additionalInfo game">Favorite Game: {userData.favoriteGame || 'Not specified'}</p>
-                        <p className="additionalInfo music">Favorite Music: {userData.favoriteMusic || 'Not specified'}</p>
-                        <p className="additionalInfo movie">Favorite Movie: {userData.favoriteMovie || 'Not specified'}</p>
-                        <p className="additionalInfo anime">Favorite Anime: {userData.favoriteAnime || 'Not specified'}</p>
-                        <p className="additionalInfo actor">Favorite Actor: {userData.favoriteActor || 'Not specified'}</p>
-                        <p className="additionalInfo">Bio: {userData.bio || 'User bio goes here...'}</p>
-                        <button className="editButton" onClick={toggleEditMode}>Edit Profile</button>
-                      
+                        <div className="profileContainer">
+  {/* Username and Full Name */}
+                    <h2 className="username">{`@${userData.username}` || "User's Name"}</h2>
+            <p className="fullname">{userData.fullname || 'Full Name'}</p>
+
+  {/* Edit Profile Button at Top Right */}
+  <button className="editButton topRight" onClick={toggleEditMode}>Edit Profile</button>
+
+  {/* Stats Row */}
+  <div className="statsRow">
+    <div className="statItem">
+      <span className="statCount">{userData.postsCount || 0}</span>
+      <span className="statLabel"> Posts</span>
+    </div>
+    <div className="statItem cursor-pointer" onClick={() => openModal('following')}>
+      <span className="statCount">{userData.following.length || 0}</span>
+      <span className="statLabel"> Following</span>
+    </div>
+    <div className="statItem cursor-pointer" onClick={() => openModal('followers')}>
+      <span className="statCount">{userData.followers.length || 0}</span>
+      <span className="statLabel"> Followers</span>
+    </div>
+  </div>
+
+  {/* Additional Info */}
+  <p className="additionalInfo">Date of Birth: {userData.dateOfBirth ? userData.dateOfBirth.split('T')[0] : 'Not specified'}</p>
+  <p className="additionalInfo">College Name: {userData.collegeName || 'Not specified'}</p>
+  <p className="additionalInfo">Relationship Status: {userData.relationshipStatus || 'Single'}</p>
+  <p className="additionalInfo">Best Friend: {userData.bestFriend?.username || 'Not specified'}</p>
+  <p className="additionalInfo">Interests: {userData.interests || 'Not specified'}</p>
+  <p className="additionalInfo sport">Favorite Sports: {userData.favoriteSports || 'Not specified'}</p>
+  <p className="additionalInfo game">Favorite Game: {userData.favoriteGame || 'Not specified'}</p>
+  <p className="additionalInfo music">Favorite Music: {userData.favoriteMusic || 'Not specified'}</p>
+  <p className="additionalInfo movie">Favorite Movie: {userData.favoriteMovie || 'Not specified'}</p>
+  <p className="additionalInfo anime">Favorite Anime: {userData.favoriteAnime || 'Not specified'}</p>
+  <p className="additionalInfo actor">Favorite Actor: {userData.favoriteActor || 'Not specified'}</p>
+  <p className="additionalInfo">Bio: {userData.bio || 'User bio goes here...'}</p>
+
+  {/* Follow and Chat Buttons */}
+  <div className="actionButtons">
+    <button
+      className={`followButton ${isFollowing ? 'unfollow' : 'follow'}`}
+      onClick={toggleFollow}
+    >
+      {isFollowing ? 'Unfollow' : 'Follow'}
+    </button>
+    <button className="chatButton">Chat</button>
+  </div>
+</div>
+
                         {isModalOpen && (
   <div className="modalBackdrop">
     <div className="modalContent">
@@ -565,9 +606,9 @@ function UserDetails() {
             </div>
 
             <div className="buttonContainer">
-                <button style={activeSection === 'posts' ? styles.activeButton : styles.inactiveButton} onClick={() => handleSectionChange('posts')}>Posts</button>
-                <button style={activeSection === 'saved' ? styles.activeButton : styles.inactiveButton} onClick={() => handleSectionChange('saved')}>Saved</button>
-                <button style={activeSection === 'liked' ? styles.activeButton : styles.inactiveButton} onClick={() => handleSectionChange('liked')}>Liked</button>
+                <button style={activeSection === 'posts' ? styles.activeButton : styles.inactiveButton} onClick={() => handleSectionChange("posts")}>Posts</button>
+                <button style={activeSection === 'saved' ? styles.activeButton : styles.inactiveButton} onClick={() => handleSectionChange("saved")}>Saved</button>
+                <button style={activeSection === 'liked' ? styles.activeButton : styles.inactiveButton} onClick={() => handleSectionChange("liked")}>Liked</button>
             </div>
             <div className="sectionContent">
                 

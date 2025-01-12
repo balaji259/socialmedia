@@ -138,6 +138,7 @@ router.post('/login', async (req, res) => {
         // Find the user by email
         const user = await User.findOne({ email });
         if (!user) {
+            console.log("email not regstereed");
             return res.status(401).json({ error: 'Email not registered' });
         }
 
@@ -145,6 +146,7 @@ router.post('/login', async (req, res) => {
         if(password){
         const isPasswordCorrect = await bcrypt.compare(password, user.password);
         if (!isPasswordCorrect) {
+            console.log("password incorrect");
             return res.status(401).json({ error: 'Invalid password' });
         }
         }
@@ -164,6 +166,7 @@ router.post('/login', async (req, res) => {
         
     } catch (error) {
         console.error('Error during login:', error);
+        console.log(error);
         res.status(500).json({ message: 'Server error.' });
     }
 });

@@ -13,7 +13,7 @@ const UserProfile = () => {
     const [selectedPost, setSelectedPost] = useState(null);
     const [savedData, setSavedData] = useState([]);
     const [likedData,setLikedData]=useState([]);
-    const [activeSection, setActiveSection] = useState('');
+    const [activeSection, setActiveSection] = useState('posts');
     const backendBaseUrl = "http://localhost:7000";
     const navigate=useNavigate();
 
@@ -242,7 +242,7 @@ const UserProfile = () => {
                 >
                     {post.postType === "image" && post.content.mediaUrl && (
                         <img
-                            src={`/${post.content.mediaUrl}`}
+                            src={`${post.content.mediaUrl}`}
                          
                             alt="Post media"
                             className="w-full h-full object-cover"
@@ -251,7 +251,7 @@ const UserProfile = () => {
                     {post.postType === "video" && post.content.mediaUrl && (
                         <video className="w-full h-full object-cover" muted>
                             <source
-                                src={`/${post.content.mediaUrl}`}
+                                src={`${post.content.mediaUrl}`}
                                 type="video/mp4"
                             />
                             Your browser does not support the video tag.
@@ -306,7 +306,7 @@ const UserProfile = () => {
                     <div className="flex justify-center items-center">
                         {selectedPost.content.mediaUrl && selectedPost.postType === "image" && (
                             <img
-                                src={`/${selectedPost.content.mediaUrl}`}
+                                src={`${selectedPost.content.mediaUrl}`}
                                 alt="Post content"
                                 className="max-w-full max-h-[75vh] object-contain rounded-lg"
                             />
@@ -319,7 +319,7 @@ const UserProfile = () => {
                                 >
                                     <source
                                         type="video/mp4"
-                                        src={`/${selectedPost.content.mediaUrl}`}
+                                        src={`${selectedPost.content.mediaUrl}`}
                                     />
                                     Your browser does not support the video tag.
                                 </video>

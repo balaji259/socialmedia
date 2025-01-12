@@ -41,7 +41,7 @@ const Login = ({ onSwitch }) => {
             .catch((error) => {
                 console.log(error.message);
                 const errorMessage = error?.message;
-                toast.error(errorMessage, { duration: 2000 });
+                toast.error(error);
             })
             .finally(() => {
                 // setIsLoggingIn(false);
