@@ -27,6 +27,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: '/images/default_profile.jpeg',
     },
+    
     bio: {
       type: String,
       trim: true,
@@ -56,7 +57,7 @@ const userSchema = new mongoose.Schema(
     ],
     relationshipStatus: {
       type: String,
-      enum: ['single', 'in a relationship', 'married', 'complicated', 'other'],
+      enum: ['single', 'in-a-relationship', 'married', 'complicated', 'other'],
       default: 'single',
     },
     streak: {
@@ -93,7 +94,7 @@ const userSchema = new mongoose.Schema(
       trim: true,
       default: '',
     },
-    favoriteSports: {
+    favoriteSport: {
       type: String,
       trim: true,
       default: '',
@@ -123,6 +124,74 @@ const userSchema = new mongoose.Schema(
       trim: true,
       default: '',
     },
+
+    mobileNumber:{
+      type:String,
+      trim:true,
+      default:'',
+    },
+
+    website:{
+      type:String,
+      trim:true,
+      default:'',
+    },
+
+    school:{
+      type:String,
+      trim:true,
+      default:'',
+    },
+
+    status: {
+      type: String,
+      enum: ['student', 'professor', 'working', 'other'],
+      default: 'student',
+    },
+
+    gender: {
+      type: String,
+      enum: ['male', 'female', 'other', 'prefer-not-to-say'],
+      default: 'prefer-not-to-say',
+    },
+
+    residence:{
+      type:String,
+      trim:true,
+      default:'',
+    },
+
+    hometown:{
+      type:String,
+      trim:true,
+      default:'',
+    },
+
+    highschool:{
+      type:String,
+      trim:true,
+      default:'',
+    },
+
+    lookingfor:{
+      type:String,
+      trim:true,
+      default:'',
+
+    },
+
+    interestedIn:{
+      type:String,
+      trim:true,
+      default:'',
+    }
+
+
+
+
+
+
+
   },
   { timestamps: true }
 );

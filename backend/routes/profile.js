@@ -241,8 +241,21 @@ router.patch('/demo/update', authenticateToken, async (req, res) => {
       //     ? new Date(fields.dateOfBirth[0])
       //     : currentUser.dateOfBirth;
 
-          updateData.dateofBirth=fields.dateOfBirth?.[0] == "undefined" ? currentUser.dateOfBirth : new Date(fields.dateOfBirth[0]);
-          console.log("updated DateogfBirth");
+          // updateData.dateofBirth=fields.dateOfBirth?.[0] == undefined ? currentUser.dateOfBirth : new Date(fields.dateOfBirth[0]);
+          
+          updateData.dateOfBirth =
+  !fields.dateOfBirth || fields.dateOfBirth === "undefined"
+    ? currentUser.dateOfBirth // Use existing value if not provided
+    : new Date(fields.dateOfBirth); // Parse the date directly
+
+          console.log("receiving dob");
+          console.log(fields.dateOfBirth?.[0]);
+          console.log("currentUser.dateOfBirth");
+          console.log(currentUser.dateOfBirth);
+          console.log("date object");
+          console.log(new Date(fields.dateOfBirth[0]));
+
+          console.log("updated DateofBirth");
           console.log(updateData.dateOfBirth);
 
       // Logging the fields (form data)
@@ -259,6 +272,10 @@ router.patch('/demo/update', authenticateToken, async (req, res) => {
 
       // Update the user's profile in the database
       const updatedUser = await User.findByIdAndUpdate(req.user.userId, updateData, { new: true });
+    console.log("profile updated!");
+
+      console.log(updatedUser);
+      
 
       res.json({ message: 'Profile updated successfully', updatedUser });
     } catch (error) {
@@ -267,7 +284,6 @@ router.patch('/demo/update', authenticateToken, async (req, res) => {
     }
   });
 });
-
 
 
 

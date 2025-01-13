@@ -59,7 +59,7 @@ const Profile = () => {
           }
 
           const data = await response.json();
-          console.log("data");
+          console.log("user data");
           // console.log("this is me id");
           console.log(data);
           // console.log(userData._id);
@@ -84,7 +84,7 @@ const Profile = () => {
       }
   
       const friends = await response.json(); // Parse the JSON response
-      console.log("friends");
+      console.log("friends data");
       console.log(friends);
       setFriends(friends);
       // return friends; // Return the friends data
@@ -104,9 +104,9 @@ const Profile = () => {
   useEffect(() => {
     if (userData) {
         setEditableData({
-            username: userData.username,
-            fullname: userData.fullname,
-            email:userData.email,
+            username: userData.username || '',
+            fullname: userData.fullname || '',
+            email:userData.email || '',
 
             relationshipStatus: userData.relationshipStatus,
             bio: userData.bio,
@@ -187,15 +187,15 @@ if (!userData) {
   return (
     <div className="profile-container">
       <div className="profile-header">
-        <span>Name of the User:{userData.username}</span>
-        <span>University name: {userData.collegeName}</span>
+        <span>Name of the User:{userData?.username}</span>
+        <span>University name: {userData?.collegeName}</span>
       </div>
 
       <div className="profile-body">
         <div className="left-section">
           {/* <div className="profile-photo">Profile Photo</div> */}
           <div className="profile-photo">
-            <img src={userData.profilePic} alt="profilepic" />
+            <img src={userData?.profilePic} alt="profilepic" />
           </div>
           
           <div className="my-profile-buttons">
@@ -220,13 +220,13 @@ if (!userData) {
             <table>
                 <tbody>
                     <tr>
-                        <td>Email: {userData.email}</td>
+                        <td>Email: {userData?.email}</td>
                     </tr>
                     <tr>
-                        <td>Mobile Number: {userData.mobileNumber}</td>
+                        <td>Mobile Number: {userData?.mobileNumber}</td>
                     </tr>
                     <tr>
-                        <td>Webisite: {userData.website}</td>
+                        <td>Webisite: {userData?.website}</td>
                     </tr>
                 </tbody>
             </table>
@@ -279,11 +279,11 @@ if (!userData) {
           {friends.map((friend) => (
             <div key={friend._id} className="friend-item">
               <img
-                src={friend.profilePic}
-                alt={`${friend.username}'s profile`}
+                src={friend?.profilePic}
+                alt={`${friend?.username}'s profile`}
                 className="friend-profile-pic"
               />
-              <p className="friend-username">{friend.username}</p>
+              <p className="friend-username">{friend?.username}</p>
             </div>
           ))}
         </div>
@@ -302,13 +302,13 @@ if (!userData) {
             <table>
               <tbody>
                 <tr>
-                  <td>Name: {userData.fullname}</td>
+                  <td>Name: {userData?.fullname}</td>
                 </tr>
                 <tr>
-                  <td>Member Since:</td>
+                  <td>Member Since:{userData?.createdAt?.split('T')[0]}</td>
                 </tr>
                 <tr>
-                  <td>Last Update:</td>
+                  <td>Last Update:{userData?.updatedAt?.split('T')[0]}</td>
                 </tr>
               </tbody>
             </table>
@@ -317,25 +317,25 @@ if (!userData) {
             <table>
               <tbody>
                 <tr>
-                  <td>School: {userData.school}</td>
+                  <td>School: {userData?.school}</td>
                 </tr>
                 <tr>
-                  <td>Status: {userData.status}</td>
+                  <td>Status: {userData?.status}</td>
                 </tr>
                 <tr>
-                  <td>Gender:{userData.gender || '-'}</td>
+                  <td>Gender:{userData?.gender || '-'}</td>
                 </tr>
                 <tr>
-                  <td>Residence: {userData.residence}</td>
+                  <td>Residence: {userData?.residence}</td>
                 </tr>
                 <tr>
-                  <td>Birthday:{userData.dateOfBirth?.split('T')[0]}</td>
+                  <td>Birthday:{userData?.dateOfBirth?.split('T')[0]}</td>
                 </tr>
                   <tr>
-                  <td>Home Town:{userData.hometown}</td>
+                  <td>Home Town:{userData?.hometown}</td>
                 </tr>
                 <tr>
-                  <td>High School: {userData.highschool}</td>
+                  <td>High School: {userData?.highschool}</td>
                 </tr>
               </tbody>
             </table>
@@ -344,20 +344,20 @@ if (!userData) {
             <table>
               <tbody>
                 <tr>
-                  <td>Looking for: {userData.lookingfor}</td>
+                  <td>Looking for: {userData?.lookingfor}</td>
                 </tr>
                 <tr>
-                  <td>Interested In: {userData.interestedIn}</td>
+                  <td>Interested In: {userData?.interestedIn}</td>
                 </tr>
                 <tr>
-                  <td>Relationship Status: {userData.relationshipStatus}</td>
+                  <td>Relationship Status: {userData?.relationshipStatus}</td>
                 </tr>
                 <tr>
+                  <td>Best Friend: {userData?.bestFriend?.username}</td>
                   {/* <td>Best Friend: {userData.bestFriend.username}</td> */}
-                  <td>Best Friend: {userData.bestFriend.username}</td>
                 </tr>
                 <tr>
-                  <td>College Name: {userData.collegeName}</td>
+                  <td>College Name: {userData?.collegeName}</td>
                 </tr>
               </tbody>
             </table>
@@ -366,28 +366,28 @@ if (!userData) {
             <table>
               <tbody>
                 <tr>
-                  <td>Interests: {userData.interests}</td>
+                  <td>Interests: {userData?.interests}</td>
                 </tr>
                 <tr>
-                  <td>Favorite Sports: {userData.favoriteSport}</td>
+                  <td>Favorite Sports: {userData?.favoriteSport}</td>
                 </tr>
                 <tr>
-                  <td>Favorite Game: {userData.favoriteGame}</td>
+                  <td>Favorite Game: {userData?.favoriteGame}</td>
                 </tr>
                 <tr>
-                  <td>Favorite Music:{userData.favoriteMusic}</td>
+                  <td>Favorite Music:{userData?.favoriteMusic}</td>
                 </tr>
                 <tr>
-                  <td>Favorite Movie:{userData.favoriteMovie}</td>
+                  <td>Favorite Movie:{userData?.favoriteMovie}</td>
                 </tr>
                 <tr>
-                  <td>Favorite Anime: {userData.favoriteAnime}</td>
+                  <td>Favorite Anime: {userData?.favoriteAnime}</td>
                 </tr>
                 <tr>
-                  <td>Favorite Actor:{userData.favoriteActor}</td>
+                  <td>Favorite Actor:{userData?.favoriteActor}</td>
                 </tr>
                 <tr>
-                  <td>About me (Bio): {userData.bio}</td>
+                  <td>About me (Bio): {userData?.bio}</td>
                 </tr>
               </tbody>
             </table>
