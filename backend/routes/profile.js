@@ -243,20 +243,33 @@ router.patch('/demo/update', authenticateToken, async (req, res) => {
 
           // updateData.dateofBirth=fields.dateOfBirth?.[0] == undefined ? currentUser.dateOfBirth : new Date(fields.dateOfBirth[0]);
           
-          updateData.dateOfBirth =
-  !fields.dateOfBirth || fields.dateOfBirth === "undefined"
-    ? currentUser.dateOfBirth // Use existing value if not provided
-    : new Date(fields.dateOfBirth); // Parse the date directly
+  //         updateData.dateOfBirth =
+  // !fields.dateOfBirth || fields.dateOfBirth === "undefined"
+  //   ? currentUser.dateOfBirth // Use existing value if not provided
+  //   : new Date(fields.dateOfBirth); // Parse the date directly
 
-          console.log("receiving dob");
-          console.log(fields.dateOfBirth?.[0]);
-          console.log("currentUser.dateOfBirth");
-          console.log(currentUser.dateOfBirth);
-          console.log("date object");
-          console.log(new Date(fields.dateOfBirth[0]));
 
-          console.log("updated DateofBirth");
-          console.log(updateData.dateOfBirth);
+// Function to validate if a date is valid
+function isValidDate(date) {
+  return date instanceof Date && !isNaN(date);
+}
+
+// Check if fields.dateOfBirth is provided and not null or the string "undefined"
+if (fields.dateOfBirth && fields.dateOfBirth !== "undefined") {
+  const parsedDate = new Date(fields.dateOfBirth);
+  if (isValidDate(parsedDate)) {
+    updateData.dateOfBirth = parsedDate;
+    console.log("valid one");
+  } else {
+    console.log("Invalid date provided:", fields.dateOfBirth);
+    updateData.dateOfBirth = currentUser.dateOfBirth;
+  }
+} else {
+  updateData.dateOfBirth = currentUser.dateOfBirth;
+}
+
+
+
 
       // Logging the fields (form data)
       console.log('Fields received:');
