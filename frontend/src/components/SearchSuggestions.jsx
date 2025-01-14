@@ -36,6 +36,9 @@ const SearchSuggestions = () => {
         },
       });
 
+      console.log("sugestions responese");
+      console.log(response.data);
+
       if (response.data.users.length > 0) {
         setSuggestedUsers((prev) => {
           const newUsers = response.data.users.filter(
@@ -141,7 +144,7 @@ const SearchSuggestions = () => {
 
       {/* Bio */}
       <p className="mt-2 text-gray-600 text-sm">
-        {user.bio ? user.bio : "-"}
+        {user.bio ? user.bio : "No Bio"}
       </p>
 
       {/* Buttons */}

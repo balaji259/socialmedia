@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from "react-router-dom";
 import './scroll.css';
@@ -209,9 +209,11 @@ const RecursiveReplies = ({
 
 
 const PostComponent = () => {
+  const fileInputRef= useRef(null);
   const navigate = useNavigate();
+
   const [posts, setPosts] = useState([]);
-  const [postContent, setPostContent] = useState("");
+  const [postContent, setPostContent] = useState(null);
   const [mediaContent, setMediaContent] = useState(null);
   const [showMenus, setShowMenus] = useState({});
   const [newComment, setNewComment] = useState('');
@@ -238,7 +240,7 @@ const PostComponent = () => {
       const data = await response.json();
       setPosts(data);
       setMediaContent(null); //added
-      setPostContent(" "); //added
+      setPostContent(null); //added
      
     } catch (error) {
       console.error("Error fetching posts:", error);
@@ -367,8 +369,12 @@ const PostComponent = () => {
   
       if (response.ok) {
       
-        setPostContent("");
+        setPostContent(null);
         setMediaContent(null);
+        if(fileInputRef.current)
+        {
+          fileInputRef.current.value = "";
+        }
         toast.success("Post created successfully");
         await fetchPosts(); // Refresh posts
       } else {
@@ -660,15 +666,15 @@ return (
     <div style={postInputContainerStyle}>
       <form onSubmit={handleSubmit}>
         <textarea
-          placeholder="What are you thinking?"
-          value={postContent}
+          placeholder="Share your thoughts...."
+          value={postContent || ""}
           onChange={(e) => setPostContent(e.target.value)}
           style={textareaStyle}
         />
         <input
           type="file"
           accept="image/*,video/*"
-        
+          ref={fileInputRef}
           onChange={(e) => setMediaContent(e.target.files[0])}
           style={{ marginTop: '10px' }}
         />

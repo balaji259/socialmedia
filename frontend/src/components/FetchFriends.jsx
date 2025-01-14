@@ -79,7 +79,7 @@ const FriendsList = () => {
             {/* Username */}
             <h3 className="mt-4 text-lg font-semibold text-gray-800">{friend.username}</h3>
             <p className="mt-2 text-gray-600 text-sm">
-        {friend.bio ? friend.bio : "-"}
+        {friend.bio ? friend.bio : "No Bio"}
       </p>
 
 

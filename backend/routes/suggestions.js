@@ -163,7 +163,7 @@ async function getSearchSuggestions(req, res) {
         const users = await User.find(matchQuery)
             .skip((page - 1) * limit)
             .limit(limit)
-            .select('_id username fullname profilePic'); // Fetch only required fields
+            .select('_id username fullname profilePic bio'); // Fetch only required fields
 
         // Add followStatus to each user
         const usersWithFollowStatus = users.map(user => ({
@@ -171,6 +171,7 @@ async function getSearchSuggestions(req, res) {
             username: user.username,
             fullname: user.fullname,
             profilePic: user.profilePic,
+            bio:user.bio,
             followStatus: loggedInUser.following.includes(user._id) ? 'unfollow' : 'follow'
         }));
 
