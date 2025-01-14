@@ -132,7 +132,7 @@ const SearchSuggestions = () => {
             : `${user.profilePic}`
         }
         alt={user.username}
-        className="w-full h-48 object-cover rounded-md"
+        className="cursor-pointer w-full h-48 object-cover rounded-md"
         onClick={()=>{goToUserProfile(user._id)}}
       />
 

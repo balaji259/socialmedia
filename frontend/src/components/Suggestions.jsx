@@ -205,6 +205,8 @@ const streakUserStyle = {
   backgroundColor: '#f5f5f5',
   padding: '10px',
   margin: '8px 0',
+  cursor:"pointer"
+
 };
 
 const profilePicStyle = {
@@ -229,6 +231,7 @@ const streakInfoStyle = {
   display: 'flex',
   alignItems: 'center',
   marginTop: '5px',
+
 };
 
 const streakIconStyle = {
@@ -287,6 +290,8 @@ const suggestionTopStyle = {
   flexDirection: 'column',
   alignItems: 'center',
   marginBottom: '8px',
+  cursor:"pointer"
+  
 };
 
 const usernameTextStyle = {

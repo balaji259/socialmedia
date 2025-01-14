@@ -68,7 +68,9 @@ const postHeaderStyle = {
 const userInfoStyle = {
   display: 'flex',
   // alignItems: 'center',
-  alignItems: 'flex-start'
+  alignItems: 'flex-start',
+  cursor:"pointer"
+
 };
 
 const profilePicStyle = {

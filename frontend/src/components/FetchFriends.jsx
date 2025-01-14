@@ -73,7 +73,7 @@ const FriendsList = () => {
               }
               onClick={()=>{goToUserProfile(friend._id)}}
               alt={friend.username}
-              className="w-full h-48 object-cover rounded-md"
+              className="w-full h-48 object-cover rounded-md cursor-pointer"
             />
 
             {/* Username */}
