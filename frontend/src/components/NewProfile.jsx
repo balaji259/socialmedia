@@ -395,7 +395,7 @@ if (!userData) {
         </div>
 
         <div className="right-section">
-          <p>Leave this space</p>
+          {/* <p>Leave this space</p> */}
         </div>
       </div>
     </div>

@@ -371,13 +371,13 @@ const NewProfile = () => {
                 <div className="button-container">
                     
                     <button className="save-me" onClick={saveChanges}>Save Changes</button>
-                    <button className="cancel-me" >Cancel</button>
+                    <button className="cancel-me" onClick={()=>navigate('/profile')} >Cancel</button>
                 </div>
 
             </div>
       
             <div className="right-section">
-              <p>Leave this space</p>
+              {/* <p>Leave this space</p> */}
             </div>
           </div>
         </div>

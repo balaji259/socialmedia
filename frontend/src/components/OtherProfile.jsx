@@ -182,19 +182,19 @@ async function getFriendsDetails(userId) {
   return (
     <div className="profile-container">
       <div className="profile-header">
-        <span>Name of the User:{userData.username}</span>
-        <span>University name: {userData.collegeName}</span>
+        <span>Name of the User:{userData?.username}</span>
+        <span>University name: {userData?.collegeName}</span>
       </div>
 
       <div className="profile-body">
         <div className="left-section">
           {/* <div className="profile-photo">Profile Photo</div> */}
           <div className="profile-photo">
-            <img src={userData.profilePic} alt="profilepic" />
+            <img src={userData?.profilePic} alt="profilepic" />
           </div>
           {/* <button className="edit-profile" onClick={editProfile}>Edit Profile</button> */}
           <div className="view-div">
-            <button className="view-posts" onClick={()=>{navigate(`/viewposts/${userId}`)}}>View {userData.username} Posts</button>
+            <button className="view-posts" onClick={()=>{navigate(`/viewposts/${userId}`)}}>View {userData?.username} Posts</button>
           </div>
           
           <div className="actions">
@@ -224,20 +224,20 @@ async function getFriendsDetails(userId) {
           </div>
           <div className="mutual-friends">
             <p>Mutual Friends</p>
-            <p>You have {mutualFriendsCount} common friends with {userData.username}</p>
+            <p>You have {mutualFriendsCount} common friends with {userData?.username}</p>
           </div>
           <div className="contact-info">
             <h4>Contact info:</h4>
             <table>
                 <tbody>
                     <tr>
-                        <td>Email: {userData.email}</td>
+                        <td>Email: {userData?.email}</td>
                     </tr>
                     <tr>
-                        <td>Mobile Number: {userData.mobileNumber}</td>
+                        <td>Mobile Number: {userData?.mobileNumber}</td>
                     </tr>
                     <tr>
-                        <td>Webisite: {userData.website}</td>
+                        <td>Webisite: {userData?.website}</td>
                     </tr>
                 </tbody>
             </table>
@@ -316,10 +316,10 @@ async function getFriendsDetails(userId) {
                   <td>Name: {userData?.fullname}</td>
                 </tr>
                 <tr>
-                  <td>Member Since:{userData?.createdAt}</td>
+                  <td>Member Since:{userData?.createdAt?.split('T')[0]}</td>
                 </tr>
                 <tr>
-                  <td>Last Update:{userData?.updatedAt}</td>
+                  <td>Last Update:{userData?.updatedAt?.split('T')[0]}</td>
                 </tr>
               </tbody>
             </table>
@@ -340,13 +340,13 @@ async function getFriendsDetails(userId) {
                   <td>Residence: {userData?.residence}</td>
                 </tr>
                 <tr>
-                  <td>Birthday:{userData.dateOfBirth}</td>
+                  <td>Birthday:{userData?.dateOfBirth?.split('T')[0]}</td>
                 </tr>
                 <tr>
-                  <td>Home Town:{userData.hometown}</td>
+                  <td>Home Town:{userData?.hometown}</td>
                 </tr>
                 <tr>
-                  <td>High School: {userData.highschool}</td>
+                  <td>High School: {userData?.highschool}</td>
                 </tr>
               </tbody>
             </table>
@@ -355,20 +355,20 @@ async function getFriendsDetails(userId) {
             <table>
               <tbody>
                 <tr>
-                  <td>Looking for: {userData.lookingfor}</td>
+                  <td>Looking for: {userData?.lookingfor}</td>
                 </tr>
                 <tr>
-                  <td>Interested In: {userData.interestedIn}</td>
+                  <td>Interested In: {userData?.interestedIn}</td>
                 </tr>
                 <tr>
-                  <td>Relationship Status: {userData.relationshipStatus}</td>
+                  <td>Relationship Status: {userData?.relationshipStatus}</td>
                 </tr>
                 <tr>
-                  <td>Best Friend: {userData.bestFriend.username}</td>
+                  <td>Best Friend: {userData?.bestFriend?.username}</td>
                   {/* <td>Best Friend: {"later!"}</td> */}
                 </tr>
                 <tr>
-                  <td>College Name: {userData.collegeName}</td>
+                  <td>College Name: {userData?.collegeName}</td>
                 </tr>
               </tbody>
             </table>
@@ -377,28 +377,28 @@ async function getFriendsDetails(userId) {
             <table>
               <tbody>
                 <tr>
-                  <td>Interests: {userData.interests}</td>
+                  <td>Interests: {userData?.interests}</td>
                 </tr>
                 <tr>
-                  <td>Favorite Sports: {userData.favoriteSport}</td>
+                  <td>Favorite Sports: {userData?.favoriteSport}</td>
                 </tr>
                 <tr>
-                  <td>Favorite Game: {userData.favoriteGame}</td>
+                  <td>Favorite Game: {userData?.favoriteGame}</td>
                 </tr>
                 <tr>
-                  <td>Favorite Music:{userData.favoriteMusic}</td>
+                  <td>Favorite Music:{userData?.favoriteMusic}</td>
                 </tr>
                 <tr>
-                  <td>Favorite Movie:{userData.favoriteMovie}</td>
+                  <td>Favorite Movie:{userData?.favoriteMovie}</td>
                 </tr>
                 <tr>
-                  <td>Favorite Anime: {userData.favoriteAnime}</td>
+                  <td>Favorite Anime: {userData?.favoriteAnime}</td>
                 </tr>
                 <tr>
-                  <td>Favorite Actor:{userData.favoriteActor}</td>
+                  <td>Favorite Actor:{userData?.favoriteActor}</td>
                 </tr>
                 <tr>
-                  <td>About me (Bio): {userData.bio}</td>
+                  <td>About me (Bio): {userData?.bio}</td>
                 </tr>
               </tbody>
             </table>
@@ -406,7 +406,7 @@ async function getFriendsDetails(userId) {
         </div>
 
         <div className="right-section">
-          <p>Leave this space</p>
+          {/* <p>Leave this space</p> */}
         </div>
       </div>
     </div>
