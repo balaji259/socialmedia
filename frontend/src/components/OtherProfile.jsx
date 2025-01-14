@@ -72,6 +72,8 @@ const Profile = () => {
         // Fetch user data by userId
         axios.get(`/user/viewProfile/${userId}`)
             .then((response) => {
+              console.log("userdata");
+              console.log(response.data);
                 setUserData(response.data);
             })
             .catch((error) => {

@@ -288,19 +288,43 @@ router.post('/getUsersByIds', async (req, res) => {
   }
 });
 
-async function getUserProfile(req,res){
-    try{
-        const {userId} =req.params;
-        const userProfile=await User.findById(userId).select('-password');
-        if(!userProfile)
-            return res.status(404).json({message:'User not found'});
-        res.status(200).json(userProfile);   
-    } 
-    catch(e){
-      console.log(e);
-      res.status(500).json({message: 'Server error!'})
+// async function getUserProfile(req,res){
+//     try{
+//         const {userId} =req.params;
+//         const userProfile=await User.findById(userId).select('-password');
+//         if(!userProfile)
+//             return res.status(404).json({message:'User not found'});
+//         res.status(200).json(userProfile);   
+//     } 
+//     catch(e){
+//       console.log(e);
+//       res.status(500).json({message: 'Server error!'})
+//     }
+// }
+
+async function getUserProfile(req, res) {
+  try {
+    const { userId } = req.params;
+
+    // Use `populate` to fetch the bestFriend details
+    const userProfile = await User.findById(userId)
+      .select('-password') // Exclude the password field
+      .populate({
+        path: 'bestFriend',   // Populate the bestFriend field
+        select: 'username',   // Only fetch the username of the bestFriend
+      });
+
+    if (!userProfile) {
+      return res.status(404).json({ message: 'User not found' });
     }
+
+    res.status(200).json(userProfile);
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: 'Server error!' });
+  }
 }
+
 
 async function getUser(req,res){
   try{
