@@ -313,13 +313,13 @@ async function getFriendsDetails(userId) {
             <table>
               <tbody>
                 <tr>
-                  <td>Name: {userData.fullname}</td>
+                  <td>Name: {userData?.fullname}</td>
                 </tr>
                 <tr>
-                  <td>Member Since:</td>
+                  <td>Member Since:{userData?.createdAt}</td>
                 </tr>
                 <tr>
-                  <td>Last Update:</td>
+                  <td>Last Update:{userData?.updatedAt}</td>
                 </tr>
               </tbody>
             </table>
@@ -328,16 +328,16 @@ async function getFriendsDetails(userId) {
             <table>
               <tbody>
                 <tr>
-                  <td>School: {userData.school}</td>
+                  <td>School: {userData?.school}</td>
                 </tr>
                 <tr>
-                  <td>Status: {userData.status}</td>
+                  <td>Status: {userData?.status}</td>
                 </tr>
                 <tr>
-                  <td>Gender:{userData.gender || '-'}</td>
+                  <td>Gender:{userData?.gender}</td>
                 </tr>
                 <tr>
-                  <td>Residence: {userData.residence}</td>
+                  <td>Residence: {userData?.residence}</td>
                 </tr>
                 <tr>
                   <td>Birthday:{userData.dateOfBirth}</td>
@@ -364,8 +364,8 @@ async function getFriendsDetails(userId) {
                   <td>Relationship Status: {userData.relationshipStatus}</td>
                 </tr>
                 <tr>
-                  {/* <td>Best Friend: {userData.bestFriend.username}</td> */}
-                  <td>Best Friend: {"later!"}</td>
+                  <td>Best Friend: {userData.bestFriend.username}</td>
+                  {/* <td>Best Friend: {"later!"}</td> */}
                 </tr>
                 <tr>
                   <td>College Name: {userData.collegeName}</td>
