@@ -141,7 +141,7 @@ router.get('/get', async (req, res) => {
 
     try {
         const posts = await Post.find({})
-            .populate('user', 'username profilePic ') // Populate user info for the post
+            .populate('user', 'username profilePic bio') // Populate user info for the post
             .populate({
                 path: 'comments',
                 populate: [

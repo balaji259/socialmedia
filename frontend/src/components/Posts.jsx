@@ -55,6 +55,8 @@ const userPostStyle = {
   borderRadius: '8px',
   boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
   // border: '2px solid black'
+  overflow:"hidden",
+  position:"relative"
 };
 
 const postHeaderStyle = {
@@ -62,14 +64,18 @@ const postHeaderStyle = {
   alignItems: 'center',
   justifyContent: 'space-between',
   marginBottom: '10px',
-  position: 'relative'
+  // position: 'relative'
 };
 
 const userInfoStyle = {
   display: 'flex',
   // alignItems: 'center',
   alignItems: 'flex-start',
-  cursor:"pointer"
+  cursor:"pointer",
+  flexWrap:"noWrap",
+  gap:"10px",
+  overflow:"hidden"
+
 
 };
 
@@ -92,6 +98,7 @@ const toggleButtonStyle = {
   border: 'none',
   fontSize: '24px',
   cursor: 'pointer',
+  marginLeft:"8px"
 };
 
 const dropdownMenuStyle = {
@@ -154,6 +161,27 @@ const menuStyle = {
   borderRadius: '5px',
   boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
   zIndex: 1,
+};
+
+
+const userDetailsStyle = {
+  display: "flex",
+  flexDirection: "column", // Ensures bio appears above the username
+  // maxWidth:"100%",
+  flex:"1",
+  // minWidth:"0",
+  overflow:"hidden",
+};
+
+const bioStyle = {
+  fontSize: "12px", // Smaller font size for the bio
+  color: "#555", // Gray color for bio text
+  whiteSpace: "nowrap", // Keeps the bio on a single line
+  overflow: "hidden", // Hides overflowing text
+  textOverflow: "ellipsis", // Adds "..." to indicate truncated text
+  maxWidth: "100%",
+  marginBottom: "4px",
+  marginLeft:"4px" // Spacing between bio and username
 };
 
 
@@ -238,6 +266,8 @@ const PostComponent = () => {
       }
       
       const data = await response.json();
+      console.log("setting posts!");
+      console.log(data);
       setPosts(data);
       setMediaContent(null); //added
       setPostContent(null); //added
@@ -695,7 +725,13 @@ return (
                 style={profilePicStyle}
               />
               
+              <div style={userDetailsStyle}>
               <span style={usernameStyle}>{post.user?.username || "Anonymous"}</span>
+              <span style={bioStyle}>{post.userId?.bio || ""}</span>
+
+              </div>
+
+
              
 
             </div>
