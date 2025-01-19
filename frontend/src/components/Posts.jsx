@@ -101,17 +101,43 @@ const toggleButtonStyle = {
   marginLeft:"8px"
 };
 
+// const dropdownMenuStyle = {
+//   position: 'absolute',
+//   right: '20px',
+//   top: '20px', // Position the dropdown below the three dots
+//   backgroundColor: '#333',
+//   color: '#fff',
+//   borderRadius: '4px',
+//   padding: '8px 0',
+//   boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+//   zIndex: 1
+// };
+
+// const dropdownMenuStyle = {
+//   position: 'absolute',
+//   right: '25px',
+//   top: '25px', // Position the dropdown below the three dots
+//   backgroundColor: '#333',
+//   color: '#fff',
+//   borderRadius: '4px',
+//   padding: '8px 0',
+//   boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+//   zIndex: 1
+// };
+
 const dropdownMenuStyle = {
   position: 'absolute',
-  right: '20px',
-  top: '20px', // Position the dropdown below the three dots
+  right: '0', // Align the dropdown beside the toggle button
+  top: '0', // Align it vertically with the toggle button
+  transform: 'translateX(calc(-100% + 40px))', // Add spacing between the toggle and dropdown
   backgroundColor: '#333',
   color: '#fff',
   borderRadius: '4px',
   padding: '8px 0',
   boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-  zIndex: 1
+  zIndex: 10,
 };
+
 
 const menuItemStyle = {
   padding: '8px 16px',
@@ -120,12 +146,25 @@ const menuItemStyle = {
 
 menuItemStyle[':hover'] = { backgroundColor: '#444' };
 
+// const postMediaStyle = {
+//   width: '100%',
+//   // maxHeight: '400px',
+//   borderRadius: '8px',
+//   marginTop: '10px',
+// };
+
 const postMediaStyle = {
-  width: '100%',
-  // maxHeight: '400px',
-  borderRadius: '8px',
-  marginTop: '10px',
+  width:'100%',
+  height:'auto',
+  // maxWidth:'300px',
+  maxHeight:'400px',
+  marginTop:'10px',
+  borderRadius:'8px',
+  objectFit:'contain'
 };
+
+
+
 
 const postFooterStyle = {
   display: 'flex',
@@ -735,10 +774,13 @@ return (
              
 
             </div>
+
+            <div style={{ position: 'relative' }}>
+
             <button style={toggleButtonStyle} onClick={() => handleToggleMenu(post.postId)}>⋮</button>
             {showMenus[post.postId] && (
               <div style={dropdownMenuStyle}>
-                <div style={menuItemStyle} onClick={() => savePost(post.postId)}>Save Post</div>
+                <div style={menuItemStyle} onClick={() => savePost(post.postId)}>Save</div>
                 
 
                 <div style={menuItemStyle} onClick={() => reportPost(post.postId)}>Report</div>
@@ -748,6 +790,7 @@ return (
                 )}
               </div>
             )}
+          </div>
           </div>
 
           <p style={{

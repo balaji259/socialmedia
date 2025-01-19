@@ -59,7 +59,7 @@ const Dashboard = () => {
           </button>
 
           <button className="menu-item" onClick={inviteFriends}>
-            Share Link
+            Invite Friends
           </button>
 
         </div>

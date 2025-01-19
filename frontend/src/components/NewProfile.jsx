@@ -226,7 +226,7 @@ if (!userData) {
                         <td>Mobile Number: {userData?.mobileNumber}</td>
                     </tr>
                     <tr>
-                        <td>Webisite: {userData?.website}</td>
+                        <td>Website: {userData?.website}</td>
                     </tr>
                 </tbody>
             </table>
