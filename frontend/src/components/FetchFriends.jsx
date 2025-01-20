@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import {useNavigate} from "react-router-dom";
 import axios from 'axios';
+import {useSocket} from "./useSocket";
 
 const FriendsList = () => {
   const [friends, setFriends] = useState([]);
   const [userId, setUserId] = useState(null); // Initialize with `null` to avoid premature API calls
   const backendBaseUrl = "http://localhost:7000";
   const navigate=useNavigate();
+  const {onlineUsers} =useSocket();
   const getUserIdFromToken = () => {
     const token = localStorage.getItem("token");
     if (!token) return null;
@@ -64,7 +66,7 @@ const FriendsList = () => {
             
           >
             {/* Profile Picture */}
-            <img
+            {/* <img
               src={
                 friend.profilePic === "/images/default_profile.jpeg"
                   ? "/images/default_profile.jpeg"
@@ -74,7 +76,27 @@ const FriendsList = () => {
               onClick={()=>{goToUserProfile(friend._id)}}
               alt={friend.username}
               className="w-full h-48 object-cover rounded-md cursor-pointer"
-            />
+            /> */}
+
+            <div className="relative mx-auto lg:mx-0">
+              <img
+                src={
+                  friend.profilePic === "/images/default_profile.jpeg"
+                    ? "/images/default_profile.jpeg"
+                    : `${friend.profilePic}`
+                }
+                alt={friend.username}
+                className="cursor-pointer w-full h-48 object-cover rounded-md"
+                onClick={() => {
+                  goToUserProfile(friend._id);
+                }}
+              />
+
+              {/* Online indicator */}
+              {onlineUsers && Array.isArray(onlineUsers) && onlineUsers.includes(friend._id) && (
+                <span className="absolute top-0 right-0 w-3 h-3 bg-green-500 rounded-full ring-2 ring-zinc-900" />
+              )}
+            </div>
 
             {/* Username */}
             <h3 className="mt-4 text-lg font-semibold text-gray-800">{friend.username}</h3>

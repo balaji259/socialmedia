@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
+import {useSocket} from "./useSocket";
 
 const SearchSuggestions = () => {
   const [query, setQuery] = useState("");
@@ -9,6 +10,8 @@ const SearchSuggestions = () => {
   const [hasMore, setHasMore] = useState(true);
   const backendBaseUrl = "http://localhost:7000";
   const navigate=useNavigate();
+
+  const {onlineUsers} =useSocket();
 
   const getUserIdFromToken = () => {
     const token = localStorage.getItem("token");
@@ -128,6 +131,7 @@ const SearchSuggestions = () => {
       className="bg-white p-4 sm:p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1 text-center"
     >
       {/* Profile Picture */}
+{/*    
       <img
         src={
           user.profilePic === "/images/default_profile.jpeg"
@@ -138,6 +142,37 @@ const SearchSuggestions = () => {
         className="cursor-pointer w-full h-48 object-cover rounded-md"
         onClick={()=>{goToUserProfile(user._id)}}
       />
+
+     
+
+
+      {onlineUsers && Array.isArray(onlineUsers) && onlineUsers.includes(user._id) && (
+    <span className="absolute bottom-0 right-0 size-3 bg-green-500 rounded-full ring-2 ring-zinc-900" />
+)} */}
+
+
+<div className="relative mx-auto lg:mx-0">
+  <img
+    src={
+      user.profilePic === "/images/default_profile.jpeg"
+        ? "/images/default_profile.jpeg"
+        : `${user.profilePic}`
+    }
+    alt={user.username}
+    className="cursor-pointer w-full h-48 object-cover rounded-md"
+    onClick={() => {
+      goToUserProfile(user._id);
+    }}
+  />
+
+  {/* Online indicator */}
+  {onlineUsers && Array.isArray(onlineUsers) && onlineUsers.includes(user._id) && (
+    <span className="absolute top-0 right-0 w-3 h-3 bg-green-500 rounded-full ring-2 ring-zinc-900" />
+  )}
+</div>
+
+
+      {/* //till here */}
 
       {/* Username */}
       <h3 className="mt-4 text-lg font-semibold text-gray-800">{user.username}</h3>

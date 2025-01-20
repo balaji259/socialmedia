@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from "react-router-dom";
 import './scroll.css';
+import {useSocket} from "./useSocket";
 
 
 // Define all styles at the top
@@ -288,6 +289,7 @@ const PostComponent = () => {
   const [replyingTo, setReplyingTo] = useState({}); // Tracks which comment's reply input is open
   const [replyTexts, setReplyTexts] = useState({}); // Stores reply text for each comment
   const [currentuserId,setcurrentuserId]=useState({});
+  const {onlineUsers} =useSocket();
 
   const backendBaseUrl = 'http://localhost:7000';
   const frontendBaseUrl='http://localhost:3000';
@@ -758,12 +760,32 @@ return (
         <div key={post.postId} style={userPostStyle}>
           <div style={postHeaderStyle}>
             <div style={userInfoStyle}  onClick={() => goToUserProfile(post.userId._id)}>
-              <img
+              {/* <img
                 src={post.user.profilePic === '/images/default_profile.jpeg' ? '/images/default_profile.jpeg' : `${post.user.profilePic}`}
                 alt="User Profile"
                 style={profilePicStyle}
-              />
+              /> */}
               
+              <div className="relative mx-auto lg:mx-0">
+              <img
+                src={
+                  post.user.profilePic === "/images/default_profile.jpeg"
+                    ? "/images/default_profile.jpeg"
+                    : `${post.user.profilePic}`
+                }
+                alt="User Profile"
+                // className="cursor-pointer w-full h-48 object-cover rounded-md"
+                style={profilePicStyle}
+               
+              />
+
+              {/* Online indicator */}
+              {onlineUsers && Array.isArray(onlineUsers) && onlineUsers.includes(post.userId?._id) && (
+                <span className="absolute top-0 right-0 w-3 h-3 bg-green-500 rounded-full ring-2 ring-zinc-900" />
+              )}
+            </div>
+
+
               <div style={userDetailsStyle}>
               <span style={usernameStyle}>{post.user?.username || "Anonymous"}</span>
               <span style={bioStyle}>{post.userId?.bio || ""}</span>
