@@ -152,6 +152,14 @@ const SearchSuggestions = () => {
 
 
 <div className="relative mx-auto lg:mx-0">
+  {/* Online indicator */}
+  {onlineUsers && Array.isArray(onlineUsers) && onlineUsers.includes(user._id) && (
+    <div className="absolute top-0 left-0 flex items-center gap-1 bg-black bg-opacity-70 px-2 py-1 rounded-br-md">
+      <span className="w-3 h-3 bg-green-500 rounded-full" />
+      <span className="text-white text-sm">Online</span>
+    </div>
+  )}
+
   <img
     src={
       user.profilePic === "/images/default_profile.jpeg"
@@ -164,11 +172,6 @@ const SearchSuggestions = () => {
       goToUserProfile(user._id);
     }}
   />
-
-  {/* Online indicator */}
-  {onlineUsers && Array.isArray(onlineUsers) && onlineUsers.includes(user._id) && (
-    <span className="absolute top-0 right-0 w-3 h-3 bg-green-500 rounded-full ring-2 ring-zinc-900" />
-  )}
 </div>
 
 

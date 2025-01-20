@@ -192,28 +192,53 @@ async function getFriendsDetails(userId) {
       <div className="profile-body">
         <div className="left-section">
           {/* <div className="profile-photo">Profile Photo</div> */}
-            <div className="relative mx-auto lg:mx-0">
-          <div className="profile-photo">
+
+        {/* //from    */}
+          {/* <div className="profile-photo"> */}
             {/* <img src={userData?.profilePic} alt="profilepic" /> */}
-              <img
+              {/* <img
                 src={
                   userData?.profilePic === "/images/default_profile.jpeg"
                     ? "/images/default_profile.jpeg"
                     : `${userData?.profilePic}`
                 }
-                alt="User Profile Picture"
-                // className="cursor-pointer w-full h-48 object-cover rounded-md"
+                alt="User Profile Picture" */}
+                {/* // className="cursor-pointer w-full h-48 object-cover rounded-md"
                 // style={profilePicStyle}
                
-              />
+              /> */}
 
               {/* Online indicator */}
-              {onlineUsers && Array.isArray(onlineUsers) && onlineUsers.includes(userId) && (
+              {/* {onlineUsers && Array.isArray(onlineUsers) && onlineUsers.includes(userId) && (
                 <span className="absolute top-0 right-0 w-3 h-3 bg-green-500 rounded-full ring-2 ring-zinc-900" />
-              )}
+              )} */}
             {/* upto here */}
-          </div>
-            </div>
+          {/* </div> */}
+
+          <div className="profile-photo relative">
+  {/* Online indicator */}
+  {onlineUsers && Array.isArray(onlineUsers) && onlineUsers.includes(userId) && (
+    <div className="absolute top-0 left-0 flex items-center gap-1 bg-black bg-opacity-70 px-2 py-1 rounded-br-md">
+      <span className="w-3 h-3 bg-green-500 rounded-full" />
+      <span className="text-white text-sm">Online</span>
+    </div>
+  )}
+
+  {/* Profile picture */}
+  <img
+    src={
+      userData?.profilePic === "/images/default_profile.jpeg"
+        ? "/images/default_profile.jpeg"
+        : `${userData?.profilePic}`
+    }
+    alt="User Profile Picture"
+   
+  />
+</div>
+
+
+
+            
           {/* <button className="edit-profile" onClick={editProfile}>Edit Profile</button> */}
           <div className="view-div">
             <button className="view-posts" onClick={()=>{navigate(`/viewposts/${userId}`)}}>View {userData?.username} Posts</button>
