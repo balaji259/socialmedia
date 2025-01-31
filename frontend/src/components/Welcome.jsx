@@ -4,12 +4,13 @@ import { useNavigate } from 'react-router-dom';
 import { useSocket } from './useSocket';
 import axios from "axios";
 
+
 const WelcomeOverlay = () => {
     const navigate = useNavigate();
     const { user, setUser, socket, connectSocket } = useSocket();
-
+    const renderurl="https://socialmedia-backend-2njs.onrender.com";
     function onRegister() {
-        navigate('/register');
+        navigate(`/register`);
     }
 
     function onLogin() {
@@ -19,7 +20,7 @@ const WelcomeOverlay = () => {
   const checkUser=async ()=>{
     const token=localStorage.getItem("token");
     if(token){
-        axios.get("/verify",{
+        axios.get(`/verify`,{
             headers: {Authorization:`Bearer ${token}` },
         })
         .then((res)=> {

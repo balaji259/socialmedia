@@ -9,6 +9,7 @@ const SearchSuggestions = () => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const backendBaseUrl = "http://localhost:7000";
+  const renderurl="https://socialmedia-backend-2njs.onrender.com";
   const navigate=useNavigate();
 
   const {onlineUsers} =useSocket();

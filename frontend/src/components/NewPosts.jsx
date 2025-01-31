@@ -12,6 +12,7 @@ const App = () => {
 
 
   const backendBaseUrl = 'http://localhost:7000';
+  const renderurl="https://socialmedia-backend-2njs.onrender.com";
   const buttonRef=useRef(null);
   
   useEffect(() => {

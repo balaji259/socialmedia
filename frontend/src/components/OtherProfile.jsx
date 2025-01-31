@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 import axios from "axios";
 import "./OtherProfile.css"; // Assuming CSS styles are in this file
 import { useSocket } from "./useSocket";
+import { FiLogOut } from "react-icons/fi";
 
 const Profile = () => {
 
@@ -22,6 +23,7 @@ const Profile = () => {
     const [isFollowing, setIsFollowing] = useState(false);
     const [loading, setLoading] = useState(false); // For button loading state
     const {onlineUsers} =useSocket();   
+    const renderurl="https://socialmedia-backend-2njs.onrender.com";
 
     const navigate=useNavigate();
     const backendBaseUrl="http://localhost:7000";
@@ -178,11 +180,24 @@ async function getFriendsDetails(userId) {
         }
       };
 
+      const goToHome = () => {
+        navigate("/home"); // Replace "/home" with your actual home page route
+      };
      
 
     if (!userData) return <p>Loading...</p>;
 
   return (
+    <>
+
+  <button className="modern-back-button" onClick={goToHome}>
+        <span className="arrow">
+          
+        <FiLogOut size={25}   style={{ transform: 'scaleX(-1)' }}/>
+          </span> 
+      </button>
+      
+
     <div className="profile-container">
       <div className="profile-header">
         <span>Name of the User:{userData?.username}</span>
@@ -458,7 +473,7 @@ async function getFriendsDetails(userId) {
       </div>
     </div>
 
-    // <div>HI</div>
+    </>
   );
 };
 

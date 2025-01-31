@@ -7,6 +7,7 @@ const FriendsList = () => {
   const [friends, setFriends] = useState([]);
   const [userId, setUserId] = useState(null); // Initialize with `null` to avoid premature API calls
   const backendBaseUrl = "http://localhost:7000";
+  const renderurl="https://socialmedia-backend-2njs.onrender.com";
   const navigate=useNavigate();
   const {onlineUsers} =useSocket();
   const getUserIdFromToken = () => {

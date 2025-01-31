@@ -7,15 +7,17 @@ import axios from "axios";
 import { useSocket } from './useSocket';
 import { useNavigate } from 'react-router-dom';
 import { FiLogOut } from "react-icons/fi";
+
 const ChatHomePage=()=>{
     const {selectedUser,resetState} = useChatStore();
     const {user,setUser,socket,connectSocket}= useSocket();
     const backendBaseUrl='http://localhost:7000';
+    const renderurl="https://socialmedia-backend-2njs.onrender.com";
     const navigate = useNavigate();
     async function getUser(){
         try{
             const token=localStorage.getItem("token");
-            const res=await axios.get(`${backendBaseUrl}/user/getUser`,{
+            const res=await axios.get(`/user/getUser`,{
                 headers: {
                     Authorization:`Bearer ${token}`,
                 },

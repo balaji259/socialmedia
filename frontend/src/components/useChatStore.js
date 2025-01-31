@@ -5,6 +5,7 @@ import axios from "axios";
 import {useSocket} from "./useSocket";
 // import {axiosInstance} from "../lib/axios";
 const backendBaseUrl = "http://localhost:7000";
+const renderurl="https://socialmedia-backend-2njs.onrender.com";
 
 
 

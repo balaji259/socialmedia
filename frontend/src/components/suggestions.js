@@ -1,8 +1,9 @@
+const renderurl="https://socialmedia-backend-2njs.onrender.com";
 async function fetchUserSuggestions() {
     try {
         const token = localStorage.getItem('token');
         
-        const response = await fetch('/user/suggestions', {
+        const response = await fetch(`/user/suggestions`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,

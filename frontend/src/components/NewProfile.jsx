@@ -1,6 +1,7 @@
 import React from "react";
 import {useState,useEffect,useRef} from "react";
 import {useNavigate} from "react-router-dom";
+import { FiLogOut } from "react-icons/fi";
 // import "./NewProfile.css";
 
 const Profile = () => {
@@ -31,6 +32,7 @@ const Profile = () => {
 
     const token=localStorage.getItem('token');
     const backendBaseUrl = 'http://localhost:7000';
+    const renderurl="https://socialmedia-backend-2njs.onrender.com";
 
 
 
@@ -151,6 +153,7 @@ useEffect(() => {
 
 
 
+
 const editProfile=()=>{
     navigate("/edit");
 }
@@ -158,6 +161,10 @@ const editProfile=()=>{
 const goToPosts=()=>{
   navigate("/newposts");
 }
+
+const goToHome = () => {
+  navigate("/home"); // Replace "/home" with your actual home page route
+};
 
 
 const convertToDateOfBirth = (dateString) => {
@@ -185,7 +192,27 @@ if (!userData) {
 
 
   return (
-    <div className="profile-container">
+
+    
+    
+    <>
+    
+    
+
+    
+    <button className="modern-back-button" onClick={goToHome}>
+        <span className="arrow">
+          
+        <FiLogOut size={25}   style={{ transform: 'scaleX(-1)' }}/>
+          </span> 
+      </button>
+      
+
+
+
+
+<div className="profile-container">
+
       <div className="profile-header">
         <span>Name of the User:{userData?.username}</span>
         <span>University name: {userData?.collegeName}</span>
@@ -212,7 +239,7 @@ if (!userData) {
             <p>You have a connection with username</p>
           </div>
           <div className="mutual-friends">
-            <p>Mutual Friends</p>
+          <p>Mutual Friends</p>
             <p>You have 19 common friends with username</p>
           </div> */}
           <div className="contact-info">
@@ -240,7 +267,7 @@ if (!userData) {
                   </td>
               </tr>
               <tr>
-
+              
                 <td>
                 <div className="friend-list">
             {friends.map((friend) => (
@@ -400,6 +427,9 @@ if (!userData) {
       </div>
     </div>
 
+    </>
+
+  
   
   );
 };

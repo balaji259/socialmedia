@@ -7,6 +7,8 @@ const SuggestionsSidebar = () => {
   const [streakCount, setStreakCount] = useState(0);
   const [topStreakUsers, setTopStreakUsers] = useState([]);
   const backendBaseUrl='http://localhost:7000';
+  const renderurl="https://socialmedia-backend-2njs.onrender.com";
+  
 
   const navigate=useNavigate();
 
@@ -74,7 +76,7 @@ const SuggestionsSidebar = () => {
   const fetchUserSuggestions = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('/user/suggestions', {
+      const response = await fetch(`/user/suggestions`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -104,7 +106,7 @@ const SuggestionsSidebar = () => {
   }, []);
 
   useEffect(() => {
-    axios.get('/streak/top-streaks')
+    axios.get(`/streak/top-streaks`)
       .then(response => {
         console.log(response);
         setTopStreakUsers(response.data);

@@ -11,6 +11,7 @@ const NewProfile = () => {
     const [userData, setUserData] = useState(null);
     const [previewImage, setPreviewImage] = useState(null);
     const backendBaseUrl="http://localhost:7000";
+    const renderurl="https://socialmedia-backend-2njs.onrender.com";
 
     const [query, setQuery] = useState("");
     const [suggestions, setSuggestions] = useState([]);

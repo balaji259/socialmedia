@@ -11,6 +11,7 @@ const Search = () => {
   const [currentuser, setCurrentUser] = useState({ username: "", profilePic: "" });
   const {user,setUser,socket,connectSocket}= useSocket();
   const backendBaseUrl="http://localhost:7000"; 
+  const renderurl="https://socialmedia-backend-2njs.onrender.com";
 
 
   useEffect(() => {

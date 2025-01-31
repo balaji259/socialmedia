@@ -2,17 +2,22 @@ import React, { useEffect, useState } from "react";
 import Navbar from "./Navbar";
 import Dashboard from "./Dashboard";
 import SuggestionsSidebar from "./Suggestions";
+
 import PostsComponent from "./Posts";
+import Quote from "./Quote.jsx";
 import {useSocket} from "./useSocket";
+
 import axios from "axios";
 
 import { fetchUserDetails } from "./userPosts.js";
 
 const Home = () => {
   const [currentuser, setCurrentUser] = useState({ username: "", profilePic: "" });
-  const [isSidebarVisible, setIsSidebarVisible] = useState(false); // Default to `false` for smaller screens
+  const [isSidebarVisible, setIsSidebarVisible] = useState(false); 
   const {user,setUser,socket,connectSocket}= useSocket();
+  const [isLoading, setIsLoading] = useState(true); 
   const backendBaseUrl="http://localhost:7000"; 
+  const renderurl="https://socialmedia-backend-2njs.onrender.com";
   // Determine sidebar visibility based on screen width
   useEffect(() => {
     const handleResize = () => {
@@ -37,15 +42,21 @@ const Home = () => {
     const token = localStorage.getItem("token");
 
     const getUserDetails = async () => {
-      const userDetails = await fetchUserDetails(token);
-      if (userDetails) {
-        setCurrentUser({ username: userDetails.username, profilePic: userDetails.profilePic });
-      
+      try {
+        const userDetails = await fetchUserDetails(token);
+        if (userDetails) {
+          setCurrentUser({ username: userDetails.username, profilePic: userDetails.profilePic });
+        }
+      } catch (error) {
+        console.error("Error fetching user details:", error);
+      } finally {
+        setIsLoading(false); 
       }
     };
 
     getUserDetails();
   }, []);
+
 
 
   async function getUser(){
@@ -66,7 +77,7 @@ const Home = () => {
 }
 
 useEffect(()=>{
-    // console.log("loading home page!");
+    console.log("loading home page!");
     getUser();
 },[]);
 
@@ -82,6 +93,12 @@ useEffect(()=>{
     if (window.innerWidth < 900) return "15%";
     return "17%";
   };
+
+
+  if (isLoading) {
+    // Display the Loading component if loading state is true
+    return <Quote />;
+  }
 
   return (
     <div style={styles.container}>

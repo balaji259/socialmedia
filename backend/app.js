@@ -39,8 +39,8 @@ app.use(express.static(path.join(__dirname, '..','frontend','dist')));
 
 app.use(
   cors({
-    origin: "https://friendsbook-cy0f.onrender.com", // Your deployed frontend URL
-    methods: ["GET", "POST"],
+    origin: "*", // Your deployed frontend URL
+    methods: ["GET", "POST","PUT","PATCH","DELETE"],
   })
 );
 

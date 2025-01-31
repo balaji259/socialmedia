@@ -8,6 +8,7 @@ const UserPosts = () => {
   const [loading, setLoading] = useState(true); // Loading state
   const [selectedPost, setSelectedPost] = useState(null); // State for selected post (modal)
   const backendBaseUrl = "http://localhost:7000"; // Backend base URL
+  const renderurl="https://socialmedia-backend-2njs.onrender.com";
 
   const fetchUserPosts = async () => {
     try {

@@ -4,6 +4,7 @@ import { useChatStore } from "./useChatStore";
 import {useSocket} from "./useSocket";
 
 const backendBaseUrl = "http://localhost:7000";
+const renderurl="https://socialmedia-backend-2njs.onrender.com";
 
 const ChatHeader = () => {
   const { selectedUser, setSelectedUser } = useChatStore();

@@ -8,7 +8,7 @@ const MessageInput = () => {
     const [mediaType, setMediaType] = useState(null);
     const [isSending, setIsSending] = useState(false);
     const [abortController, setAbortController] = useState(null);
-
+    
     const fileInputRef = useRef(null);
     const { sendMessages } = useChatStore();
 

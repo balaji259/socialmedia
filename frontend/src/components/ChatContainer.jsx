@@ -8,6 +8,8 @@ import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 const backendBaseUrl="http://localhost:7000";
 
+const renderurl="https://socialmedia-backend-2njs.onrender.com"
+
 const  ChatContainer=() =>{
     const {messages,getMessages,isMessagesLoading,selectedUser,subscribeToMessages,unsubscribeFromMessages}=useChatStore();
     const [userId,setUserId]=useState();

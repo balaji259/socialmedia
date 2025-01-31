@@ -1,5 +1,5 @@
 
-import React from "react";
+import React,{useState} from "react";
 import { toast } from 'react-hot-toast';
 import {useEffect} from "react";
 import { useNavigate } from "react-router-dom";
@@ -10,6 +10,7 @@ import {useSocket} from "./useSocket";
 const Dashboard = () => {
   const navigate = useNavigate();
   const websitelink="https://friendsbook-cy0f.onrender.com";
+  const renderurl="https://socialmedia-backend-2njs.onrender.com";
   const {user, setUser ,socket, connectSocket,disconnectSocket} =useSocket();
 
 
@@ -30,11 +31,15 @@ const Dashboard = () => {
     navigate("/");
   };
 
+ 
+
   function inviteFriends(){
-    navigator.clipboard.writeText(`${websitelink}`)
+    navigator.clipboard.writeText(`https://www.friendsbook.online`)
     .then(() => toast.success("website link copied! Share it to your friends."))
     .catch(err => console.error('Failed to copy:', err));
   }
+
+ 
 
   return (
     <div className="dashboard">
@@ -60,6 +65,10 @@ const Dashboard = () => {
 
           <button className="menu-item" onClick={inviteFriends}>
             Invite Friends
+          </button>
+
+          <button className="menu-item" onClick={() => window.location.reload()}>
+            Refresh
           </button>
 
         </div>

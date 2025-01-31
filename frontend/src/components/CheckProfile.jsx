@@ -15,6 +15,7 @@ const UserProfile = () => {
     const [likedData,setLikedData]=useState([]);
     const [activeSection, setActiveSection] = useState('posts');
     const backendBaseUrl = "http://localhost:7000";
+    const renderurl="https://socialmedia-backend-2njs.onrender.com";
     const navigate=useNavigate();
 
     const handleSectionChange = (section) => {

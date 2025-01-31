@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "./Navbar";
 import Dashboard from "./Dashboard";
+import Quote from "./Quote.jsx";
 import FetchFriends from "./FetchFriends.jsx";
 import { fetchUserDetails } from "./userPosts.js";
 import {useSocket} from "./useSocket";
@@ -9,19 +10,30 @@ import axios from "axios";
 const Friends = () => {
   const [currentuser, setCurrentUser] = useState({ username: "", profilePic: "" });
   const {user,setUser,socket,connectSocket}= useSocket();
+  const [isLoading, setIsLoading] = useState(true); 
   const backendBaseUrl="http://localhost:7000"; 
+  const renderurl="https://socialmedia-backend-2njs.onrender.com";
 
 
   useEffect(() => {
     const token = localStorage.getItem("token");
 
     const getUserDetails = async () => {
-      const userDetails = await fetchUserDetails(token);
-      if (userDetails) {
-        setCurrentUser({
-          username: userDetails.username,
-          profilePic: userDetails.profilePic,
-        });
+      try{
+
+        const userDetails = await fetchUserDetails(token);
+        if (userDetails) {
+          setCurrentUser({
+            username: userDetails.username,
+            profilePic: userDetails.profilePic,
+          });
+        }
+      }
+      catch(e){
+        console.log(e);
+      }
+      finally{
+        setIsLoading(false);
       }
     };
 
@@ -49,6 +61,11 @@ useEffect(()=>{
     
     getUser();
 },[]);
+
+if(isLoading)
+{
+  return <Quote />;
+}
 
 
   // Styles for layout and responsiveness

@@ -293,7 +293,8 @@ const PostComponent = () => {
 
   const backendBaseUrl = 'http://localhost:7000';
   const frontendBaseUrl='http://localhost:3000';
-  const baseUrl="https://friendsbook-cy0f.onrender.com";
+  const baseUrl="https://friendsbook.online";
+  const renderurl="https://socialmedia-backend-2njs.onrender.com";
 
 
   const fetchPosts = async () => {
@@ -354,15 +355,30 @@ const PostComponent = () => {
       alert("No token found. Please log in again.");
       return;
     }
+
   
     console.log("Initial Token:", token);
+    console.log("post",postContent);
+    console.log("trim",postContent?.trim());
+    console.log("media",mediaContent);
+    console.log("finished");
   
     const formData = new FormData();
+
+
   
+
+     // Validation before appending data
+     if (!postContent?.trim() && !mediaContent) {
+      console.log("post cannot be empty!");
+      toast.error("Post cannot be empty!"); 
+      return;
+  }
+
     // Append text content
-    if (postContent.trim()) {
-      formData.append("captionOrText", postContent.trim());
-      console.log("Caption/Text added to FormData:", postContent.trim());
+    if (postContent?.trim()) {
+      formData.append("captionOrText", postContent?.trim());
+      console.log("Caption/Text added to FormData:", postContent?.trim());
     }
 
   
@@ -370,11 +386,7 @@ const PostComponent = () => {
     if (mediaContent) {
       console.log("Media content detected, preparing for Cloudinary upload:", mediaContent);
   
-    if(!postContent.trim() && !mediaContent)
-    {
-      toast.error('Post cannot be empty!');
-      return;
-    }
+   
 
 
       try {
@@ -403,7 +415,7 @@ const PostComponent = () => {
         console.log("Media URL added to FormData:", mediaUrl);
       } catch (error) {
         console.error("Media upload error:", error);
-        alert("Failed to upload media. Please try again.");
+        toast.error("Failed to upload media. Please try again.");
         return;
       }
     }
@@ -430,7 +442,7 @@ const PostComponent = () => {
   
       // Backend call
       console.log("Sending FormData to backend...");
-      const response = await fetch(`/posts/create`, {
+      const response = await fetch(`${renderurl}/posts/create`, {
         method: "POST",
         body: formData,
         headers: {

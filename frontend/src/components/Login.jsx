@@ -13,6 +13,7 @@ const Login = ({ onSwitch }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
+    const renderurl="https://socialmedia-backend-2njs.onrender.com";
 
     
     const {user, setUser ,socket, connectSocket}= useSocket();
@@ -21,7 +22,7 @@ const Login = ({ onSwitch }) => {
          
             e.preventDefault();
            
-        axios.post("/user/login", { email, password })
+        axios.post(`/user/login`, { email, password })
             .then((response) => {
                 const token = response.data.token;
                 localStorage.setItem('token', token);
@@ -53,7 +54,7 @@ const Login = ({ onSwitch }) => {
     const handleGoogleLogin = async (x) => {
         
             console.log(x.email);
-            axios.post("/user/login", { email: x.email })
+            axios.post(`/user/login`, { email: x.email })
                 .then((response) => {
                     const token = response.data.token;
                     localStorage.setItem('token', token);

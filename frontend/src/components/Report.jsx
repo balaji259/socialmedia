@@ -7,6 +7,7 @@ const ReportPost = () => {
     const [postId, setPostId] = useState("");
     const [reason, setReason] = useState("");
     const backendBaseUrl = 'http://localhost:7000';
+    const renderurl="https://socialmedia-backend-2njs.onrender.com";
     const navigate = useNavigate();
 
     useEffect(() => {

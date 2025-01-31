@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import { io } from "socket.io-client";
 
 const backendBaseUrl = "https://friendsbook-cy0f.onrender.com";
+const renderurl="https://socialmedia-backend-2njs.onrender.com";
 
 // Create Context
 const SocketContext = createContext();

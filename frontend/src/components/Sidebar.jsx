@@ -11,6 +11,7 @@ const Sidebar=() => {
     const {getUsers,clearUsers, users,selectedUser,setSelectedUser,isUsersLoading}=useChatStore();
     const {onlineUsers} =useSocket();
     const backendBaseUrl = "http://localhost:7000";
+    const renderurl="https://socialmedia-backend-2njs.onrender.com";
     
     // const onlineUsers=[];
     const [showOnlineOnly, setShowOnlineOnly] = useState(false);
