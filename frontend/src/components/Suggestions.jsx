@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import './scroll.css'
+import './scroll.css';
+import Lottie from "lottie-react";
+import fireAnimation from "../assets/fire.json"; // Adjust path as needed
 const SuggestionsSidebar = () => {
   const [suggestions, setSuggestions] = useState([]);
   const [streakCount, setStreakCount] = useState(0);
@@ -136,11 +138,12 @@ const SuggestionsSidebar = () => {
         <h3 style={streakTableHeaderStyle}>Popular Streaker</h3>
         {topStreakUsers.map((user, index) => (
           <div key={user._id} style={streakUserStyle} onClick={()=>handleNavigation(user._id)}>
-            <img src={user.profilePic === '/images/default_profile.jpeg' ? '/images/default_profile.jpeg' : `${user.profilePic}`} alt='profilePic' style={profilePicStyle} />
+            <img src={user.profilePic === '/images/squarepfp.png' ? '/images/squarepfp.png' : `${user.profilePic}`} alt='profilePic' style={profilePicStyle} />
             <div style={userInfoStyle}>
               <span style={usernameStyle}>{user.username}</span>
               <div style={streakInfoStyle}>
-                <img src="/images/fireon.svg" alt="Streak Icon" style={streakIconStyle} />
+                {/* <img src="/images/fireon.svg" alt="Streak Icon" style={streakIconStyle} /> */}
+                <Lottie animationData={fireAnimation} loop={true} style={streakIconStyle} />
                 <span style={streakCountStyle}>{user.streak.count}</span>
               </div>
             </div>

@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema(
     },
     profilePic: {
       type: String,
-      default: '/images/default_profile.jpeg',
+      default: '/images/squarepfp.png',
     },
     
     bio: {

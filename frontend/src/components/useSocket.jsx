@@ -30,38 +30,53 @@ useEffect(() => {
   }
 }, [onlineUsers]);
 
-useEffect(() => {
-  if (user) {
+// useEffect(() => {
+//   if (user) {
    
-    connectSocket();
-  }
-}, [user]);
+//     connectSocket();
+//   }
+// }, [user]);
 
   // Connect Socket
   const connectSocket = () => {
 
-    if (!user?.userId) {
+    // if (!user?.userId) {
       
-      console.error("Cannot connect socket: User ID is not available.");
+    //   console.error("Cannot connect socket: User ID is not available.");
+    //   return;
+    // }
+    
+    
+    if (!user) {
+      console.error("Cannot connect socket: User is not logged in.");
       return;
     }
-
-
-
+    
     if (socket?.connected) {
       // console.log("Socket is already connected.");
       return;
     }
-
-    const newSocket = io(backendBaseUrl,{
-      query:{
-        userId:user.userId,
-      },
+    
+    const token = localStorage.getItem("token"); // Retrieve the token
+  if (!token) {
+    console.error("Cannot connect socket: Token is not available.");
+    return;
+  }
+    
+    // const newSocket = io(backendBaseUrl,{
+    //   query:{
+    //     userId:user.userId,
+    //   },
       
-      // reconnection: true,        // Enable reconnection
-      // reconnectionAttempts: 5,   // Number of reconnection attempts
-      // reconnectionDelay: 1000, 
-    });
+   
+    // });
+
+    // Pass the token during the connection
+  const newSocket = io(backendBaseUrl, {
+    auth: {
+      token, // Include the token in the WebSocket handshake
+    },
+  });
 
     // newSocket.connect();
 
@@ -95,6 +110,9 @@ useEffect(() => {
   const disconnectSocket = () => {
     if (socket?.connected) {
       // console.log("Disconnecting socket:", socket.id);
+      console.log("Disconnecting socket:", socket.id);//added
+      socket.off("getOnlineUsers"); // Clean up listener
+
       socket.disconnect();
       setSocket(null);
       // console.log("socket cleaned up");
@@ -105,14 +123,25 @@ useEffect(() => {
   };
 
   // Cleanup on unmount
+  // useEffect(() => {
+  //   return () => {
+  //     if (socket?.connected) {
+  //       // console.log("Cleaning up socket during unmount.");
+  //       disconnectSocket();
+  //     }
+  //   };
+  // }, [socket]);
+
   useEffect(() => {
     return () => {
-      if (socket?.connected) {
-        // console.log("Cleaning up socket during unmount.");
+      if (socket) {
+        console.log("Cleaning up socket during unmount.");
         disconnectSocket();
       }
     };
-  }, [socket]);
+  }, []);
+  
+
 
   return (
     <SocketContext.Provider

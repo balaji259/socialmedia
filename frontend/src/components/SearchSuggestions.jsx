@@ -163,8 +163,8 @@ const SearchSuggestions = () => {
 
   <img
     src={
-      user.profilePic === "/images/default_profile.jpeg"
-        ? "/images/default_profile.jpeg"
+      user.profilePic === "/images/squarepfp.png"
+        ? "/images/squarepfp.png"
         : `${user.profilePic}`
     }
     alt={user.username}

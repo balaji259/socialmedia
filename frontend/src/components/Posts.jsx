@@ -773,7 +773,7 @@ return (
           <div style={postHeaderStyle}>
             <div style={userInfoStyle}  onClick={() => goToUserProfile(post.userId._id)}>
               <img
-                src={post.user.profilePic === '/images/default_profile.jpeg' ? '/images/default_profile.jpeg' : `${post.user.profilePic}`}
+                src={post.user.profilePic === '/images/squarepfp.png' ? '/images/squarepfp.png' : `${post.user.profilePic}`}
                 alt="User Profile"
                 style={profilePicStyle}
               />

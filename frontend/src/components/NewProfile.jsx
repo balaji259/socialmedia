@@ -2,6 +2,7 @@ import React from "react";
 import {useState,useEffect,useRef} from "react";
 import {useNavigate} from "react-router-dom";
 import { FiLogOut } from "react-icons/fi";
+import Quote from "./Quote";
 // import "./NewProfile.css";
 
 const Profile = () => {
@@ -180,7 +181,7 @@ const convertToDateOfBirth = (dateString) => {
 
 
 if (!userData) {
-  return <div>Loading...</div>;
+  return <Quote />;
   // return <LoadingPage />;
 }
 

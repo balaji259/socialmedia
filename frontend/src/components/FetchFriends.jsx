@@ -90,8 +90,8 @@ const FriendsList = () => {
 
   <img
     src={
-      friend.profilePic === "/images/default_profile.jpeg"
-        ? "/images/default_profile.jpeg"
+      friend.profilePic === "/images/squarepfp.png"
+        ? "/images/squarepfp.png"
         : `${friend.profilePic}`
     }
     alt={friend.username}

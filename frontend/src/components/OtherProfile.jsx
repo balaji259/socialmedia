@@ -6,6 +6,7 @@ import axios from "axios";
 import "./OtherProfile.css"; // Assuming CSS styles are in this file
 import { useSocket } from "./useSocket";
 import { FiLogOut } from "react-icons/fi";
+import Quote from "./Quote";
 
 const Profile = () => {
 
@@ -185,7 +186,7 @@ async function getFriendsDetails(userId) {
       };
      
 
-    if (!userData) return <p>Loading...</p>;
+    if (!userData) return <Quote />;
 
   return (
     <>
@@ -242,8 +243,8 @@ async function getFriendsDetails(userId) {
   {/* Profile picture */}
   <img
     src={
-      userData?.profilePic === "/images/default_profile.jpeg"
-        ? "/images/default_profile.jpeg"
+      userData?.profilePic === "/images/squarepfp.png"
+        ? "/images/squarepfp.png"
         : `${userData?.profilePic}`
     }
     alt="User Profile Picture"

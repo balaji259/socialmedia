@@ -111,7 +111,7 @@ const Sidebar=() => {
                     <div className="relative mx-auto lg:mx-0">
                         <img 
                             // src={user.profilePic || "/avatar.png"}
-                            src={user.profilePic === '/images/default_profile.jpeg' ? '/images/default_profile.jpeg' : `${user.profilePic}`}
+                            src={user.profilePic === '/images/squarepfp.png' ? '/images/squarepfp.png' : `${user.profilePic}`}
                             alt={user.name}
                             className="size-12 object-cover rounded-md"
                         />
