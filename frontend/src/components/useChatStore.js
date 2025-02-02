@@ -16,6 +16,7 @@ export const useChatStore = create((set,get)=>({
     messages:[],
     users:[],
     selectedUser:null,
+    chatUserId: null, // New field to store friend ID
     isUsersLoading:false,
     isMessagesLoading:false,
 
@@ -114,7 +115,7 @@ export const useChatStore = create((set,get)=>({
 
     //optimise this one later
     setSelectedUser:(selectedUser)=> set({selectedUser}),
-
+    setChatUserId: (chatUserId) => set({ chatUserId }),
     clearUsers: () => {
         set({ users: [], selectedUser: null });
         console.log("clearing Users");

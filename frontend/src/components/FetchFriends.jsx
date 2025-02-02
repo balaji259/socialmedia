@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import {useNavigate} from "react-router-dom";
 import axios from 'axios';
 import {useSocket} from "./useSocket";
-
+import { useChatStore } from "./useChatStore";
 const FriendsList = () => {
   const [friends, setFriends] = useState([]);
   const [userId, setUserId] = useState(null); // Initialize with `null` to avoid premature API calls
+  const { users, selectedUser, setSelectedUser, chatUserId, setChatUserId } = useChatStore();
   const backendBaseUrl = "http://localhost:7000";
   const renderurl="https://socialmedia-backend-2njs.onrender.com";
   const navigate=useNavigate();
@@ -13,6 +14,7 @@ const FriendsList = () => {
   const getUserIdFromToken = () => {
     const token = localStorage.getItem("token");
     if (!token) return null;
+
 
     try {
       const payload = JSON.parse(atob(token.split(".")[1]));
@@ -30,6 +32,7 @@ const FriendsList = () => {
   useEffect(() => {
     if (!userId) return; // Avoid API call until userId is available
 
+   
 
 
     const fetchFriends = async () => {
@@ -53,8 +56,11 @@ const FriendsList = () => {
   };
 
     const handleChat = (friendId) => {
-    navigate(`/chats?chatUserId=${friendId}`); // Pass the friendId as a query parameter
-  };
+    // navigate(`/chats?chatUserId=${friendId}`);
+     // Pass the friendId as a query parameter
+      setChatUserId(friendId);
+      navigate('/chats');
+    };
 
 
   return (

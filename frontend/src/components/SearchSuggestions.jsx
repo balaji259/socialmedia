@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
 import {useSocket} from "./useSocket";
+import { useChatStore } from "./useChatStore";
 
 const SearchSuggestions = () => {
   const [query, setQuery] = useState("");
@@ -11,6 +12,7 @@ const SearchSuggestions = () => {
   const backendBaseUrl = "http://localhost:7000";
   const renderurl="https://socialmedia-backend-2njs.onrender.com";
   const navigate=useNavigate();
+  const { users, selectedUser, setSelectedUser, chatUserId, setChatUserId } = useChatStore();
 
   const {onlineUsers} =useSocket();
 
@@ -82,7 +84,8 @@ const SearchSuggestions = () => {
 
   useEffect(() => {
     setSuggestedUsers([]);
-    setPage(1);
+    // setPage(1);
+    setPage(2);
     setHasMore(true);
     fetchUsers();
   }, [query]);
@@ -107,9 +110,16 @@ const SearchSuggestions = () => {
     if (page > 1) fetchUsers();
   }, [page]);
 
-  const handleChat = (searchId) => {
-    navigate(`/chats?chatUserId=${searchId}`); // Pass the friendId as a query parameter
-  };
+  // const handleChat = (searchId) => {
+  //   navigate(`/chats?chatUserId=${searchId}`); // Pass the friendId as a query parameter
+  // };
+
+  const handleChat = (friendId) => {
+    // navigate(`/chats?chatUserId=${friendId}`);
+     // Pass the friendId as a query parameter
+      setChatUserId(friendId);
+      navigate('/chats');
+    };
 
 
 

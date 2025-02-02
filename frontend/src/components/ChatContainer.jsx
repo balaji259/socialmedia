@@ -11,7 +11,7 @@ const backendBaseUrl="http://localhost:7000";
 const renderurl="https://socialmedia-backend-2njs.onrender.com"
 
 const  ChatContainer=() =>{
-    const {messages,getMessages,isMessagesLoading,selectedUser,subscribeToMessages,unsubscribeFromMessages}=useChatStore();
+    const {messages,getMessages,isMessagesLoading,selectedUser,subscribeToMessages,unsubscribeFromMessages,chatUserId,setChatUserId}=useChatStore();
     const [userId,setUserId]=useState();
     const [user,setUser]=useState();
 
@@ -84,12 +84,12 @@ const  ChatContainer=() =>{
 
 
     useEffect(() => {
-      const chatUserId = searchParams.get("chatUserId");
+      // const chatUserId = searchParams.get("chatUserId");
       if (chatUserId) {
         // Set selected user based on URL
         getMessages(chatUserId);
       }
-    }, [searchParams, getMessages]);
+    }, [chatUserId, getMessages]);
 
 
 

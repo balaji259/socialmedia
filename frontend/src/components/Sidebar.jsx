@@ -4,11 +4,15 @@ import SidebarSkeleton from "./skeletons/SidebarSkeleton";
 import { Users } from "lucide-react";
 import {useSocket} from "./useSocket";
 
+
+
+
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 
 
 const Sidebar=() => {
-    const {getUsers,clearUsers, users,selectedUser,setSelectedUser,isUsersLoading}=useChatStore();
+    // const {getUsers,clearUsers, users,selectedUser,setSelectedUser,isUsersLoading}=useChatStore();
+    const { getUsers,clearUsers,users, selectedUser, setSelectedUser, chatUserId, setChatUserId, isUsersLoading } = useChatStore();
     const {onlineUsers} =useSocket();
     const backendBaseUrl = "http://localhost:7000";
     const renderurl="https://socialmedia-backend-2njs.onrender.com";
@@ -31,25 +35,23 @@ const Sidebar=() => {
 
    
     useEffect(() => {
-        const chatUserId = searchParams.get("chatUserId");
+        // const chatUserId = searchParams.get("chatUserId");
         if (chatUserId && users.length > 0) {
           const userToSelect = users.find((user) => user._id === chatUserId);
           if (userToSelect) setSelectedUser(userToSelect);
         }
-      }, [searchParams, users, setSelectedUser]);
+      }, [chatUserId, users, setSelectedUser]);
     
 
       const handleUserSelect = (user) => {
         setSelectedUser(user);
-        const newUrl = new URLSearchParams(location.search);
-        newUrl.set("chatUserId", user._id); // Add `chatUserId` to URL
-        navigate(`${location.pathname}?${newUrl.toString()}`); // Preserve current path
+        setChatUserId(user._id);
+        // const newUrl = new URLSearchParams(location.search);
+        // newUrl.set("chatUserId", user._id); // Add `chatUserId` to URL
+        // navigate(`${location.pathname}?${newUrl.toString()}`); // Preserve current path
       };
 
-    // const filteredUsers = showOnlineOnly
-    // ? users.filter((user) => onlineUsers.includes(user._id))
-    // : users;
-
+   
     const filteredUsers = users
     .filter((user) =>
       user.username.toLowerCase().includes(searchQuery.toLowerCase())
