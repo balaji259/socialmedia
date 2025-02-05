@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from "react-router-dom";
 import './scroll.css';
+import "./Posts.css"
 import {useSocket} from "./useSocket";
 
 
@@ -28,12 +29,25 @@ const postInputContainerStyle = {
 
 const textareaStyle = {
   width: '100%',
-  height: '80px',
+  height: '60px',
   padding: '10px',
   borderRadius: '5px',
   border:'1px solid grey',
   borderColor: '#ddd',
   resize: 'none',
+};
+
+const removeButtonStyle = {
+  position: 'absolute',
+  top: '5px',
+  right: '5px',
+  backgroundColor: '#ff4d4d',
+  color: '#fff',
+  border: 'none',
+  borderRadius: '3px',
+  padding: '5px 10px',
+  cursor: 'pointer',
+  fontSize: '12px',
 };
 
 const submitButtonStyle = {
@@ -48,6 +62,28 @@ const submitButtonStyle = {
   // position:'relative',
   // right:'-180px'
 };
+
+
+const hiddenFileInputStyle = {
+  position: 'absolute',
+  left: '0',
+  top: '0',
+  width: '100%',
+  height: '100%',
+  opacity: 0,
+  zIndex: -1,
+};
+
+const customUploadButtonStyle = {
+  backgroundColor: '#007bff',
+  color: '#fff',
+  padding: '8px 15px',
+  border: 'none',
+  borderRadius: '5px',
+  cursor: 'pointer',
+  fontSize: '14px',
+};
+
 
 const userPostStyle = {
   backgroundColor: '#ffffff',
@@ -170,8 +206,8 @@ const postMediaStyle = {
 const postFooterStyle = {
   display: 'flex',
   justifyContent: 'space-around',
-  marginTop: '15px',
-  marginBottom:'15px'
+  marginTop: '25px',
+  marginBottom:'0px'
 };
 
 const postButtonStyle = {
@@ -739,33 +775,104 @@ const goToUserProfile = (userId) => {
   userId===currentuserId?navigate(`/profile`):navigate(`/other/${userId}`);
 };
 
+// const handleMediaChange = (e) => {
+//   const file = e.target.files[0];
+//   if (file) {
+//     setMediaContent(file);
+//   }
+// };
+
+const removePreview = () => {
+  setMediaContent(null); // Clear the media content state
+  fileInputRef.current.value = ""; // Clear the file input field
+};
+const handleMediaChange = (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    setMediaContent(file); // Save the selected file
+  } else {
+    setMediaContent(null); // Clear the preview if no file is selected
+  }
+};
 
 
 return (
 
 
   <div className="post-component-container" style={postComponentContainerStyle}>
-  
-    <div style={postInputContainerStyle}>
-      <form onSubmit={handleSubmit}>
-        <textarea
-          placeholder="Share your thoughts...."
-          value={postContent || ""}
-          onChange={(e) => setPostContent(e.target.value)}
-          style={textareaStyle}
-        />
-        <input
-          type="file"
-          accept="image/*,video/*"
-          ref={fileInputRef}
-          onChange={(e) => setMediaContent(e.target.files[0])}
-          style={{ marginTop: '10px' }}
-        />
+  <div style={postInputContainerStyle}>
+    <form onSubmit={handleSubmit}>
+      <textarea
+        placeholder="Share your thoughts...."
+        value={postContent || ""}
+        onChange={(e) => setPostContent(e.target.value)}
+        style={textareaStyle}
+      />
+      {/* <input
+        type="file"
+        accept="image/*,video/*"
+        ref={fileInputRef}
+        onChange={(e) => handleMediaChange(e)}
+        style={{ marginTop: '10px' }}
+      /> */}
+      <div style={{ position: 'relative', marginTop: '10px' }}>
+          <input
+            type="file"
+            accept="image/*,video/*"
+            ref={fileInputRef}
+            onChange={(e) => handleMediaChange(e)}
+            style={hiddenFileInputStyle} // Hide the default file input
+          />
+          <button
+            type="button"
+            onClick={() => fileInputRef.current.click()} // Trigger the hidden file input click
+            style={customUploadButtonStyle}
+          >
+            Upload Media
+          </button>
+        </div>
 
-        <button type="submit" style={submitButtonStyle}>Post</button>
-        
-      </form>
-    </div>
+      {/* Media Preview */}
+      {mediaContent && (
+        <div style={{ marginTop: '10px', position: 'relative' }}>
+          {mediaContent.type.startsWith('video') ? (
+            <video
+              src={URL.createObjectURL(mediaContent)}
+              controls
+              style={{
+                maxWidth: '100%',
+                maxHeight: '300px',
+                borderRadius: '5px',
+              }}
+            />
+          ) : (
+            <img
+              src={URL.createObjectURL(mediaContent)}
+              alt="Preview"
+              style={{
+                maxWidth: '100%',
+                maxHeight: '300px',
+                borderRadius: '5px',
+                objectFit: 'contain',
+              }}
+            />
+          )}
+          <button
+            type="button"
+            onClick={removePreview}
+            style={removeButtonStyle}
+          >
+            Remove
+          </button>
+        </div>
+      )}
+
+      <button type="submit" style={submitButtonStyle}>
+        Post
+      </button>
+    </form>
+  </div>
+
 
     <div  style={{ marginTop: '20px' }}>
       {posts.map((post) => (
