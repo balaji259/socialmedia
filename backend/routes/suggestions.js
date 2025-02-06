@@ -140,10 +140,7 @@ async function getRandomUserSuggestions(req, res) {
 
 async function getSearchSuggestions(req, res) {
     try {
-        const loggedInUserId = req.user.userId; // Assuming user ID is available in req.user
-        console.log(loggedInUserId);
-        const { query = '', page = 1, limit = 9 } = req.query; // Default limit is 9 for 3 rows
-
+        const loggedInUserId = req.user.userId;
         if (!loggedInUserId) {
             return res.status(400).json({ message: 'User not authenticated' });
         }
@@ -153,25 +150,20 @@ async function getSearchSuggestions(req, res) {
             return res.status(404).json({ message: 'Logged-in user not found' });
         }
 
-        const excludeIds = [loggedInUser._id]; // Exclude the logged-in user's ID
+        const { query = '' } = req.query;
+        let matchQuery = { _id: { $ne: loggedInUserId } }; // Exclude logged-in user
 
-        const matchQuery = {
-            _id: { $nin: excludeIds },
-            username: { $regex: query, $options: 'i' } // Case-insensitive search by username
-        };
+        if (query.trim()) {
+            matchQuery.username = { $regex: query.trim(), $options: 'i' };
+        }
 
         const users = await User.find(matchQuery)
-            .skip((page - 1) * limit)
-            .limit(limit)
-            .select('_id username fullname profilePic bio'); // Fetch only required fields
+            .select('_id username fullname profilePic bio')
+            .lean(); // Improve performance
 
-        // Add followStatus to each user
+        // Add followStatus
         const usersWithFollowStatus = users.map(user => ({
-            _id: user._id,
-            username: user.username,
-            fullname: user.fullname,
-            profilePic: user.profilePic,
-            bio:user.bio,
+            ...user,
             followStatus: loggedInUser.following.includes(user._id) ? 'unfollow' : 'follow'
         }));
 
@@ -181,7 +173,6 @@ async function getSearchSuggestions(req, res) {
         res.status(500).json({ message: 'Something went wrong', error: error.message });
     }
 }
-
 
 
 module.exports = { getRandomUserSuggestions,getSearchSuggestions };
