@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useChatStore } from './useChatStore';
 import './scroll.css';
 import Lottie from "lottie-react";
 import fireAnimation from "../assets/fire.json"; // Adjust path as needed
@@ -8,6 +9,7 @@ const SuggestionsSidebar = () => {
   const [suggestions, setSuggestions] = useState([]);
   const [streakCount, setStreakCount] = useState(0);
   const [topStreakUsers, setTopStreakUsers] = useState([]);
+  const { profileId, setProfileId }=useChatStore();
   const backendBaseUrl='http://localhost:7000';
   const renderurl="https://socialmedia-backend-2njs.onrender.com";
   
@@ -116,17 +118,24 @@ const SuggestionsSidebar = () => {
       .catch(error => console.error('Error fetching top streak users:', error));
   }, []);
 
-  const goToUserProfile = (id) => {
-     
-    id===userId?navigate(`/profile`):navigate(`/profile/${id}`);
-  };
+
+  useEffect(()=>{
+    if(profileId!=null){
+      if(profileId==currentUserId)
+        navigate('/profile');
+      else
+        navigate('/other');
+    }
+  },[profileId]);
 
   const handleNavigation=async(userId)=>{
     console.log("id bro");
     console.log(userId);
 
+    setProfileId(userId);
+
     // navigate(`/other/${userId}`)
-  userId===currentUserId?navigate(`/profile`):navigate(`/other/${userId}`);
+  // userId===currentUserId?navigate(`/profile`):navigate(`/other/${userId}`);
   }
 
 

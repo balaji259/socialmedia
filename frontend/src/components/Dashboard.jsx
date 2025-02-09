@@ -4,6 +4,20 @@ import { toast } from 'react-hot-toast';
 import {useEffect} from "react";
 import { useNavigate } from "react-router-dom";
 import "./dashboard.css"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faHouse } from "@fortawesome/free-solid-svg-icons";
+import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+import { faUser } from "@fortawesome/free-solid-svg-icons";
+import { faMessage } from "@fortawesome/free-solid-svg-icons";
+import { faUserGroup } from "@fortawesome/free-solid-svg-icons";
+import { faRotate } from "@fortawesome/free-solid-svg-icons";
+import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
+// import { faArrowLeftFromBracket } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
+{/* <FontAwesomeIcon icon={faArrowRightFromBracket} /> */}
+
+
+
 
 import {useSocket} from "./useSocket";
 
@@ -49,26 +63,28 @@ const Dashboard = () => {
         {/* Top Section */}
         <div className="menu">
           <button className="menu-item" onClick={() => navigate("/home")}>
-            Home
+          Home
           </button>
           <button className="menu-item" onClick={() => navigate("/search")}>
-            Search
+           Search
           </button>
           <button className="menu-item" onClick={() => navigate("/friends")}> <span className="stacked-text">
-       Friend<br />Circle
+          Friend<br />Circle
           </span></button>
-          <button className="menu-item" onClick={()=> navigate("/chats")}>Chats</button>
+          <button className="menu-item" onClick={()=> navigate("/chats")}>
+           Chats
+            </button>
           
           <button className="menu-item" onClick={() => navigate("/profile")}>
-            Profile
+           Profile
           </button>
 
           <button className="menu-item" onClick={inviteFriends}>
-            Invite Friends
+           Invite Friends
           </button>
 
           <button className="menu-item" onClick={() => window.location.reload()}>
-            Refresh
+           Refresh
           </button>
 
         </div>

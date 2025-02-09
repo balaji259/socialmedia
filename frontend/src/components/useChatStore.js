@@ -20,6 +20,8 @@ export const useChatStore = create((set,get)=>({
     isUsersLoading:false,
     isMessagesLoading:false,
 
+    profileId:null,
+
 
 
     getUsers: async()=>{
@@ -116,6 +118,8 @@ export const useChatStore = create((set,get)=>({
     //optimise this one later
     setSelectedUser:(selectedUser)=> set({selectedUser}),
     setChatUserId: (chatUserId) => set({ chatUserId }),
+    setProfileId:(profileId) => set({ profileId }),
+
     clearUsers: () => {
         set({ users: [], selectedUser: null });
         console.log("clearing Users");

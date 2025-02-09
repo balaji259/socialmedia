@@ -6,7 +6,7 @@ import { useChatStore } from "./useChatStore";
 const FriendsList = () => {
   const [friends, setFriends] = useState([]);
   const [userId, setUserId] = useState(null); // Initialize with `null` to avoid premature API calls
-  const { users, selectedUser, setSelectedUser, chatUserId, setChatUserId } = useChatStore();
+  const { users, selectedUser, setSelectedUser, chatUserId, setChatUserId, profileId, setProfileId } = useChatStore();
   const backendBaseUrl = "http://localhost:7000";
   const renderurl="https://socialmedia-backend-2njs.onrender.com";
   const navigate=useNavigate();
@@ -24,11 +24,11 @@ const FriendsList = () => {
       console.error("Error decoding token:", error);
     }
   };
-
+  
   useEffect(() => {
     getUserIdFromToken(); // Fetch userId from token
   }, []); // Run only on component mount
-
+  
   useEffect(() => {
     if (!userId) return; // Avoid API call until userId is available
 
@@ -46,16 +46,28 @@ const FriendsList = () => {
         console.error("Error fetching friends:", error);
       }
     };
-
+    
     fetchFriends();
   }, [userId]);
+  
+  
+
 
   const goToUserProfile = (id) => {
-    // navigate(`/profile/${userId}`); 
-    id===userId?navigate(`/profile`):navigate(`/other/${id}`);
+     
+    setProfileId(id);
   };
 
-    const handleChat = (friendId) => {
+  useEffect(()=>{
+    console.log("navigating to user profile");
+    console.log("now the profileId is:",profileId);
+    if(profileId!=null)
+      navigate(`/other`);
+  },[profileId]);
+     
+
+  
+  const handleChat = (friendId) => {
     // navigate(`/chats?chatUserId=${friendId}`);
      // Pass the friendId as a query parameter
       setChatUserId(friendId);
@@ -68,7 +80,7 @@ const FriendsList = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {friends.map((friend) => (
           <div
-            key={friend._id}
+          key={friend._id}
             className="bg-white p-4 sm:p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1 text-center"
             
           >
@@ -79,8 +91,8 @@ const FriendsList = () => {
                   ? "/images/default_profile.jpeg"
                   : `${friend.profilePic}`
 
-              }
-              onClick={()=>{goToUserProfile(friend._id)}}
+                }
+                onClick={()=>{goToUserProfile(friend._id)}}
               alt={friend.username}
               className="w-full h-48 object-cover rounded-md cursor-pointer"
             /> */}

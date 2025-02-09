@@ -7,10 +7,12 @@ import "./OtherProfile.css"; // Assuming CSS styles are in this file
 import { useSocket } from "./useSocket";
 import { FiLogOut } from "react-icons/fi";
 import Quote from "./Quote";
+import { useChatStore } from "./useChatStore";
 
 const Profile = () => {
 
-    const { userId } = useParams(); // Get userId from the URL
+    // const { userId } = useParams(); // Get userId from the URL
+  
     const [userData, setUserData] = useState(null);
     const [currentUserId,setCurrentUserId]=useState();
     const [userPosts, setUserPosts] = useState([]);
@@ -24,6 +26,12 @@ const Profile = () => {
     const [isFollowing, setIsFollowing] = useState(false);
     const [loading, setLoading] = useState(false); // For button loading state
     const {onlineUsers} =useSocket();   
+    const {profileId, setProfileId, chatUserId, setChatUserId}=useChatStore();
+    // const userId=profileId;
+
+    
+    
+  
     const renderurl="https://socialmedia-backend-2njs.onrender.com";
 
     const navigate=useNavigate();
@@ -63,32 +71,49 @@ const Profile = () => {
     };
 
     useEffect(()=>{
+      console.log("target user uid",profileId);
         fetchuserId();
       },[currentUserId])
 
-      const handleChat = (userId) => {
+useEffect(()=>{
+  console.log("come on!");
+  console.log(profileId);
+},[profileId]);
 
-            navigate(`/chats?chatUserId=${userId}`);
-        // Pass the friendId as a query parameter
+      const handleChat = (profileId) => {
+
+          setChatUserId(profileId);
+          navigate("/chats");
+    
       };
+
+
+      // useEffect(()=>{
+      //   if(chatUserId){
+      //     navigate('/chats');
+      //   }
+      // },[chatUserId]);
 
       useEffect(() => {
         // Fetch user data by userId
-        axios.get(`/user/viewProfile/${userId}`)
-            .then((response) => {
-              console.log("userdata");
-              console.log(response.data);
-                setUserData(response.data);
-            })
-            .catch((error) => {
-                console.error('Error fetching user data:', error);
-            });
- }, [userId]);
+        if(profileId){
+          console.log("useriod from fetching-",profileId);
+          axios.get(`/user/viewProfile/${profileId}`)
+              .then((response) => {
+                console.log("userdata");
+                console.log(response.data);
+                  setUserData(response.data);
+              })
+              .catch((error) => {
+                  console.error('Error fetching user data:', error);
+              });
+        }
+ }, [profileId]);
 
 
  const checkConnection = async () => {
     try {
-      const response = await axios.get(`/profile/check-connection/${currentUserId}/${userId}`);
+      const response = await axios.get(`/profile/check-connection/${currentUserId}/${profileId}`);
       setConnectionStatus(response.data);
     } catch (error) {
       console.error('Error checking connection:', error);
@@ -100,8 +125,8 @@ const Profile = () => {
 
 const fetchMutualFriends = async () => {
   try {
-    if (userId && currentUserId) {
-      const response = await axios.get(`/profile/mutual-friends/${currentUserId}/${userId}`);
+    if (profileId && currentUserId) {
+      const response = await axios.get(`/profile/mutual-friends/${currentUserId}/${profileId}`);
       setMutualFriendsCount(response.data.mutualFriendsCount);
     }
   } catch (error) {
@@ -110,10 +135,10 @@ const fetchMutualFriends = async () => {
 };
 
 
-async function getFriendsDetails(userId) {
+async function getFriendsDetails(profileId) {
     try {
       console.log("before");
-      const response = await fetch(`/profile/getfriends/${userId}`);
+      const response = await fetch(`/profile/getfriends/${profileId}`);
       console.log("after");
       console.log(response);
       if (!response.ok) {
@@ -135,19 +160,19 @@ async function getFriendsDetails(userId) {
  useEffect(() => {
    // Fetch connection status
  
-   if(userId && currentUserId)
+   if(profileId && currentUserId)
         checkConnection();
         fetchMutualFriends();
-        getFriendsDetails(userId);
+        getFriendsDetails(profileId);
         fetchFollowStatus();
- }, [currentUserId, userId]);
+ }, [currentUserId, profileId]);
 
 
    // Fetch initial follow status
    const fetchFollowStatus = async () => {
     try {
       const response = await axios.get(
-        `/profile/isFollowing/${userId}/${currentUserId}`);
+        `/profile/isFollowing/${profileId}/${currentUserId}`);
       
       console.log("follow status");
       console.log(response.data.isFollowing);
@@ -165,10 +190,10 @@ async function getFriendsDetails(userId) {
             // Unfollow API call
             console.log('calling unfollow route');
             await axios.post(
-              `/profile/unfollow/${userId}/${currentUserId}`);
+              `/profile/unfollow/${profileId}/${currentUserId}`);
           } else {
             // Follow API call
-            await axios.post(`/profile/follow/${userId}/${currentUserId}`);
+            await axios.post(`/profile/follow/${profileId}/${currentUserId}`);
           }
           setIsFollowing(!isFollowing); // Toggle follow status locally
         } catch (error) {
@@ -177,13 +202,18 @@ async function getFriendsDetails(userId) {
           setLoading(false); // Hide loading indicator
           checkConnection();
           fetchMutualFriends();
-          getFriendsDetails(userId);
+          getFriendsDetails(profileId);
         }
       };
 
       const goToHome = () => {
+        setProfileId(null);
         navigate("/home"); // Replace "/home" with your actual home page route
       };
+
+      const handleNavigationToPosts = (profileId)=>{
+        navigate('/viewposts');
+      }
      
 
     if (!userData) return <Quote />;
@@ -233,7 +263,7 @@ async function getFriendsDetails(userId) {
 
           <div className="profile-photo relative">
   {/* Online indicator */}
-  {onlineUsers && Array.isArray(onlineUsers) && onlineUsers.includes(userId) && (
+  {onlineUsers && Array.isArray(onlineUsers) && onlineUsers.includes(profileId) && (
     <div className="absolute top-0 left-0 flex items-center gap-1 bg-black bg-opacity-70 px-2 py-1 rounded-br-md">
       <span className="w-3 h-3 bg-green-500 rounded-full" />
       <span className="text-white text-sm">Online</span>
@@ -257,7 +287,7 @@ async function getFriendsDetails(userId) {
             
           {/* <button className="edit-profile" onClick={editProfile}>Edit Profile</button> */}
           <div className="view-div">
-            <button className="view-posts" onClick={()=>{navigate(`/viewposts/${userId}`)}}>View {userData?.username} Posts</button>
+            <button className="view-posts" onClick={()=>{handleNavigationToPosts(profileId)}}>View {userData?.username} Posts</button>
           </div>
           
           <div className="actions">
@@ -271,7 +301,7 @@ async function getFriendsDetails(userId) {
                 {loading ? "Processing..." : isFollowing ? "Unfollow" : "Follow"}
             </button>
 
-            <button className="chat-btn" onClick={()=>{handleChat(userId)}}>Chat</button>
+            <button className="chat-btn" onClick={()=>{handleChat(profileId)}}>Chat</button>
           </div>
           <div className="connection-info">
             <p>Connection</p>

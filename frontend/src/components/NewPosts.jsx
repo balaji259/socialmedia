@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import "./NewPosts.css";
 import axios from "axios";
+import { FiLogOut } from "react-icons/fi";
 const App = () => {
   const [activeTab, setActiveTab] = useState(null);
 
@@ -14,6 +16,7 @@ const App = () => {
   const backendBaseUrl = 'http://localhost:7000';
   const renderurl="https://socialmedia-backend-2njs.onrender.com";
   const buttonRef=useRef(null);
+  const navigate=useNavigate();
   
   useEffect(() => {
     // Click the button programmatically when the component renders
@@ -239,8 +242,24 @@ useEffect(()=>{
 
 
  
+const goToHome = () => {
+  navigate("/profile"); 
+};
+
 
   return (
+
+    <>
+
+  <button className="modern-back-button" onClick={goToHome}>
+        <span className="arrow">
+          
+        <FiLogOut size={25}   style={{ transform: 'scaleX(-1)' }}/>
+          </span> 
+      </button>
+      
+    
+    
     <div className="App">
       <div className="button-container">
         <button
@@ -265,6 +284,8 @@ useEffect(()=>{
       </div>
       <div className="posts-container">{renderPosts()}</div>
     </div>
+    
+    </>
   );
 };
 

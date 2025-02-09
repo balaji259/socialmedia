@@ -59,8 +59,8 @@ const RoutesComponent = () => {
                 <Route path="/friends" element={<Friends /> } />
                 <Route path="/friendlist" element={<FriendList />} />
                 <Route path="/newposts" element={<NewPosts /> } />
-                <Route path="/other/:userId" element={<OtherProfile />} />
-                <Route path="/viewposts/:userId" element={<OtherPosts />} />
+                <Route path="/other" element={<OtherProfile />} />
+                <Route path="/viewposts" element={<OtherPosts />} />
                 {/* <Route path="/chat/:friendId" element={<ChatFriend /> } /> */}
                 {/* <Route path='./chat' element={<chatsection />} />             */}
             </Routes>

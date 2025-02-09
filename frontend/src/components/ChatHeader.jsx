@@ -2,18 +2,35 @@ import { X } from "lucide-react";
 // import { useAuthStore } from "./useAuthStore";
 import { useChatStore } from "./useChatStore";
 import {useSocket} from "./useSocket";
-
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 const backendBaseUrl = "http://localhost:7000";
 const renderurl="https://socialmedia-backend-2njs.onrender.com";
 
 const ChatHeader = () => {
-  const { selectedUser, setSelectedUser } = useChatStore();
+  const { selectedUser, setSelectedUser, profileId, setProfileId } = useChatStore();
   const { onlineUsers } = useSocket();
+  const navigate=useNavigate();
+  let isexit=0;
+
+  function handleNavigation(){
+    console.log("clicked");
+    // console.log(selectedUser);
+    setProfileId(selectedUser._id);
+    isexit=1;
+  }
+  
+  useEffect(()=>{
+    if(profileId!=null && isexit==1)
+      navigate(`/other`);
+
+  },[profileId])
+
 
   return (
     <div className="p-2.5 border-b border-base-300">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3" onClick={handleNavigation}>
           {/* Avatar */}
           <div className="avatar">
             <div className="size-8  relative">

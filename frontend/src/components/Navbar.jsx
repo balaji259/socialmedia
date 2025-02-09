@@ -1,6 +1,7 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { useNavigate } from "react-router-dom";
 import logo from '/images/logo.jpeg';
+
 
 const Navbar = ({ username, profilePic }) => {
   const BACKEND_URL = 'http://localhost:7000';
@@ -11,6 +12,8 @@ const Navbar = ({ username, profilePic }) => {
 
     const navigate=useNavigate();
 
+
+    
   return (
     <nav className="fixed top-0 left-0 w-full flex flex-wrap justify-between items-center py-3 px-4 bg-gray-100 border-b-2 border-gray-300 z-10 shadow-md">
       {/* Left side: Brand Logo and Tagline */}
@@ -22,8 +25,26 @@ const Navbar = ({ username, profilePic }) => {
         </div>
       </div>
 
+
+       {/* Center: Valentine's Text */}
+       <div className="hidden sm:flex items-center justify-center space-x-2">
+        <span className="text-red-500 text-xl sm:text-2xl">❤️</span>
+        <div className="text-center">
+          <h2 className="text-red-500 font-semibold text-sm sm:text-lg">
+            Celebrate Valentine's with Friendsbook
+          </h2>
+          <p className="text-pink-500 text-xs sm:text-sm">
+            Share the love with your circle! 💖
+          </p>
+        </div>
+        <span className="text-red-500 text-xl sm:text-2xl">❤️</span>
+      </div>
+
       {/* Right side: Profile Picture and Username */}
       <div className="flex items-center space-x-2 cursor-pointer" onClick={()=>navigate(`/profile`)}> 
+
+     
+
         <img
           src={profilePicUrl}
           alt="Profile"

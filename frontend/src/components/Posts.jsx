@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import './scroll.css';
 import "./Posts.css"
 import {useSocket} from "./useSocket";
+import { useChatStore } from './useChatStore';
 
 
 // Define all styles at the top
@@ -362,6 +363,8 @@ const PostComponent = () => {
   const [replyTexts, setReplyTexts] = useState({}); // Stores reply text for each comment
   const [currentuserId,setcurrentuserId]=useState({});
   const {onlineUsers} =useSocket();
+  const [isPosting,setIsPosting]=useState(false);
+  const {profileId, setProfileId} =useChatStore();
 
   const backendBaseUrl = 'http://localhost:7000';
   const frontendBaseUrl='http://localhost:3000';
@@ -420,129 +423,108 @@ const PostComponent = () => {
   
 
   const handleSubmit = async (e) => {
+    // setIsPosting(true);
     e.preventDefault();
+
+    setIsPosting(true); // Ensure state change
+
+    console.log("Posting state:", isPosting); // Debugging
+
     const token = localStorage.getItem("token");
-  
+
     if (!token) {
-      alert("No token found. Please log in again.");
-      return;
-    }
-
-  
-    console.log("Initial Token:", token);
-    console.log("post",postContent);
-    console.log("trim",postContent?.trim());
-    console.log("media",mediaContent);
-    console.log("finished");
-  
-    const formData = new FormData();
-
-
-  
-
-     // Validation before appending data
-     if (!postContent?.trim() && !mediaContent) {
-      console.log("post cannot be empty!");
-      toast.error("Post cannot be empty!"); 
-      return;
-  }
-
-    // Append text content
-    if (postContent?.trim()) {
-      formData.append("captionOrText", postContent?.trim());
-      console.log("Caption/Text added to FormData:", postContent?.trim());
-    }
-
-  
-    // Append media content if exists
-    if (mediaContent) {
-      console.log("Media content detected, preparing for Cloudinary upload:", mediaContent);
-  
-   
-
-
-      try {
-        const cloudinaryData = new FormData();
-        cloudinaryData.append("file", mediaContent);
-        cloudinaryData.append("upload_preset", "simpleunsigned"); // Replace with your preset
-  
-        const cloudinaryResponse = await fetch(
-          "https://api.cloudinary.com/v1_1/dhtk7vhyv/upload",
-          {
-            method: "POST",
-            body: cloudinaryData,
-          }
-        );
-  
-        if (!cloudinaryResponse.ok) {
-          throw new Error("Failed to upload media to Cloudinary");
-        }
-  
-        const cloudinaryResult = await cloudinaryResponse.json();
-        const mediaUrl = cloudinaryResult.secure_url;
-  
-        console.log("Media uploaded successfully, URL received:", mediaUrl);
-  
-        formData.append("mediaContent", mediaUrl);
-        console.log("Media URL added to FormData:", mediaUrl);
-      } catch (error) {
-        console.error("Media upload error:", error);
-        toast.error("Failed to upload media. Please try again.");
+        alert("No token found. Please log in again.");
         return;
-      }
     }
-  
-    try {
-      // Decode userId from token
-      const base64Url = token.split(".")[1];
-      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-      const jsonPayload = decodeURIComponent(
-        atob(base64)
-          .split("")
-          .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
-          .join("")
-      );
-      const { userId } = JSON.parse(jsonPayload);
-  
-      formData.append("userId", userId);
-  
-      // Log the final FormData contents
-      console.log("Final FormData before backend request:");
-      for (let [key, value] of formData.entries()) {
-        console.log(`${key}: ${value}`);
-      }
-  
-      // Backend call
-      console.log("Sending FormData to backend...");
-      const response = await fetch(`${renderurl}/posts/create`, {
-        method: "POST",
-        body: formData,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-  
-      if (response.ok) {
-      
-        setPostContent(null);
-        setMediaContent(null);
-        if(fileInputRef.current)
-        {
-          fileInputRef.current.value = "";
+
+    if (!postContent?.trim() && !mediaContent) {
+        toast.error("Post cannot be empty!");
+        return;
+    }
+
+    // Decode userId from token in parallel
+    const decodeUserId = new Promise((resolve, reject) => {
+        try {
+            const base64Url = token.split(".")[1];
+            const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+            const jsonPayload = decodeURIComponent(
+                atob(base64)
+                    .split("")
+                    .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+                    .join("")
+            );
+            resolve(JSON.parse(jsonPayload).userId);
+        } catch (error) {
+            reject(error);
         }
-        toast.success("Post created successfully");
-        await fetchPosts(); // Refresh posts
-      } else {
-        const errorData = await response.json();
-        console.error("Backend error response:", errorData);
-        toast.error("Failed to create Post");
-      }
+    });
+
+    let mediaUrl = null;
+
+    // Upload media to Cloudinary in parallel (if media exists)
+    const uploadMedia = mediaContent
+        ? fetch("https://api.cloudinary.com/v1_1/dhtk7vhyv/upload", {
+              method: "POST",
+              body: (() => {
+                  const cloudinaryData = new FormData();
+                  cloudinaryData.append("file", mediaContent);
+                  cloudinaryData.append("upload_preset", "simpleunsigned");
+                  return cloudinaryData;
+              })(),
+          })
+              .then((res) => (res.ok ? res.json() : Promise.reject("Cloudinary upload failed")))
+              .then((data) => data.secure_url)
+              .catch((error) => {
+                  console.error("Media upload error:", error);
+                  toast.error("Failed to upload media. Please try again.");
+                  throw error;
+              })
+        : Promise.resolve(null);
+
+    try {
+        const [userId, uploadedMediaUrl] = await Promise.all([decodeUserId, uploadMedia]);
+        mediaUrl = uploadedMediaUrl;
+
+        // Prepare formData
+        const formData = new FormData();
+        formData.append("userId", userId);
+        if (postContent?.trim()) formData.append("captionOrText", postContent.trim());
+        if (mediaUrl) formData.append("mediaContent", mediaUrl);
+
+        // Send to backend
+        const response = await fetch(`${renderurl}/posts/create`, {
+            method: "POST",
+            body: formData,
+            headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error("Backend error response:", errorData);
+            toast.error("Failed to create Post");
+            // return;
+        }
+        else
+        {
+          
+                  setPostContent(null);
+                  setMediaContent(null);
+                  if (fileInputRef.current) fileInputRef.current.value = "";
+                  toast.success("Post created successfully");
+                  await fetchPosts(); // Refresh posts
+
+        }
+
     } catch (error) {
-      console.error("Error submitting form:", error);
-      toast.error("Error in creating post. Please try again.");
+        console.error("Error submitting form:", error);
+        toast.error("Error in creating post. Please try again.");
     }
-  };
-  
+    finally{
+      // setIsPosting(false);
+      setIsPosting(false); // Ensure it always resets
+    }
+};
+
 
 
   
@@ -808,8 +790,18 @@ const toggleReplyInput = (replyId) => {
 
 const goToUserProfile = (userId) => {
   // navigate(`/profile/${userId}`); 
-  userId===currentuserId?navigate(`/profile`):navigate(`/other/${userId}`);
+  setProfileId(userId);
+  // userId===currentuserId?navigate(`/profile`):navigate(`/other/${userId}`);
 };
+
+useEffect(()=>{
+  if(profileId!=null){
+    if(profileId==currentuserId)
+        navigate('/profile');
+    else 
+        navigate('/other');
+  }
+},[profileId]);
 
 // const handleMediaChange = (e) => {
 //   const file = e.target.files[0];
@@ -896,8 +888,8 @@ return (
         onChange={(e) => handleMediaChange(e)}
         style={hiddenFileInputStyle} // Hide the default file input
       />
-      <button type="submit" style={submitButtonStyle}>
-        Post
+      <button type="submit" disabled={isPosting} style={submitButtonStyle}>
+        {isPosting ? "Posting...." : "Post"}
       </button>
     </div>
   </form>

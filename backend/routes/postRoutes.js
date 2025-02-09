@@ -11,6 +11,7 @@ const authMiddleware = require('../middleware/auth');  // Ensure correct import
 const authenticateUser = require('./authenticate_user');
 const SavedPost = require('../models/savedPost');
 const User = require("../models/users");
+const multiparty = require("multiparty");
 const { checkStreakOnLoad, updateStreakOnPost } = require("./streak");
 
 
@@ -24,117 +25,73 @@ const getISTDate = () => {
 
 
 
+
 router.post('/create', async (req, res) => {
     try {
-        const form = new formidable.IncomingForm();
-
+        const form = new multiparty.Form();
+        
         form.parse(req, async (err, fields, files) => {
             if (err) {
                 console.error('Form parse error:', err);
                 return res.status(500).json({ error: 'Failed to parse form data' });
             }
 
-            // Log the received fields and files
-            console.log("Received fields:", fields);
-            console.log("Received files:", files);
-
             const { captionOrText, userId, mediaContent } = fields;
+            if (!userId) return res.status(400).json({ error: "User ID is required" });
 
-            console.log("captionOrText:", captionOrText);
-            console.log("userId:", userId);
-            console.log("mediaContent:", mediaContent);
+            const caption = captionOrText?.[0] || null;
+            const mediaUrl = mediaContent?.[0] || null;
+            const postType = mediaUrl ? (/\.(mp4|webm|avi|mkv|mov|flv|wmv)$/i.test(mediaUrl) ? "video" : "image") : "text";
 
-            // Check if userId is provided
-            if (!userId) {
-                return res.status(400).json({ error: "User ID is required" });
-            }
-
-            // Process captionOrText field
-            let caption = null;
-            if (captionOrText) {
-                caption = Array.isArray(captionOrText) ? captionOrText.join(' ') : captionOrText;
-            }
-
-            // Process mediaContent field
-            let mediaUrl = null;
-            if (mediaContent) {
-                mediaUrl = Array.isArray(mediaContent) ? mediaContent[0] : mediaContent;
-            }
-
-            // Determine the post type based on the media URL
-            let postType = "text"; // Default to text if no media
-            if (mediaUrl) {
-                const isImage = mediaUrl.match(/\.(jpeg|jpg|png|gif|bmp|webp|tiff)$/i);
-                const isVideo = mediaUrl.match(/\.(mp4|webm|avi|mkv|mov|flv|wmv)$/i);
-
-                if (!isImage && !isVideo) {
-                    return res.status(400).json({ error: "Invalid media type" });
-                }
-
-                postType = isVideo ? "video" : "image";
-            }
-
-            // Create the post
-            const post = new Post({
-                user: userId,
-                postType,
-                caption,
-                content: { mediaUrl },
-            });
-
+            // Create post
+            const post = new Post({ user: userId, postType, caption, content: { mediaUrl } });
             await post.save();
 
-            // Increment the user's postsCount by 1
-            await User.findByIdAndUpdate(userId, { $inc: { postsCount: 1 } });
+            // Update user's post count & streak in a single query
+            const currentDate = new Date();
+            currentDate.setHours(0, 0, 0, 0);
 
-            // Streak logic
-            const user = await User.findById(userId);
-            if (!user) {
-                return res.status(404).json({ error: 'User not found' });
-            }
+            const updateUser = await User.findByIdAndUpdate(
+                userId,
+                [
+                    {
+                        $set: {
+                            "streak.lastPostTime": currentDate,
+                            "streak.count": {
+                                $cond: {
+                                    if: { $eq: ["$streak.lastPostTime", currentDate] },
+                                    then: "$streak.count",
+                                    else: {
+                                        $cond: {
+                                            if: {
+                                                $eq: [
+                                                    { $dateDiff: { startDate: "$streak.lastPostTime", endDate: currentDate, unit: "day" } },
+                                                    1,
+                                                ],
+                                            },
+                                            then: { $add: ["$streak.count", 1] },
+                                            else: 1,
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    { $inc: { postsCount: 1 } },
+                ],
+                { new: true }
+            );
 
-            const currentDate = getISTDate();
-            const currentDateOnly = new Date(currentDate.setHours(0, 0, 0, 0));
-            console.log(`current (IST, day-only): ${currentDateOnly}`);
-
-            const lastPostDate = user.streak.lastPostTime;
-            if (lastPostDate) {
-                const lastPostDateIST = new Date(lastPostDate).toLocaleString("en-US", { timeZone: "Asia/Kolkata" });
-                const lastPostDateInIST = new Date(lastPostDateIST);
-                const lastPostDateOnly = new Date(lastPostDateInIST.setHours(0, 0, 0, 0));
-                console.log(`lastPost (IST, day-only): ${lastPostDateOnly}`);
-
-                const diffInDays = Math.floor((currentDateOnly - lastPostDateOnly) / (24 * 60 * 60 * 1000));
-                console.log(`difference: ${diffInDays}`);
-
-                if (diffInDays === 0) {
-                    await User.findByIdAndUpdate(userId, { 'streak.lastPostTime': currentDate });
-                } else if (diffInDays === 1) {
-                    await User.findByIdAndUpdate(userId, {
-                        'streak.count': user.streak.count + 1,
-                        'streak.lastPostTime': currentDate,
-                    });
-                } else {
-                    await User.findByIdAndUpdate(userId, {
-                        'streak.count': 1,
-                        'streak.lastPostTime': currentDate,
-                    });
-                }
-            } else {
-                await User.findByIdAndUpdate(userId, {
-                    'streak.count': 1,
-                    'streak.lastPostTime': currentDate,
-                });
-            }
+            if (!updateUser) return res.status(404).json({ error: 'User not found' });
 
             res.status(201).json({ message: 'Post created successfully', post });
         });
+
     } catch (error) {
         console.error('Error creating post:', error);
-        res.status(500).json({ error: error.message || 'Failed to create post' });
+        res.status(500).json({ error: 'Failed to create post' });
     }
 });
-
 
 router.get('/get', async (req, res) => {
     const userId = req.user ? req.user._id : null; // Optional authentication check

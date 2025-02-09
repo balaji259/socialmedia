@@ -1,14 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import { FiLogOut } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
+import { useChatStore } from "./useChatStore";
 
 const UserPosts = () => {
-  const { userId } = useParams(); // Get userId from URL params
+  // const { userId } = useParams(); // Get userId from URL params
   const [posts, setPosts] = useState([]); // Store fetched posts
   const [loading, setLoading] = useState(true); // Loading state
   const [selectedPost, setSelectedPost] = useState(null); // State for selected post (modal)
   const backendBaseUrl = "http://localhost:7000"; // Backend base URL
   const renderurl="https://socialmedia-backend-2njs.onrender.com";
+  const {profileId, setProfileId}=useChatStore();
+  const userId=profileId;
+  const navigate=useNavigate();
 
   const fetchUserPosts = async () => {
     try {
@@ -34,6 +40,10 @@ const UserPosts = () => {
     fetchUserPosts();
   }, [userId]);
 
+  function goToHome(){
+    navigate(`/other`);
+  }
+
   if (loading) {
     return <p>Loading...</p>; // Show loading indicator
   }
@@ -41,10 +51,20 @@ const UserPosts = () => {
 
 
       return (
+
+        <>
+        
+        <button className="modern-back-button" onClick={goToHome}>
+        <span className="arrow">
+          
+        <FiLogOut size={25}   style={{ transform: 'scaleX(-1)' }}/>
+          </span> 
+      </button>
+      
+
         <div className="grid-container">
 {posts.map((post) => {
-// Determine whether to use post or post.postId
-// const currentPost = post.postId || post;
+
 
 return (
   <div
@@ -110,6 +130,7 @@ return (
 )}
 </div>
 
+        </>
       );
      
 };

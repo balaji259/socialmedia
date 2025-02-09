@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useSocket } from "./useSocket";
 import { useChatStore } from "./useChatStore";
+// import {useChatStore} from "./useChatStore";
 
 const SearchSuggestions = () => {
   const [query, setQuery] = useState("");
@@ -11,8 +12,9 @@ const SearchSuggestions = () => {
   const backendBaseUrl = "http://localhost:7000";
   const renderurl="https://socialmedia-backend-2njs.onrender.com";
   const navigate = useNavigate();
-  // const { setChatUserId } = useChatStore();
-  const { users, selectedUser, setSelectedUser, chatUserId, setChatUserId } = useChatStore();
+  const { setChatUserId, profileId, setProfileId } = useChatStore();
+  // const { users, selectedUser, setSelectedUser, chatUserId, setChatUserId , profileId, setProfileId} = useChatStore();
+  // const { getUsers,clearUsers,users, selectedUser, setSelectedUser, chatUserId, setChatUserId, isUsersLoading, profileId, setProfileId } = useChatStore();
 
   const {onlineUsers} =useSocket();
 
@@ -76,10 +78,21 @@ const SearchSuggestions = () => {
     }
   };
 
+  
 
   const goToUserProfile = (id) => {
-    navigate(id === currentUserId ? `/profile` : `/other/${id}`);
+    console.log(id);
+    setProfileId(id);
+    
   };
+
+  useEffect(()=>{
+    console.log("navigating to user profile");
+    console.log("now the profileId is:",profileId);
+    if(profileId!=null)
+      navigate(profileId === currentUserId ? `/profile` : `/other`);
+
+  },[profileId]);
 
   const handleChat = (friendId) => {
     setChatUserId(friendId);

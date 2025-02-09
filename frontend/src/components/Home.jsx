@@ -10,6 +10,8 @@ import {useSocket} from "./useSocket";
 import axios from "axios";
 
 import { fetchUserDetails } from "./userPosts.js";
+import "./Valentine.css";
+
 
 const Home = () => {
   const [currentuser, setCurrentUser] = useState({ username: "", profilePic: "" });
@@ -93,6 +95,25 @@ useEffect(()=>{
     if (window.innerWidth < 900) return "15%";
     return "17%";
   };
+
+  useEffect(() => {
+    const container = document.createElement('div');
+    container.classList.add('falling-roses-container');
+    document.body.appendChild(container);
+
+    for (let i = 0; i < 20; i++) {
+      const petal = document.createElement('div');
+      petal.classList.add('falling-petal');
+      petal.style.left = `${Math.random() * 100}vw`;
+      petal.style.animationDuration = `${2 + Math.random() * 3}s`;
+      container.appendChild(petal);
+    }
+
+    setTimeout(() => {
+      container.remove(); // Remove petals after animation
+    }, 5000);
+  }, []);
+
 
 
   if (isLoading) {
