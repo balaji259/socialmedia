@@ -62,29 +62,43 @@ const Dashboard = () => {
       <div className="sidebar">
         {/* Top Section */}
         <div className="menu">
-          <button className="menu-item" onClick={() => navigate("/home")}>
-          Home
+          <button className="menu-item tooltip" onClick={() => navigate("/home")}>
+         <FontAwesomeIcon icon={faHouse} id="home" />
+         <span className="tooltip-text">Home</span>
+          {/* Home */}
           </button>
-          <button className="menu-item" onClick={() => navigate("/search")}>
-           Search
+          <button className="menu-item tooltip" onClick={() => navigate("/search")}>
+          <FontAwesomeIcon icon={faMagnifyingGlass} id="search"/> 
+          <span className="tooltip-text">Search</span>
+          {/* Search */}
           </button>
-          <button className="menu-item" onClick={() => navigate("/friends")}> <span className="stacked-text">
-          Friend<br />Circle
+          <button className="menu-item tooltip" onClick={() => navigate("/friends")}> <span className="stacked-text">
+          <FontAwesomeIcon icon={faUserGroup} id="friendcircle" />
+          <span className="tooltip-text">Friend Circle</span>
+          {/* Friend<br />Circle */}
           </span></button>
-          <button className="menu-item" onClick={()=> navigate("/chats")}>
-           Chats
+          <button className="menu-item tooltip" onClick={()=> navigate("/chats")}>
+          <FontAwesomeIcon icon={faMessage} id="chats"/>
+          <span className="tooltip-text">Chats</span>
+           {/* Chats */}
             </button>
           
-          <button className="menu-item" onClick={() => navigate("/profile")}>
-           Profile
+          <button className="menu-item tooltip" onClick={() => navigate("/profile")}>
+           <FontAwesomeIcon icon={faUser}  id="profile"  />
+           <span className="tooltip-text">Profile</span>
+           {/* Profile */}
           </button>
 
-          <button className="menu-item" onClick={inviteFriends}>
-           Invite Friends
+          <button className="menu-item tooltip" onClick={inviteFriends}>
+           <FontAwesomeIcon icon={faUserPlus} id="invite-friends" />
+           <span className="tooltip-text">Invite</span>
+           {/* Invite Friends */}
           </button>
 
-          <button className="menu-item" onClick={() => window.location.reload()}>
-           Refresh
+          <button className="menu-item tooltip" onClick={() => window.location.reload()}>
+           <FontAwesomeIcon icon={faRotate} id="refresh" />
+           <span className="tooltip-text">Refresh</span>
+           {/* Refresh */}
           </button>
 
         </div>

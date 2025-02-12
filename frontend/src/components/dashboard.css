@@ -89,6 +89,38 @@ img{
   background-color: #dc2626;
 }
 
+/* Position the tooltip container */
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+/* Hidden by default */
+.tooltip-text {
+  visibility: hidden;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  padding: 8px 8px;
+  border-radius: 5px;
+  position: absolute;
+  left: 160%; /* Position above the icon */
+  /* top: 50%; */
+  transform: translateX(-50%);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+  font-size: 12px;
+}
+
+/* Show tooltip on hover */
+.tooltip:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+
+
 /* Responsive Design */
 
 
