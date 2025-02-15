@@ -81,12 +81,19 @@ const Search = () => {
   };
 
   // Adjusting dynamic styles for responsiveness
+  // const getSidebarWidth = () => {
+  //   if (window.innerWidth < 600) return "20%"; // Small screens
+  //   if (window.innerWidth < 900) return "25%"; // Medium screens
+  //   if (window.innerWidth < 1700) return "20%"; 
+  //   return "20%"; // Larger screens
+  // };
+
   const getSidebarWidth = () => {
-    if (window.innerWidth < 600) return "20%"; // Small screens
-    if (window.innerWidth < 900) return "25%"; // Medium screens
-    if (window.innerWidth < 1700) return "20%"; 
-    return "20%"; // Larger screens
+    if (window.innerWidth < 600) return "11%";
+    if (window.innerWidth < 900) return "15%";
+    return "15%";
   };
+
 
   async function getUser(){
     try{

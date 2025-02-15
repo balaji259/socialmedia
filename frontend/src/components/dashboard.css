@@ -22,7 +22,10 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+
   transition: all 0.3s ease-in-out;
+
+  align-items: flex-start;
 }
 
 img{
@@ -39,7 +42,7 @@ img{
 .menu {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   /* gap: 1.5rem; */
   gap: 1.2rem;
 }
@@ -47,11 +50,18 @@ img{
 .menu-item {
   font-size: 1rem; /* Default size for large screens */
   padding: 0.5rem 1rem;
-  text-align: left;
+  /* text-align: left; */
   background: none;
   border: none;
   cursor: pointer;
   transition: background-color 0.2s;
+}
+
+.menu-item{
+  display:flex;
+  justify-content: center;
+  align-items:center;
+
 }
 
 .menu-item:hover {
@@ -61,13 +71,13 @@ img{
 
 .logout {
   margin-top: 2rem;
-  /* display:flex; */
-  /* justify-content: flex-start; */
+  display:flex;
+  justify-content: flex-start;
 }
 
 .logout{
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 .logout-btn {
@@ -117,6 +127,29 @@ img{
 .tooltip:hover .tooltip-text {
   visibility: visible;
   opacity: 1;
+}
+.iconpicture{
+  margin-right: 4px;
+}
+
+.menu-text::before {
+  content: "\A"; /* Line break */
+  white-space: pre; /* Ensure line break is recognized */
+}
+
+/* Remove line break on large screens */
+@media (min-width: 1025px) {
+  .menu-text::before {
+    content: ""; /* Remove the break */
+  }
+}
+
+
+
+@media (min-width: 1025px) {
+  .menu-text {
+    margin-left: 0.5rem; /* Adds space between icon and text */
+  }
 }
 
 

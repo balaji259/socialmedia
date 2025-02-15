@@ -64,59 +64,85 @@ const Dashboard = () => {
         <div className="menu">
           <button className="menu-item tooltip" onClick={() => navigate("/home")}>
          <FontAwesomeIcon icon={faHouse} id="home" />
-         <span className="tooltip-text">Home</span>
+        
+         {/* <br /> */}
           {/* Home */}
+          <span className="menu-text">Home</span>
           </button>
           <button className="menu-item tooltip" onClick={() => navigate("/search")}>
-          <FontAwesomeIcon icon={faMagnifyingGlass} id="search"/> 
-          <span className="tooltip-text">Search</span>
+          <FontAwesomeIcon icon={faMagnifyingGlass} id="search" /> 
+          {/* <br /> */}
+      
           {/* Search */}
+          <span className="menu-text">Search</span>
           </button>
           <button className="menu-item tooltip" onClick={() => navigate("/friends")}> <span className="stacked-text">
-          <FontAwesomeIcon icon={faUserGroup} id="friendcircle" />
-          <span className="tooltip-text">Friend Circle</span>
+          <FontAwesomeIcon icon={faUserGroup} id="friendcircle"  />
+          {/* <br /> */}
+    
           {/* Friend<br />Circle */}
+          <span className="menu-text">Friend</span>
           </span></button>
           <button className="menu-item tooltip" onClick={()=> navigate("/chats")}>
-          <FontAwesomeIcon icon={faMessage} id="chats"/>
-          <span className="tooltip-text">Chats</span>
+          <FontAwesomeIcon icon={faMessage} id="chats" />
+
+          {/* <br /> */}
            {/* Chats */}
+           <span className="menu-text">Chats</span>
             </button>
           
           <button className="menu-item tooltip" onClick={() => navigate("/profile")}>
-           <FontAwesomeIcon icon={faUser}  id="profile"  />
-           <span className="tooltip-text">Profile</span>
+           <FontAwesomeIcon icon={faUser}  id="profile" />
+
+           {/* <br /> */}
            {/* Profile */}
+           <span className="menu-text">Profile</span>
           </button>
 
           <button className="menu-item tooltip" onClick={inviteFriends}>
            <FontAwesomeIcon icon={faUserPlus} id="invite-friends" />
-           <span className="tooltip-text">Invite</span>
+
+           {/* <br /> */}
            {/* Invite Friends */}
+           <span className="menu-text">Invite</span>
           </button>
 
           <button className="menu-item tooltip" onClick={() => window.location.reload()}>
            <FontAwesomeIcon icon={faRotate} id="refresh" />
-           <span className="tooltip-text">Refresh</span>
+
+           {/* <br /> */}
            {/* Refresh */}
+           <span className="menu-text">Refresh</span>
           </button>
 
         </div>
 
         {/* Bottom Section */}
         <div className="logout">
-          <button
+          {/* <button
             onClick={handleLogout}
             className="logout-btn"
           >
             Logout
+          </button> */}
+
+        <button className="menu-item tooltip" onClick={handleLogout}>
+           <FontAwesomeIcon icon={faArrowRightFromBracket} id="logouticon" />
+
+           {/* <br /> */}
+           {/* Refresh */}
+           <span className="menu-text">Logout</span>
           </button>
+
+
         </div>
       </div>
      
       </div>
     
   );
+
+
 };
 
 export default Dashboard;

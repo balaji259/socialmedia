@@ -105,7 +105,7 @@ const SearchSuggestions = () => {
       <div className="relative mb-8">
         <input
           type="text"
-          placeholder="Search for users..."
+          placeholder="Search for users ...."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           className="w-full p-4 rounded-full border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-300 transition duration-200 ease-in-out shadow-sm text-sm sm:text-base"

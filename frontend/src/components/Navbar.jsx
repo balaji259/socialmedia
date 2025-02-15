@@ -27,7 +27,7 @@ const Navbar = ({ username, profilePic }) => {
 
 
        {/* Center: Valentine's Text */}
-       <div className="hidden sm:flex items-center justify-center space-x-2">
+       {/* <div className="hidden sm:flex items-center justify-center space-x-2">
         <span className="text-red-500 text-xl sm:text-2xl">❤️</span>
         <div className="text-center">
           <h2 className="text-red-500 font-semibold text-sm sm:text-lg">
@@ -38,7 +38,7 @@ const Navbar = ({ username, profilePic }) => {
           </p>
         </div>
         <span className="text-red-500 text-xl sm:text-2xl">❤️</span>
-      </div>
+      </div> */}
 
       {/* Right side: Profile Picture and Username */}
       <div className="flex items-center space-x-2 cursor-pointer" onClick={()=>navigate(`/profile`)}> 

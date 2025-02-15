@@ -516,6 +516,110 @@ router.patch('/:id/unlike', authenticateUser, async (req, res) => {
 
 
 
+// Delete comment route
+router.delete('/comment/delete/:commentId', async (req, res) => {
+    const { commentId } = req.params;
+    console.log("reached backend");
+    console.log(commentId);
+    try {
+        // Find and delete the comment
+        const deletedComment = await Comment.findByIdAndDelete(commentId);
+        if (!deletedComment) {
+            return res.status(404).json({ message: 'Comment not found' });
+        }
+
+        // Remove comment reference from the associated post
+        await Post.updateOne(
+            { comments: commentId },
+            { $pull: { comments: commentId } }
+        );
+
+        // If the comment had replies, delete them as well
+        await Comment.deleteMany({ _id: { $in: deletedComment.replies } });
+
+        console.log("deleted");
+        res.status(200).json({ message: 'Comment deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting comment:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
+
+router.put('/comment/edit/:commentId', async (req, res) => {
+    const { commentId } = req.params;
+    const { text } = req.body;
+
+    try {
+        const updatedComment = await Comment.findByIdAndUpdate(
+            commentId,
+            { text },
+            { new: true }
+        );
+
+        if (!updatedComment) {
+            return res.status(404).json({ message: 'Comment not found' });
+        }
+
+        res.status(200).json({ message: 'Comment updated successfully', updatedComment });
+    } catch (error) {
+        console.error('Error updating comment:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
+
+router.delete('/reply/delete/:replyId', async (req, res) => {
+    const { replyId } = req.params;
+
+    try {
+        console.log("Deleting reply:", replyId);
+
+        // Find and delete the reply
+        const deletedReply = await Comment.findByIdAndDelete(replyId);
+        if (!deletedReply) {
+            return res.status(404).json({ message: 'Reply not found' });
+        }
+
+        // Remove reply reference from the parent comment
+        await Comment.updateOne(
+            { replies: { $elemMatch: { replyId } } },
+            { $pull: { replies: { replyId } } }
+        );
+
+        console.log("Reply deleted successfully");
+        res.status(200).json({ message: 'Reply deleted successfully' });
+
+    } catch (error) {
+        console.error('Error deleting reply:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
+
+router.put('/reply/edit/:replyId', async (req, res) => {
+  
+
+    const {replyId}=req.params;
+    const { text } = req.body;
+
+    try {
+        const updatedComment = await Comment.findByIdAndUpdate(
+            replyId,
+            { text },
+            { new: true }
+        );
+
+        if (!updatedComment) {
+            return res.status(404).json({ message: 'Reply not found' });
+        }
+
+        res.status(200).json({ message: 'Reply updated successfully', updatedComment });
+    } catch (error) {
+        console.error('Error updating comment:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+
+
+});
+
 
 
 module.exports = router;

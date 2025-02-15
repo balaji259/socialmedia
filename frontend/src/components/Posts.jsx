@@ -5,7 +5,7 @@ import './scroll.css';
 import "./Posts.css"
 import {useSocket} from "./useSocket";
 import { useChatStore } from './useChatStore';
-
+import axios from "axios";
 
 // Define all styles at the top
 const postComponentContainerStyle = {
@@ -365,6 +365,12 @@ const PostComponent = () => {
   const {onlineUsers} =useSocket();
   const [isPosting,setIsPosting]=useState(false);
   const {profileId, setProfileId} =useChatStore();
+
+  const [editingCommentId, setEditingCommentId] = useState(null); // Stores the comment being edited
+  const [editText, setEditText] = useState(""); // Stores the updated text
+  const [editingReplyId, setEditingReplyId] = useState(null);
+
+
 
   const backendBaseUrl = 'http://localhost:7000';
   const frontendBaseUrl='http://localhost:3000';
@@ -824,7 +830,126 @@ const handleMediaChange = (e) => {
 };
 
 
+
+function handleDeleteComment(commentId) {
+  console.log("Clicked delete for comment:", commentId);
+
+  // const confirmDelete = window.confirm("Are you sure you want to delete this comment?");
+  // if (!confirmDelete) return;
+
+  axios.delete(`/posts/comment/delete/${commentId}`)
+    .then(response => {
+        console.log("Comment deleted successfully:", response.data);
+
+        // Update UI by removing the deleted comment
+        setPosts(prevPosts => 
+          prevPosts.map(post => ({
+            ...post,
+            comments: post.comments.filter(comment => comment.commentId !== commentId)
+          }))
+        );
+    })
+    .catch(error => {
+        console.error("Error deleting comment:", error.response?.data || error.message);
+    });
+}
+
+function handleEditComment(commentId, currentText) {
+  setEditingCommentId(commentId); // Track which comment is being edited
+  setEditText(currentText); // Store the existing comment text in state
+}
+
+function handleSaveEdit(commentId) {
+  axios.put(`/posts/comment/edit/${commentId}`, { text: editText })
+    .then(response => {
+      console.log("Comment updated successfully:", response.data);
+
+      // Update UI to show the edited comment text
+      setPosts(prevPosts => prevPosts.map(post => ({
+        ...post,
+        comments: post.comments.map(comment =>
+          comment.commentId === commentId ? { ...comment, text: editText } : comment
+        )
+      })));
+
+      setEditingCommentId(null); // Exit edit mode
+    })
+    .catch(error => {
+      console.error("Error updating comment:", error);
+    });
+}
+
+
+function handleEditReply(commentId, replyId, currentText) {
+  setEditingReplyId(replyId); // Track which reply is being edited
+  setEditText(currentText); // Store the existing reply text in state
+}
+
+function handleSaveEditReply(commentId, replyId) {
+
+  console.log("replyId");
+  console.log(replyId);
+
+
+  axios.put(`/posts/reply/edit/${replyId}`, { text: editText })
+    .then(response => {
+      console.log("Reply updated successfully:", response.data);
+
+      // Update UI to show the edited reply text
+      setPosts(prevPosts => prevPosts.map(post => ({
+        ...post,
+        comments: post.comments.map(comment =>
+          comment.commentId === commentId
+            ? { 
+                ...comment, 
+                replies: comment.replies.map(reply =>
+                  reply.replyId === replyId ? { ...reply, text: editText } : reply
+                ) 
+              }
+            : comment
+        )
+      })));
+
+      setEditingReplyId(null); // Exit edit mode
+    })
+    .catch(error => {
+      console.error("Error updating reply:", error);
+    });
+}
+
+
+
+
+
+const handleDeleteReply = async (commentId, replyId) => {
+  try {
+      const response = await axios.delete(`/posts/reply/delete/${replyId}`);
+
+      if (response.status === 200) {
+          console.log("Reply deleted successfully");
+
+          setPosts(prevPosts =>
+            prevPosts.map(post => ({
+                ...post,
+                comments: post.comments.map(comment => 
+                    comment.commentId === commentId 
+                        ? { ...comment, replies: comment.replies.filter(reply => reply.replyId !== replyId) } 
+                        : comment
+                )
+            }))
+        );
+
+       
+      }
+  } catch (error) {
+      console.error("Error deleting reply:", error);
+      alert("Failed to delete reply.");
+  }
+};
+
+
 return (
+
 
 
   <div className="post-component-container" style={postComponentContainerStyle}>
@@ -1000,93 +1125,128 @@ return (
             </button>
           </div>
 
-          {/* Comment Section */}
-          {openComments[post.postId] && (
-            <div style={{ padding: "10px", border: "1px solid #ccc" }}>
-              {post.comments.map((comment) => (
-                <div key={comment.commentId} style={{ margin: "10px 0" }}>
-                  <strong>{comment.user?.username || "Anonymous"}:</strong> 
-                  
-                  {comment.text}
+         {/* Comment Section */}
+{openComments[post.postId] && (
+  <div style={{ padding: "10px", border: "1px solid #ccc" }}>
+    {post.comments.map((comment) => (
+      
+     
 
-                  <div>
-                    <button onClick={() => toggleCommentLike(comment.commentId)}>
-                      {/* Like button content */}
-                    </button>
-                    <button onClick={() => toggleReplyInput(comment.commentId)}>Reply</button>
-                  </div>
 
-                  {/* Display replies */}
-                  <div style={{ marginLeft: "20px" }}>
-                    {comment.replies.map((reply) => (
-                      <div key={reply.replyId} class="mb-1" >
-                        {console.log("reply")}
-                        {console.log(reply)}
-                        <strong>{reply.user?.username || "Anonymous"}:</strong> 
-                        {reply.text}
-                        <div>
-                          
-                        </div>
+      <div key={comment.commentId} style={{ margin: "10px 0" }}>
+        <strong>{comment.user?.username || "Anonymous"}:</strong> 
 
-                        {/* Reply input for each reply */}
-                      
-                   
+        {console.log("comment")}
+        {console.log(comment)}
 
-{replyingTo[reply.replyId] && (
-  <div style={{ marginLeft: "20px" }}>
+        {/* {comment.text} */}
+
+         {/* Show input field if editing */}
+    {editingCommentId === comment.commentId ? (
+      <input
+        type="text"
+        value={editText}
+        onChange={(e) => setEditText(e.target.value)}
+        style={{ border: "2px solid black", padding: "5px", borderRadius: "4px" }} 
+      />
+    ) : (
+      <span>{comment.text}</span>
+    )}
+
+        <div>
+          {/* <button onClick={() => toggleCommentLike(comment.commentId)}> */}
+            {/* Like button content */}
+          {/* </button> */}
+          <button className="mr-4" onClick={() => toggleReplyInput(comment.commentId)}>Reply</button>
+          {/* {comment.user.userId === currentuserId && (
+            <>
+              <button onClick={() => handleEditComment(comment.commentId)}>Edit</button>
+              <button onClick={() => handleDeleteComment(comment.commentId)}>Delete</button>
+            </>
+          )} */}
+
+      {comment.user.userId === currentuserId && (
+        <>
+          {editingCommentId === comment.commentId ? (
+            <>
+              <button className="mr-4" onClick={() => handleSaveEdit(comment.commentId)}>Save</button>
+              <button className="mr-4" onClick={() => setEditingCommentId(null)}>Cancel</button>
+            </>
+          ) : (
+            <button className="mr-4" onClick={() => handleEditComment(comment.commentId, comment.text)}>Edit</button>
+          )}
+          <button onClick={() => handleDeleteComment(comment.commentId)}>Delete</button>
+        </>
+      )}
+
+
+        </div>
+
+        {/* Display replies */}
+        <div style={{ marginLeft: "20px" }}>
+        {comment.replies.map((reply) => (
+    <div key={reply.replyId} className="mb-1">
+      <strong>{reply.user?.username || "Anonymous"}:</strong> 
+
+      {/* If editing this reply, show input field */}
+      {editingReplyId === reply.replyId ? (
+        <>
+          <input 
+            type="text" 
+            placeholder="Enter the new reply!"
+            value={editText} 
+            onChange={(e) => setEditText(e.target.value)} 
+            style={{ border: "2px solid black", padding: "5px", borderRadius: "4px" }} 
+          />
+          <button className="mr-4" onClick={() => handleSaveEditReply(comment.commentId, reply.replyId)}>Save</button>
+          <button onClick={() => setEditingReplyId(null)}>Cancel</button>
+        </>
+      ) : (
+        <>
+          {reply.text}
+          {reply.user.userId === currentuserId && (
+            <div>
+              <button className="mr-4" onClick={() => handleEditReply(comment.commentId, reply.replyId,reply.text)}>Edit</button>
+              <button onClick={() => handleDeleteReply(comment.commentId, reply.replyId)}>Delete</button>
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  ))}
+        </div>
+
+        {/* Reply input for each comment */}
+        {replyingTo[comment.commentId] && (
+          <div style={{ marginLeft: "20px" }}>
+            <textarea
+              placeholder="  Write a reply..."
+              value={replyTexts[comment.commentId] || ""}
+              onChange={(e) => handleReplyChange(comment.commentId, e.target.value)}
+              style={{ width: "100%", margin: "5px 0", border: "2px solid black" }}
+            />
+            <div class="flex justify-end">
+              <button onClick={() => handleAddReply(comment.commentId)}>Reply</button>
+            </div>
+          </div>
+        )}
+      </div>
+    ))}
+
+    {/* New comment input */}
     <textarea
-      class="w-full my-1 border-2 border-black"
-      placeholder="Write a reply..."
-      value={replyTexts[reply.replyId] || ""}
-      onChange={(e) => handleReplyChange(reply.replyId, e.target.value)}
+      class="border-2 border-black"
+      placeholder="  Write a comment..."
+      value={newComment}
+      onChange={(e) => setNewComment(e.target.value)}
+      style={{ width: "100%", margin: "5px 0" }}
     />
     <div class="flex justify-end">
-      <button 
-        class="mt-2 bg-blue-500 text-white py-1 px-3 rounded hover:bg-blue-600 transition"
-        onClick={() => handleAddReply(reply.replyId)}
-      >
-        Reply
-      </button>
+      <button class="text-right pl-2 pr-2" onClick={() => handleAddComment(post.postId)}>Comment</button>
     </div>
   </div>
 )}
-                      </div>
-                    ))}
-                  </div>
 
-                  {/* Reply input for each comment */}
-
-                  {replyingTo[comment.commentId] && (
-                    <div style={{ marginLeft: "20px" }}>
-                      <textarea
-                        placeholder="  Write a reply..."
-                        value={replyTexts[comment.commentId] || ""}
-                        onChange={(e) => handleReplyChange(comment.commentId, e.target.value)}
-                        style={{ width: "100%", margin: "5px 0",border:"2px solid black" }}
-                      />
-                      <div class="flex justify-end">
-                      <button onClick={() => handleAddReply(comment.commentId)}>Reply</button>
-
-                      </div>
-                        </div>
-                  )}
-                </div>
-              ))}
-
-              {/* New comment input */}
-              <textarea
-                class="border-2 border-black"
-                placeholder="  Write a comment..."
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-                style={{ width: "100%", margin: "5px 0" }}
-              />
-              <div class="flex justify-end">
-              <button class="text-right   pl-2 pr-2" onClick={() => handleAddComment(post.postId)}>Comment</button>
-              </div>
-              {/* <button class="text-right" onClick={() => handleAddComment(post.postId)}>Comment</button> */}
-            </div>
-          )}
         </div>
       ))}
     </div>

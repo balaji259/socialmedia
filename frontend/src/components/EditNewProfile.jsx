@@ -308,7 +308,7 @@ const NewProfile = () => {
         name="bestfriend"
         value={query}
         onChange={handleSearchInputChange}
-        placeholder="Search for a user..."
+        placeholder="Search for friend"
         autoComplete="off"
       />
       {suggestions.length > 0 && (

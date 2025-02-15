@@ -24,7 +24,7 @@ body {
     padding: 10px 20px;
     background-color: #007bff;
     color: #fff;
-    font-weight: bold;
+    /* font-weight: bold; */
     flex-wrap: wrap;
     text-align: center;
   }
@@ -218,7 +218,7 @@ body {
   .friend-username {
     font-size: 14px;
     color: #333;
-    font-weight: bold;
+    /* font-weight: bold; */
   }
   
   
@@ -254,9 +254,9 @@ body {
     border:2px solid rgba(0, 0, 0, 0.61);
   }
   
-  table td:first-child {
-    font-weight: bold;
-  }
+  /* table td:first-child { */
+    /* font-weight: bold; */
+  /* } */
   
   /* Right section */
   .right-section {

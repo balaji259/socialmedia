@@ -10,7 +10,7 @@ import {useSocket} from "./useSocket";
 import axios from "axios";
 
 import { fetchUserDetails } from "./userPosts.js";
-import "./Valentine.css";
+
 
 
 const Home = () => {
@@ -93,7 +93,7 @@ useEffect(()=>{
   const getSidebarWidth = () => {
     if (window.innerWidth < 600) return "11%";
     if (window.innerWidth < 900) return "15%";
-    return "17%";
+    return "15%";
   };
 
   useEffect(() => {
