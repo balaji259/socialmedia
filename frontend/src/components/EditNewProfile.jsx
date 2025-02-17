@@ -16,7 +16,9 @@ const NewProfile = () => {
     const [query, setQuery] = useState("");
     const [suggestions, setSuggestions] = useState([]);
     const [selectedUserId, setSelectedUserId] = useState("undefined");
-
+    const [selectedBestFriends, setSelectedBestFriends] = useState([]);
+    // const [suggestions, setSuggestions] = useState([]); // Search suggestions
+    
     const handleSearchInputChange = async (e) => {
       const value = e.target.value;
       setQuery(value);
@@ -37,14 +39,31 @@ const NewProfile = () => {
       }
     };
   
-    const handleSuggestionClick = (user) => {
-      console.log("in handle suggestion click");
-      console.log(user._id);
-      setQuery(user.username); // Update the input value with the selected username
-      setSelectedUserId(user._id); // Store the selected user ID
-      setSuggestions([]); // Clear the suggestions
-    };
+    // const handleSuggestionClick = (user) => {
+    //   console.log("in handle suggestion click");
+    //   console.log(user._id);
+    //   setQuery(user.username); // Update the input value with the selected username
+    //   setSelectedUserId(user._id); // Store the selected user ID
+    //   setSuggestions([]); // Clear the suggestions
+    // };
 
+    const handleSuggestionClick = (user) => {
+      console.log("Selected user:", user);
+      
+      setSelectedBestFriends((prevSelected) => {
+          if (prevSelected.some(u => u._id === user._id)) {
+              return prevSelected; // Prevent duplicate selections
+          }
+          return [...prevSelected, user]; // Add the new user
+      });
+  
+      setQuery(""); // Clear the search input after selection
+      setSuggestions([]); // Clear the suggestions
+  };
+  
+  const removeFriend = (userId) => {
+    setSelectedBestFriends(selectedBestFriends.filter((user) => user._id !== userId));
+};
 
 
     const navigate=useNavigate();
@@ -96,7 +115,9 @@ const NewProfile = () => {
         formData.append('interestedIn', editableData.interestedIn);
         formData.append('relationshipstatus', editableData.relationshipstatus);
         // formData.append('bestfriend', editableData.bestfriend);
-        formData.append('bestfriend',selectedUserId);
+        // formData.append('bestfriend',selectedUserId);
+        formData.append('bestfriend', JSON.stringify(selectedBestFriends.map(user => user._id)));
+
         formData.append('collegename', editableData.collegename);
         formData.append('interests',editableData.interests);
         formData.append('sport', editableData.sport);
@@ -303,7 +324,7 @@ const NewProfile = () => {
                   <label>Best Friend:</label>
                   {/* <input type="text" name="bestfriend" value={editableData.bestfriend} onChange={handleInputChange} /> */}
 
-                  <input
+                  {/* <input
         type="text"
         name="bestfriend"
         value={query}
@@ -323,9 +344,59 @@ const NewProfile = () => {
             </li>
           ))}
         </ul>
-      )}
+      )} */}
+
+<input
+  type="text"
+  name="bestfriend"
+  value={query}
+  onChange={handleSearchInputChange}
+  placeholder="Search for friend"
+  autoComplete="off"
+/>
+{suggestions.length > 0 && (
+  <ul className="dropdown">
+    {suggestions.map((user) => (
+      <li
+        key={user._id}
+        onClick={() => handleSuggestionClick(user)}
+        className="dropdown-item"
+      >
+        {user.username}
+      </li>
+    ))}
+  </ul>
+)}
+
+{/* Display selected best friends */}
+{/* <div> */}
+  {/* <strong>Selected Best Friends:</strong>
+  {selectedBestFriends.map((friend) => (
+    <span key={friend._id}>
+      {friend.username} <button onClick={() => removeFriend(friend._id)}>❌</button>
+    </span>
+  ))} */}
+</div>
+
+ {/* Display selected best friends below the input */}
+  
+ {selectedBestFriends.length > 0 && (
+    <div className="selected-best-friends">
+      <strong>Selected Best Friends:</strong>
+      <div className="friends-list">
+        {selectedBestFriends.map((friend) => (
+          <span key={friend._id} className="friend-tag">
+            {friend.username}{" "}
+            <button onClick={() => removeFriend(friend._id)}>❌</button>
+          </span>
+        ))}
+      </div>
+    </div>
+  )}
+
+{/* </div> */}
                 
-                </div>
+                {/* </div> */}
                 <div className="input-group">
                   <label>College Name:</label>
                   <input type="text" name="collegename" value={editableData.collegename} onChange={handleInputChange} />

@@ -84,11 +84,21 @@ const userSchema = new mongoose.Schema(
       trim: true,
       default: '',
     },
-    bestFriend: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User', // Reference to another user as the best friend
-      default: null,
-    },
+    // bestFriend: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: 'User', // Reference to another user as the best friend
+    //   default: null,
+    // },
+
+    bestFriend: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      }
+    ],
+    
+
+
     interests: {
       type: String,
       trim: true,

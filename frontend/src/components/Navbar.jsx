@@ -12,6 +12,10 @@ const Navbar = ({ username, profilePic }) => {
 
     const navigate=useNavigate();
 
+    function sendFeedback(){
+      // console.log("Send feedback!");
+      navigate('/feedback');
+    }
 
     
   return (
@@ -41,16 +45,21 @@ const Navbar = ({ username, profilePic }) => {
       </div> */}
 
       {/* Right side: Profile Picture and Username */}
-      <div className="flex items-center space-x-2 cursor-pointer" onClick={()=>navigate(`/profile`)}> 
+      <div className="flex items-center space-x-2 cursor-pointer" > 
 
-     
+     {/* //added */}
+
+     <button class="pr-4 text-red-500" onClick={sendFeedback}>
+      Send Feedback
+     </button>
 
         <img
           src={profilePicUrl}
           alt="Profile"
+          onClick={()=>navigate(`/profile`)}
           className="w-8 h-8 sm:w-10 sm:h-10 rounded-md object-cover"
         />
-        <p className="text-sm sm:text-base font-medium text-gray-800 truncate max-w-[6rem] sm:max-w-[10rem]">
+        <p className="text-sm sm:text-base font-medium text-gray-800 truncate max-w-[6rem] sm:max-w-[10rem]" onClick={()=>navigate(`/profile`)}>
           {username || 'Username'}
         </p>
       </div>

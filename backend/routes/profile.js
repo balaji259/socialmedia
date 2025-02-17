@@ -217,10 +217,10 @@ router.patch('/demo/update', authenticateToken, async (req, res) => {
         lookingfor: fields.lookingfor?.[0] == "undefined" ? currentUser.lookingfor :fields.lookingfor?.[0],
         interestedIn: fields.interestedIn?.[0] == "undefined" ? currentUser.interestedIn :fields.interestedIn?.[0],
         relationshipstatus: fields.relationshipstatus?.[0] == "undefined" ? currentUser.relationshipStatus : fields.relationshipstatus?.[0],
-        // bestFriend: mongoose.Types.ObjectId.isValid(fields.bestfriend?.[0])
-        //   ? fields.bestfriend[0]
-        //   : currentUser.bestFriend,
-        bestFriend:fields.bestfriend?.[0]== "undefined" ? currentUser.bestFriend : fields.bestfriend?.[0],
+      
+        // bestFriend:fields.bestfriend?.[0]== "undefined" ? currentUser.bestFriend : fields.bestfriend?.[0],
+        bestFriend: fields.bestfriend ? JSON.parse(fields.bestfriend[0]) : currentUser.bestFriend,
+
         collegeName: fields.collegename?.[0] == "undefined" ? currentUser.collegeName :fields.collegename?.[0],
         interests: fields.interests?.[0] == "undefined" ? currentUser.interests : fields.interests?.[0],
 
@@ -235,19 +235,7 @@ router.patch('/demo/update', authenticateToken, async (req, res) => {
         bio: fields.bio?.[0] == "undefined" ?  currentUser.bio : fields.bio?.[0]
       };
 
-      // Handle dateOfBirth separately
-      // updateData.dateOfBirth =
-      //   fields.dateOfBirth?.[0] && !isNaN(new Date(fields.dateOfBirth[0]).getTime())
-      //     ? new Date(fields.dateOfBirth[0])
-      //     : currentUser.dateOfBirth;
-
-          // updateData.dateofBirth=fields.dateOfBirth?.[0] == undefined ? currentUser.dateOfBirth : new Date(fields.dateOfBirth[0]);
-          
-  //         updateData.dateOfBirth =
-  // !fields.dateOfBirth || fields.dateOfBirth === "undefined"
-  //   ? currentUser.dateOfBirth // Use existing value if not provided
-  //   : new Date(fields.dateOfBirth); // Parse the date directly
-
+      
 
 // Function to validate if a date is valid
 function isValidDate(date) {

@@ -380,10 +380,40 @@ if (!userData) {
                 <tr>
                   <td>Relationship Status: {userData?.relationshipStatus}</td>
                 </tr>
-                <tr>
+                {/* <tr>
                   <td>Best Friend: {userData?.bestFriend?.username}</td>
-                  {/* <td>Best Friend: {userData.bestFriend.username}</td> */}
-                </tr>
+                  
+                </tr> */}
+
+
+                {/* <tr>
+                  <td>Best Friends:</td>
+                  <td>
+                    {userData?.bestFriend && userData.bestFriend.length > 0 ? (
+                      userData.bestFriend.map((friend,index) => <span key={friend._id}>{friend.username}, </span>)
+                    ) : (
+                      <span>No best friends selected</span>
+                    )}
+                  </td>
+                </tr> */}
+
+<tr>
+  <td>Best Friends:
+  {/* <td> */}
+    {userData?.bestFriend && userData.bestFriend.length > 0 ? (
+      userData.bestFriend.map((friend, index) => (
+        <span key={friend._id}>
+          {friend.username}
+          {index !== userData.bestFriend.length - 1 && ", "}
+        </span>
+      ))
+    ) : (
+      <span>No best friends selected</span>
+    )}
+  </td>
+</tr>
+
+
                 <tr>
                   <td>College Name: {userData?.collegeName}</td>
                 </tr>

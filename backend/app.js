@@ -9,6 +9,7 @@ const userRouter=require("./routes/user")
 const profileRouter=require("./routes/profile");
 const streakRouter=require('./routes/streak');
 const chatRouter=require("./routes/message");
+const feedbackRouter=require("./routes/feedback.js");
 // const otpRoutes = require('./routes/otpRoutes')
 
 const {app,server} =require("./socket.js");
@@ -53,6 +54,8 @@ app.use('/user',userRouter);
 app.use('/profile',profileRouter);
 app.use('/streak',streakRouter);
 app.use('/messages',chatRouter);
+app.use('/feedback',feedbackRouter);
+
 
 
 app.get('/verify',verifyToken,(req,res)=>{

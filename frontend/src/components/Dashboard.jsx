@@ -14,6 +14,8 @@ import { faRotate } from "@fortawesome/free-solid-svg-icons";
 import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
 // import { faArrowLeftFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
+import { faNewspaper } from "@fortawesome/free-solid-svg-icons";
+{/* <FontAwesomeIcon icon="fa-regular fa-newspaper" /> */}
 {/* <FontAwesomeIcon icon={faArrowRightFromBracket} /> */}
 
 
@@ -63,11 +65,11 @@ const Dashboard = () => {
         {/* Top Section */}
         <div className="menu">
           <button className="menu-item tooltip" onClick={() => navigate("/home")}>
-         <FontAwesomeIcon icon={faHouse} id="home" />
+         <FontAwesomeIcon icon={faNewspaper} id="home" />
         
          {/* <br /> */}
           {/* Home */}
-          <span className="menu-text">Home</span>
+          <span className="menu-text">News Feed</span>
           </button>
           <button className="menu-item tooltip" onClick={() => navigate("/search")}>
           <FontAwesomeIcon icon={faMagnifyingGlass} id="search" /> 
@@ -81,7 +83,7 @@ const Dashboard = () => {
           {/* <br /> */}
     
           {/* Friend<br />Circle */}
-          <span className="menu-text">Friend</span>
+          <span className="menu-text">Friends</span>
           </span></button>
           <button className="menu-item tooltip" onClick={()=> navigate("/chats")}>
           <FontAwesomeIcon icon={faMessage} id="chats" />
