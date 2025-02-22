@@ -67,7 +67,7 @@ router.post("/senddata", async (req, res) => {
 
     const mailOptions = {
       from: process.env.EMAIL_USER,
-      to: "rr200259@rguktrkv.ac.in", // Change recipient email
+      to: "friendsbook.team@gmail.com", // Change recipient email
       subject: "New Feedback Received",
       text: `Received a feedback from:${email}\nFeedback Type: ${feedbackType}\nFeedback Part: ${feedbackPart}\nMessage: ${feedbackText}\nInclude Session Data: ${includeSessionData}\nContact Me: ${contactMe}`,
     };
