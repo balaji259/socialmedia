@@ -15,6 +15,9 @@ const postComponentContainerStyle = {
   backgroundColor: '#d5d5d5',
   // maxHeight: '80vh',
   overflowY: 'scroll',
+  
+  border:'none'
+  
 };
 
 

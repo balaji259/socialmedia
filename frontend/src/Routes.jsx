@@ -31,6 +31,7 @@ import NewPosts from "./components/NewPosts.jsx";
 import OtherProfile from "./components/OtherProfile.jsx";
 import OtherPosts from "./components/OtherPosts.jsx";
 import FeedbackForm from './components/Feedback.jsx';
+import NewFeedbackForm from './components/NewFeedback.jsx';
 
 const RoutesComponent = () => {
     return (
@@ -62,7 +63,8 @@ const RoutesComponent = () => {
                 <Route path="/newposts" element={<NewPosts /> } />
                 <Route path="/other" element={<OtherProfile />} />
                 <Route path="/viewposts" element={<OtherPosts />} />
-                <Route path="/feedback" element={<FeedbackForm />} />
+                <Route path="/feedback" element={<NewFeedbackForm />} />
+                {/* <Route path="/new" element={<NewFeedbackForm />} /> */}
                 {/* <Route path="/chat/:friendId" element={<ChatFriend /> } /> */}
                 {/* <Route path='./chat' element={<chatsection />} />             */}
             </Routes>

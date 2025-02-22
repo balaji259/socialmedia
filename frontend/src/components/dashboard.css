@@ -7,14 +7,14 @@
   width: 100%;
   padding-left:0px;
   background-color: #d5d5d5;
+  border:none;
   /* width: 90%; */
   /* background-color: #dc2626; */
 }
 
 .sidebar {
   background-color: #f3f4f6; 
-  /* background-color:blue; */
-  /* border-right: 1px solid #d1d5db;  */
+
   padding-top: 1.5rem ;
   padding-bottom:1.5rem;
   padding-left:0rem;
@@ -26,6 +26,7 @@
   transition: all 0.3s ease-in-out;
 
   align-items: flex-start;
+  border:none;
 }
 
 img{
@@ -59,8 +60,9 @@ img{
 
 .menu-item{
   display:flex;
-  justify-content: center;
+  /* justify-content: center; */
   align-items:center;
+  justify-content: flex-start;
 
 }
 

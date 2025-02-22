@@ -3,6 +3,7 @@ import {useState,useEffect,useRef} from "react";
 import {useNavigate} from "react-router-dom";
 import { FiLogOut } from "react-icons/fi";
 import Quote from "./Quote";
+import { ChartNoAxesColumnDecreasing } from "lucide-react";
 // import "./NewProfile.css";
 
 const Profile = () => {
@@ -106,6 +107,9 @@ const Profile = () => {
   let formattedDateofBirth;
   useEffect(() => {
     if (userData) {
+
+       
+
         setEditableData({
             username: userData.username || '',
             fullname: userData.fullname || '',
@@ -400,11 +404,11 @@ if (!userData) {
 <tr>
   <td>Best Friends:
   {/* <td> */}
-    {userData?.bestFriend && userData.bestFriend.length > 0 ? (
+    {userData?.bestFriend && userData.bestFriend?.length > 0 ? (
       userData.bestFriend.map((friend, index) => (
         <span key={friend._id}>
           {friend.username}
-          {index !== userData.bestFriend.length - 1 && ", "}
+          {index !== userData.bestFriend?.length - 1 && ", "}
         </span>
       ))
     ) : (

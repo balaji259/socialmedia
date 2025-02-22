@@ -1,5 +1,5 @@
 import React from 'react';
-import {useState} from "react";
+import {useState,useEffect} from "react";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
 import './EditNewProfile.css'; 
@@ -17,20 +17,126 @@ const NewProfile = () => {
     const [suggestions, setSuggestions] = useState([]);
     const [selectedUserId, setSelectedUserId] = useState("undefined");
     const [selectedBestFriends, setSelectedBestFriends] = useState([]);
-    // const [suggestions, setSuggestions] = useState([]); // Search suggestions
+    const navigate=useNavigate();
+
+    
+   
+
+
+    const fetchUserData = async () => {
+      try {
+          const token = localStorage.getItem('token');
+          if (!token) {
+              alert('You are not logged in. Please log in to view your profile.');
+              window.location.href = 'index.html';
+              return;
+          }
+
+          const response = await fetch(`/profile/me`, {
+              method: 'GET',
+              headers: {
+                  'Authorization': `Bearer ${token}`,
+                  'Content-Type': 'application/json',
+              },
+          });
+
+          if (!response.ok) {
+              throw new Error(`Error: ${response.status} ${response.statusText}`);
+          }
+
+          const data = await response.json();
+          console.log("user data");
+          // console.log("this is me id");
+          console.log(data);
+          // console.log(userData._id);
+          setUserData(data);
+         
+          
+      } catch (error) {
+          console.error('Failed to fetch user data:', error);
+          setError('Error fetching user data. Please try again later.');
+      }
+
+  };
+
+  useEffect(() => {
+    fetchUserData();
+   
+}, []);
+
+let formattedDateofBirth;
+useEffect(() => {
+  if (userData) {
+      setEditableData({
+          username: userData.username || '',
+          fullname: userData.fullname || '',
+          email:userData.email || '',
+
+          relationshipStatus: userData.relationshipStatus,
+          bio: userData.bio,
+          profilePic: userData.profilePic,
+          // dateOfBirth: userData.dateOfBirth|| '',
+          dateOfBirth: userData.dateOfBirth ? userData.dateOfBirth.split('T')[0] : '',
+
+          
+          collegeName: userData.collegeName || '',
+          bestFriend: userData.bestFriend || '',
+          interests: userData.interests || '',
+          gender:userData.gender || '',
+          favoriteSport: userData.favoriteSport || '',
+          favoriteGame: userData.favoriteGame || '',
+          favoriteMusic: userData.favoriteMusic || '',
+          favoriteMovie: userData.favoriteMovie || '',
+          favoriteAnime: userData.favoriteAnime || '',
+          favoriteActor: userData.favoriteActor || '',
+          highschool:userData.highschool || '',
+          hometown:userData.hometown || '',
+          interestedIn:userData.interestedIn || '',
+          lookingfor:userData.lookingfor || '',
+          residence:userData.residence || '',
+          school:userData.school || '',
+          status:userData.status || '',
+          website:userData.website || '',
+          mobileNumber:userData.mobileNumber || '',
+
+
+
+
+      });
+
+      
+    }
+  }, [userData]);
+  
+  
+  useEffect(()=>{
+    if(editableData)
+      {
+      setSelectedBestFriends(editableData.bestFriend);
+    console.log("editableData")
+    console.log(editableData);
+    
+  }
+},[editableData])
+
+
+
+
+
+
     
     const handleSearchInputChange = async (e) => {
       const value = e.target.value;
       setQuery(value);
   
-      if (value.length > 0) {
-        // Fetch suggestions from the backend
+      if (value?.length > 0) {
+
         try {
           const response = await fetch(`/profile/search-bestfriend?query=${value}`);
           const data = await response.json();
-          setSuggestions(data.users); // Assuming the backend returns { users: [{ id, name }] }
+          setSuggestions(data?.users); // Assuming the backend returns { users: [{ id, name }] }
           console.log("data of best freinds");
-          console.log(data.users);
+          console.log(data?.users);
         } catch (error) {
           console.error("Error fetching suggestions:", error);
         }
@@ -39,13 +145,7 @@ const NewProfile = () => {
       }
     };
   
-    // const handleSuggestionClick = (user) => {
-    //   console.log("in handle suggestion click");
-    //   console.log(user._id);
-    //   setQuery(user.username); // Update the input value with the selected username
-    //   setSelectedUserId(user._id); // Store the selected user ID
-    //   setSuggestions([]); // Clear the suggestions
-    // };
+
 
     const handleSuggestionClick = (user) => {
       console.log("Selected user:", user);
@@ -66,7 +166,6 @@ const NewProfile = () => {
 };
 
 
-    const navigate=useNavigate();
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -95,11 +194,9 @@ const NewProfile = () => {
     const saveChanges = async () => {
         const formData = new FormData();
     
-        // Append all fields to the formData
-        // formData.append('username', editableData.username);
-        // formData.append('email', editableData.email);
+
         formData.append('fullname', editableData.fullname);
-        formData.append('mobile', editableData.mobile);
+        formData.append('mobile', editableData.mobileNumber);
         formData.append('website', editableData.website);
         formData.append('fullname',editableData.fullname);
         formData.append('school', editableData.school);
@@ -113,23 +210,21 @@ const NewProfile = () => {
         formData.append('highschool', editableData.highschool);
         formData.append('lookingfor', editableData.lookingfor);
         formData.append('interestedIn', editableData.interestedIn);
-        formData.append('relationshipstatus', editableData.relationshipstatus);
+        formData.append('relationshipstatus', editableData.relationshipStatus);
         // formData.append('bestfriend', editableData.bestfriend);
         // formData.append('bestfriend',selectedUserId);
         formData.append('bestfriend', JSON.stringify(selectedBestFriends.map(user => user._id)));
 
-        formData.append('collegename', editableData.collegename);
+        formData.append('collegename', editableData.collegeName);
         formData.append('interests',editableData.interests);
-        formData.append('sport', editableData.sport);
-        formData.append('game', editableData.game);
-        formData.append('music', editableData.music);
-        formData.append('movie', editableData.movie);
-        formData.append('anime', editableData.anime);
-        formData.append('actor', editableData.actor);
+        formData.append('sport', editableData.favoriteSport);
+        formData.append('game', editableData.favoriteGame);
+        formData.append('music', editableData.favoriteMusic);
+        formData.append('movie', editableData.favoriteMovie);
+        formData.append('anime', editableData.favoriteAnime);
+        formData.append('actor', editableData.favoriteActor);
         formData.append('bio',editableData.bio);
-        // if (editableData.profilePic instanceof File) {
-        //     formData.append('profilePic', editableData.profilePic); // Attach image file
-        // }
+      
   
         if (editableData.profilePic instanceof File) {
           console.log('Profile picture is a file:', editableData.profilePic); // Debug
@@ -138,6 +233,8 @@ const NewProfile = () => {
           console.log('Profile picture is not a file:', editableData.profilePic); // Debug
       }
     
+      console.log("formdata");
+      console.log(formData);
         try {
             const response = await axios.patch(`/profile/demo/update`, formData, {
                 headers: {
@@ -197,9 +294,7 @@ const NewProfile = () => {
                     style={{ display: 'none' }}
                     id="photoInput"
                 />
-                {/* <label htmlFor="photoInput" style={{ cursor: 'pointer' }}>
-                  Upload Profile Photo
-                </label> */}
+                
               </div>
               <label className="photo-input-label" htmlFor="photoInput" style={{ cursor: 'pointer' }}>
                   Upload Profile Photo
@@ -207,13 +302,10 @@ const NewProfile = () => {
       
               <div className="info-section class-section">
                 <h4>Contact Info:</h4>
-                {/* <div className="input-group">
-                  <label>Email:</label>
-                  <input type="email" name="email" value={editableData.email} onChange={handleInputChange} />
-                </div> */}
+           
                 <div className="input-group">
                   <label>Mobile No:</label>
-                  <input type="number" name="mobile" value={editableData.mobile} onChange={handleInputChange} />
+                  <input type="number" name="mobileNumber" value={editableData.mobileNumber} onChange={handleInputChange} />
                 </div>
                 <div className="input-group">
                   <label>Websites:</label>
@@ -309,7 +401,7 @@ const NewProfile = () => {
                   <label>Relationship Status:</label>
                   <select
                         name="relationshipstatus" // Specify the name for the dropdown
-                        value={editableData.relationshipstatus} // Bind the value to the state
+                        value={editableData.relationshipStatus} // Bind the value to the state
                         onChange={handleInputChange}
                   >
                     <option>Select Your Status</option>
@@ -322,30 +414,7 @@ const NewProfile = () => {
                 </div>
                 <div className="input-group dropdownparent">
                   <label>Best Friend:</label>
-                  {/* <input type="text" name="bestfriend" value={editableData.bestfriend} onChange={handleInputChange} /> */}
-
-                  {/* <input
-        type="text"
-        name="bestfriend"
-        value={query}
-        onChange={handleSearchInputChange}
-        placeholder="Search for friend"
-        autoComplete="off"
-      />
-      {suggestions.length > 0 && (
-        <ul className="dropdown">
-          {suggestions.map((user) => (
-            <li
-              key={user._id}
-              onClick={() => handleSuggestionClick(user)}
-              className="dropdown-item"
-            >
-              {user.username}
-            </li>
-          ))}
-        </ul>
-      )} */}
-
+                 
 <input
   type="text"
   name="bestfriend"
@@ -354,7 +423,7 @@ const NewProfile = () => {
   placeholder="Search for friend"
   autoComplete="off"
 />
-{suggestions.length > 0 && (
+{suggestions?.length > 0 && (
   <ul className="dropdown">
     {suggestions.map((user) => (
       <li
@@ -368,19 +437,12 @@ const NewProfile = () => {
   </ul>
 )}
 
-{/* Display selected best friends */}
-{/* <div> */}
-  {/* <strong>Selected Best Friends:</strong>
-  {selectedBestFriends.map((friend) => (
-    <span key={friend._id}>
-      {friend.username} <button onClick={() => removeFriend(friend._id)}>❌</button>
-    </span>
-  ))} */}
+
 </div>
 
- {/* Display selected best friends below the input */}
+
   
- {selectedBestFriends.length > 0 && (
+ {selectedBestFriends?.length > 0 && (
     <div className="selected-best-friends">
       <strong>Selected Best Friends:</strong>
       <div className="friends-list">
@@ -394,12 +456,9 @@ const NewProfile = () => {
     </div>
   )}
 
-{/* </div> */}
-                
-                {/* </div> */}
                 <div className="input-group">
                   <label>College Name:</label>
-                  <input type="text" name="collegename" value={editableData.collegename} onChange={handleInputChange} />
+                  <input type="text" name="collegeName" value={editableData.collegeName} onChange={handleInputChange} />
                 </div>
               </div>
       
@@ -411,27 +470,27 @@ const NewProfile = () => {
                 </div>
                 <div className="input-group">
                   <label>Favorite Sports:</label>
-                  <input type="text" name="sport" value={editableData.sport} onChange={handleInputChange}  />
+                  <input type="text" name="favoriteSport" value={editableData.favoriteSport} onChange={handleInputChange}  />
                 </div>
                 <div className="input-group">
                   <label>Favorite Game:</label>
-                  <input type="text" name="game" value={editableData.game} onChange={handleInputChange} />
+                  <input type="text" name="favoriteGame" value={editableData.favoriteGame} onChange={handleInputChange} />
                 </div>
                 <div className="input-group">
                   <label>Favorite Music:</label>
-                  <input type="text" name="music" value={editableData.music} onChange={handleInputChange} />
+                  <input type="text" name="favoriteMusic" value={editableData.favoriteMusic} onChange={handleInputChange} />
                 </div>
                 <div className="input-group">
                   <label>Favorite Movie:</label>
-                  <input type="text" name="movie" value={editableData.movie} onChange={handleInputChange}/>
+                  <input type="text" name="favoriteMovie" value={editableData.favoriteMovie} onChange={handleInputChange}/>
                 </div>
                 <div className="input-group">
                   <label>Favorite Anime:</label>
-                  <input type="text" name="anime" value={editableData.anime} onChange={handleInputChange}/>
+                  <input type="text" name="favoriteAnime" value={editableData.favoriteAnime} onChange={handleInputChange}/>
                 </div>
                 <div className="input-group">
                   <label>Favorite Actor:</label>
-                  <input type="text" name="actor" value={editableData.actor} onChange={handleInputChange}/>
+                  <input type="text" name="favoriteActor" value={editableData.favoriteActor} onChange={handleInputChange}/>
                 </div>
                 <div className="input-group">
                   <label>About me (Bio):</label>
