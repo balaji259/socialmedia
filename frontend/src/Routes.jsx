@@ -32,15 +32,21 @@ import OtherProfile from "./components/OtherProfile.jsx";
 import OtherPosts from "./components/OtherPosts.jsx";
 import FeedbackForm from './components/Feedback.jsx';
 import NewFeedbackForm from './components/NewFeedback.jsx';
+import About from "./components/About.jsx"
+import Blog from "./components/Blog.jsx"
+import NewLogin from "./components/Newlogin.jsx"
+import FAQ from "./components/Faq.jsx"
+import Coming from "./components/Comingsoon.jsx";
 
 const RoutesComponent = () => {
     return (
         <SocketProvider>
         <Router>
             <Routes>
-                <Route path="/" element={<WelcomeOverlay />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/login" element={<Login />} />
+                <Route path="/" element={<NewLogin />} />
+                {/* <Route path="/" element={<WelcomeOverlay />} /> */}
+                {/* <Route path="/register" element={<Register />} /> */}
+                {/* <Route path="/login" element={<Login />} /> */}
                 <Route path="/auth" element={<App />} />
                 <Route path="/logo" element={<Logo />} />
                 <Route path="/navbar" element={<Navbar />} />
@@ -64,9 +70,16 @@ const RoutesComponent = () => {
                 <Route path="/other" element={<OtherProfile />} />
                 <Route path="/viewposts" element={<OtherPosts />} />
                 <Route path="/feedback" element={<NewFeedbackForm />} />
-                {/* <Route path="/new" element={<NewFeedbackForm />} /> */}
-                {/* <Route path="/chat/:friendId" element={<ChatFriend /> } /> */}
-                {/* <Route path='./chat' element={<chatsection />} />             */}
+                <Route path="/about" element={<About />} />
+                <Route path="/blog" element={<Blog />} />
+                <Route path="/newlogin" element={<NewLogin />} />
+                
+                
+                <Route path="/faq" element={<Coming /> }/>
+                <Route path="/contact" element={<Coming /> } />
+                
+
+   
             </Routes>
         </Router>
         </SocketProvider>

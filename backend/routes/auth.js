@@ -179,4 +179,60 @@ router.get("/user",authenticateUser,async(req,res)=>{
     res.status(200).json(req.user);
 })
 
+
+
+// Registration Route
+router.post('/newregister', async (req, res) => {
+    console.log("req.body");
+    console.log(req.body);
+    console.log("Entered registration route");
+    const { username, fullname, email, gender, birthday, password } = req.body;
+
+    try {
+        // Check if a user with the same email already exists
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({ error: 'Email already registered. Please use a different email.' });
+        }
+
+        // Hash the password before saving
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Create a new user instance with the additional fields
+        const newUser = new User({
+            username,
+            fullname,
+            email,
+            gender,
+            dateOfBirth:birthday,
+            password: hashedPassword, // Save hashed password
+        });
+
+        // Save the new user to the database
+        await newUser.save();
+
+        // Create a JWT payload including the new fields
+        const payload = {
+            userId: newUser._id,
+            username: newUser.username,
+            email: newUser.email,
+            
+        };
+
+        // Generate a JWT token that expires in 30 days
+        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '30d' });
+
+        // Respond with the generated token and user details
+        return res.status(201).json({
+            token, 
+            payload,
+            message: 'Registration successful!',
+        });
+
+    } catch (error) {
+        console.error('Error registering user:', error);
+        return res.status(500).json({ error: 'Error registering user' });
+    }
+});
+
 module.exports = router;
