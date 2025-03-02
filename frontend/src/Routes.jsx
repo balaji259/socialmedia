@@ -75,8 +75,8 @@ const RoutesComponent = () => {
                 <Route path="/newlogin" element={<NewLogin />} />
                 
                 
-                <Route path="/faq" element={<Coming /> }/>
-                <Route path="/contact" element={<Coming /> } />
+                <Route path="/faq" element={<FAQ /> }/>
+                <Route path="/contact" element={<NewFeedbackForm /> } />
                 
 
    

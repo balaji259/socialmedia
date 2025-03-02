@@ -14,7 +14,7 @@ const BlogPage = () => {
           {/* <p href="#" className="hover:underline">Login</p>
           <p href="#" className="hover:underline">Register</p> */}
           <p className="cursor-pointer text-white" onClick={()=>{navigate('/newlogin')}}>Login/Register</p>
-          <p className="text-white">Help</p>
+          <p className="text-white" onClick={()=>{navigate("/contact")}}>Help</p>
         </nav>
       </header>
 

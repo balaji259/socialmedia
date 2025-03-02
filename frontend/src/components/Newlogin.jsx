@@ -237,11 +237,17 @@ const checkUser=async ()=>{
               <h2 className="text-lg md:text-xl font-semibold text-[#3b5998]">
                 Friendsbook helps you connect and share with the people in your life.
               </h2>
-              <img
+              {/* <img
                 src="/images/map.jpg" // Replace with actual image
                 alt="World map with connected people icons"
                 className="mx-auto md:mx-0 max-w-full"
-              />
+              /> */}
+              <img
+              src="/images/map.jpg"
+              alt="World map with connected people icons"
+              // className="mx-auto md:mx-0 max-w-full md:scale-110 lg:scale-125"
+              className="mx-auto md:mx-0 max-w-full  md:scale-110 lg:scale-120 lg:pl-6 lg:pt-4"
+            />
             </div>
   
             {/* Signup Form */}

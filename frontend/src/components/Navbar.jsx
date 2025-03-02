@@ -49,9 +49,9 @@ const Navbar = ({ username, profilePic }) => {
 
      {/* //added */}
 
-     <button class="pr-2 text-red-500" onClick={sendFeedback}>
+     {/* <button class="pr-2 text-red-500" onClick={sendFeedback}>
       Feedback
-     </button>
+     </button> */}
 
         <img
           src={profilePicUrl}

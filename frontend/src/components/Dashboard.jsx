@@ -15,6 +15,7 @@ import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
 // import { faArrowLeftFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { faNewspaper } from "@fortawesome/free-solid-svg-icons";
+import { faEnvelope, faCommentDots } from "@fortawesome/free-solid-svg-icons";
 {/* <FontAwesomeIcon icon="fa-regular fa-newspaper" /> */}
 {/* <FontAwesomeIcon icon={faArrowRightFromBracket} /> */}
 
@@ -116,6 +117,13 @@ const Dashboard = () => {
            {/* Refresh */}
            <span className="menu-text">Refresh</span>
           </button>
+
+          <button className="menu-item tooltip" onClick={()=>{navigate('/feedback')}}>
+          <FontAwesomeIcon icon={faCommentDots} id="feedback" />  
+           <span className="menu-text">Feedback</span>
+          </button>
+
+
 
         </div>
 
