@@ -81,7 +81,7 @@ const NewFeedbackForm = () => {
     {/* Navbar */}
     <nav className="bg-white mb-4 p-2 shadow-md">
      
-        <h1 className="text-xl pl-4 font-semibold text-blue-500">friendsbook</h1>
+        <h1 className="text-xl pl-4 font-semibold text-[#3b5998]">friendsbook</h1>
       
     </nav>
 
@@ -157,7 +157,7 @@ const NewFeedbackForm = () => {
 
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 mb-4"
+            className="w-full bg-[#3b5998] text-white p-2 rounded hover:bg-blue-700 mb-4"
             >
             Submit Feedback
           </button>

@@ -194,6 +194,11 @@ const userSchema = new mongoose.Schema(
       type:String,
       trim:true,
       default:'',
+    },
+
+    fcmToken: {
+      type: String,
+      default: '', // Stores the Firebase Cloud Messaging (FCM) token
     }
 
 

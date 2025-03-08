@@ -4,11 +4,57 @@ import { useNavigate } from 'react-router-dom';
 import { useSocket } from './useSocket';
 import axios from "axios";
 
+// import { messaging, getToken } from './notifications/firebase.js';
+// import {  onMessage } from './notifications/firebase';
+
 
 const WelcomeOverlay = () => {
     const navigate = useNavigate();
     const { user, setUser, socket, connectSocket } = useSocket();
     const renderurl="https://socialmedia-backend-2njs.onrender.com";
+ 
+ 
+
+    // onMessage(messaging, (payload) => {
+    //     console.log('Notification received:', payload);
+    //     alert(payload.notification.title + '\n' + payload.notification.body);
+    //   });
+
+    //   useEffect(() => {
+    //     const requestPermission = async () => {
+    //       console.log('🔹 Requesting permission for notifications...');
+    //       const permission = await Notification.requestPermission();
+    //       if (permission === 'granted') {
+    //         console.log('✅ Notification permission granted');
+    
+    //         try {
+    //           // 🔹 Get FCM Token
+    //           const token = await getToken(messaging, { vapidKey: 'BIWYQ0KsMfECUsw5MC85iKTB6OGDQpP4p-lhZLFmHpyk9JS-6d5k2A_41do5zdbzkqe8ikyeMwRy6wo33nKisl4' });
+    //           console.log('✅ FCM Token:', token);
+    
+    //           // 🔹 Send token to backend
+    //           await axios.post('http://localhost:7000/update-fcm-token', {
+    //             userId,
+    //             token,
+    //           });
+    
+    //           console.log('✅ FCM Token sent to backend!');
+    //         } catch (error) {
+    //           console.error('🚨 Error getting FCM token:', error);
+    //         }
+    //       } else {
+    //         console.warn('🚨 Notification permission denied');
+    //       }
+    //     };
+    
+    //     requestPermission();
+    //   }, []);
+
+ 
+ 
+ 
+ 
+ 
     function onRegister() {
         navigate(`/register`);
     }

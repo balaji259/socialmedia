@@ -22,7 +22,7 @@ body {
     display: flex;
     justify-content: space-between;
     padding: 10px 20px;
-    background-color: #007bff;
+    background-color: #3b5998;
     color: #fff;
     /* font-weight: bold; */
     flex-wrap: wrap;
@@ -60,7 +60,7 @@ body {
     /* width:120px; */
     /* height:40px; */
     border-radius: 5px;
-    background-color: #007bff;
+    background-color: #3b5998;
     color:white;
     padding:10px 10px;
     margin:5px;
@@ -69,7 +69,7 @@ body {
     display: block;
     margin: 10px 0;
     padding: 5px;
-    background-color: #007bff;
+    background-color: #3b5998;
     color: #fff;
     text-align: center;
     border: none;
@@ -82,7 +82,7 @@ body {
     justify-content: space-between;
     margin: 10px 0;
   }
-
+  
   .view-div{
     display:flex;
     justify-content: flex-end;
@@ -93,7 +93,7 @@ body {
     flex: 1;
     margin: 5px;
     padding: 10px;
-    background-color: #007bff;
+    background-color: #3b5998;
     color: #fff;
     border: none;
     border-radius: 4px;
@@ -137,13 +137,13 @@ body {
   
   .info-section h4 {
     margin-bottom: 10px;
-    color: #007bff;
+    color: #3b5998;
     font-size: 16px;
   }
 
   .contact-info h4{
     margin-bottom: 10px;
-    color: #007bff;
+    color: #3b5998;
     font-size: 16px;
   }
 
@@ -192,7 +192,7 @@ body {
   
   .info-table h4 {
     margin-bottom: 5px;
-    color: #007bff;
+    color: #3b5998;
     font-size: 16px;
   }
   

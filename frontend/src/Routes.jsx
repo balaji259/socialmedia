@@ -37,6 +37,7 @@ import Blog from "./components/Blog.jsx"
 import NewLogin from "./components/Newlogin.jsx"
 import FAQ from "./components/Faq.jsx"
 import Coming from "./components/Comingsoon.jsx";
+import Notifications from './components/Notifications.jsx'; 
 
 const RoutesComponent = () => {
     return (
@@ -44,7 +45,7 @@ const RoutesComponent = () => {
         <Router>
             <Routes>
                 <Route path="/" element={<NewLogin />} />
-                {/* <Route path="/" element={<WelcomeOverlay />} /> */}
+                <Route path="/welcome" element={<WelcomeOverlay />} />
                 {/* <Route path="/register" element={<Register />} /> */}
                 {/* <Route path="/login" element={<Login />} /> */}
                 <Route path="/auth" element={<App />} />
@@ -77,7 +78,7 @@ const RoutesComponent = () => {
                 
                 <Route path="/faq" element={<FAQ /> }/>
                 <Route path="/contact" element={<NewFeedbackForm /> } />
-                
+                <Route path="/notifications" element={<Notifications />} />  
 
    
             </Routes>

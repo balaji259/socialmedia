@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Navbar from "./Navbar";
 import Dashboard from "./Dashboard";
 import SuggestionsSidebar from "./Suggestions";
-
+import { toast } from "react-hot-toast";
 import PostsComponent from "./Posts";
 import Quote from "./Quote.jsx";
 import {useSocket} from "./useSocket";
@@ -10,6 +10,10 @@ import {useSocket} from "./useSocket";
 import axios from "axios";
 
 import { fetchUserDetails } from "./userPosts.js";
+
+
+import { messaging, getToken } from './notifications/firebase.js';
+import {  onMessage } from './notifications/firebase';
 
 
 
@@ -20,7 +24,82 @@ const Home = () => {
   const [isLoading, setIsLoading] = useState(true); 
   const backendBaseUrl="http://localhost:7000"; 
   const renderurl="https://socialmedia-backend-2njs.onrender.com";
-  // Determine sidebar visibility based on screen width
+ 
+//for push notifications ! 
+ 
+  onMessage(messaging, (payload) => {
+    console.log('Notification received:', payload);
+    alert(payload.notification.title + '\n' + payload.notification.body);
+  });
+
+  useEffect(() => {
+    console.log("in effect ");
+    console.log("user");
+    console.log(user);
+    if(user){
+      console.log("inside if stateent !");
+      console.log("user.userId");
+      console.log(user?.userId);
+      const requestPermission = async () => {
+        console.log('🔹 Requesting permission for notifications...');
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+          console.log('✅ Notification permission granted');
+          
+          try {
+            // 🔹 Get FCM Token
+            const token = await getToken(messaging, { vapidKey: 'BIWYQ0KsMfECUsw5MC85iKTB6OGDQpP4p-lhZLFmHpyk9JS-6d5k2A_41do5zdbzkqe8ikyeMwRy6wo33nKisl4' });
+            console.log('✅ FCM Token:', token);
+            
+            // 🔹 Send token to backend
+            await axios.post('http://localhost:7000/update-fcm-token', {
+              userId:user.userId,
+              token,
+            });
+            
+            console.log('✅ FCM Token sent to backend!');
+          } catch (error) {
+            console.error('🚨 Error getting FCM token:', error);
+          }
+        } else {
+          console.warn('🚨 Notification permission denied');
+        }
+      };
+      
+      requestPermission();
+    }
+  }, [user]);
+
+
+  //notification check:
+  const sendNotification = async () => {
+    try {
+        const response = await fetch("http://localhost:7000/send-notification", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                userId: "67c343222142a971928c836c",  // Replace with actual userId
+                title: "New Message",
+                body: "Loading home page",
+            }),
+        });
+
+        const data = await response.json();
+        console.log("data");
+        console.log(data);
+        // toast.success(`${data.title}: ${data.body}`, { position: "top-right" });
+        console.log("Notification Response:", data);
+    } catch (error) {
+        console.error("Error sending notification:", error);
+    }
+};
+
+// Call the function to test
+
+
+ 
+
+// Determine sidebar visibility based on screen width
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 1200) {
@@ -55,33 +134,40 @@ const Home = () => {
         setIsLoading(false); 
       }
     };
-
+    
     getUserDetails();
   }, []);
-
-
-
+  
+  
+  
   async function getUser(){
     try{
-        const token=localStorage.getItem("token");
-        const res=await axios.get(`/user/getUser`,{
-            headers: {
-                Authorization:`Bearer ${token}`,
-            },
-
+      const token=localStorage.getItem("token");
+      const res=await axios.get(`/user/getUser`,{
+        headers: {
+          Authorization:`Bearer ${token}`,
+        },
+        
         })
-       
+       console.log("setting res.data");
+       console.log(res.data);
         setUser(res.data);
     }
     catch(e){
-        console.log(e);
+      console.log(e);
     }
-}
-
-useEffect(()=>{
+  }
+  
+  useEffect(()=>{
     console.log("loading home page!");
     getUser();
-},[]);
+    
+    //notification
+    console.log("before notification")
+    sendNotification();
+    console.log("after notificaion")
+
+  },[]);
 
 
 
@@ -117,7 +203,7 @@ useEffect(()=>{
 
 
   if (isLoading) {
-    // Display the Loading component if loading state is true
+  
     return <Quote />;
   }
 
@@ -246,7 +332,7 @@ const styles = {
     top: "80px", // Below Navbar
     right: "-10px",
     padding: "10px 30px 10px 15px",
-    backgroundColor: "#007bff",
+    backgroundColor: "#3b5998",
     color: "#fff",
     border: "none",
     borderRadius: "10px",

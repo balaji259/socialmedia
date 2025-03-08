@@ -73,6 +73,24 @@ const SearchSuggestions = () => {
             : user
         )
       );
+
+      // ✅ Send notification **ONLY** for "follow" action
+      console.log("outside if in notifictaions");
+      if (action === "follow") {
+           console.log("inside if in notifictaions");
+           console.log("calling axios");
+           
+          await axios.post("/send-notification", {
+              userId, 
+              senderId: currentUserId,
+              type: "Follow Notification",
+              title: "New Follower",
+              body: `${currentUserId} started following you!!`,
+          }, { headers: { Authorization: `Bearer ${token}` } });
+
+          console.log("Follow notification sent successfully!");
+      }
+
     } catch (error) {
       console.error(`Error performing ${action} action:`  , error);
     }
@@ -141,7 +159,7 @@ const SearchSuggestions = () => {
               <button
                 onClick={() => handleFollowUnfollow(user._id, user.followStatus === "follow" ? "follow" : "unfollow")}
                 className={`flex-1 px-4 py-2 ${
-                  user.followStatus === "follow" ? "bg-blue-600 hover:bg-blue-700" : "bg-red-500 hover:bg-red-600"
+                  user.followStatus === "follow" ? "bg-[#3b5998] hover:bg-blue-700" : "bg-red-500 hover:bg-red-600"
                 } text-white font-semibold rounded-md shadow-md transition duration-200`}
               >
                 {user.followStatus === "follow" ? "Follow" : "Unfollow"}

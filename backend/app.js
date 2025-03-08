@@ -10,6 +10,11 @@ const profileRouter=require("./routes/profile");
 const streakRouter=require('./routes/streak');
 const chatRouter=require("./routes/message");
 const feedbackRouter=require("./routes/feedback.js");
+const notificationRouter=require("./routes/notifications.js");
+const User=require("./models/users.js");
+const Notification=require("./models/notification")
+
+const {sendNotification} =require("./notificationService.js");
 // const otpRoutes = require('./routes/otpRoutes')
 
 const {app,server} =require("./socket.js");
@@ -55,6 +60,100 @@ app.use('/profile',profileRouter);
 app.use('/streak',streakRouter);
 app.use('/messages',chatRouter);
 app.use('/feedback',feedbackRouter);
+app.use('/notifications',notificationRouter);
+
+
+
+app.post('/update-fcm-token', async (req, res) => {
+  const { userId, token } = req.body;
+
+  try {
+    if (!userId || !token) {
+      return res.status(400).json({ success: false, message: 'Missing userId or token' });
+    }
+
+    // 🔹 Update the user's FCM token
+    await User.findByIdAndUpdate(userId, { fcmToken: token }, { new: true });
+
+    res.json({ success: true, message: 'FCM token updated successfully' });
+  } catch (error) {
+    console.error('Error updating FCM token:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+
+// app.post('/send-notification', async (req, res) => {
+//   // const { userId, title, body } = req.body;
+//   const { userId, title } = req.body
+//   const body=req.body.message;
+//   console.log(req.body);
+//   console.log(req.body.message);
+
+//   try {
+//     await sendNotification(userId, title, body);
+//     res.json({ success: true, message: 'Notification sent successfully' });
+//   } catch (error) {
+//     console.error('🚨 Error sending notification:', error);
+//     res.status(500).json({ success: false, message: 'Server error' });
+//   }
+// });
+
+app.post('/send-notification', async (req, res) => {
+  try {
+    console.log("inside send notification route");
+      const { userId, senderId, type, title, body } = req.body;
+      console.log(req.body);
+
+     
+      if (!userId || !senderId || !type || !title || !body) {
+          return res.status(400).json({ success: false, message: "Missing required fields" });
+      }
+
+      console.log("📩 New Notification Request:", req.body);
+
+
+    let notificationBody = body; 
+
+      if(type==="Follow Notification"){
+     
+      const sender = await User.findById(senderId);
+      if (!sender) {
+        return res.status(404).json({ success: false, message: "Sender not found" });
+      }
+      console.log("sender isername");
+      console.log(sender.username);
+
+      notificationBody = `${sender.username} followed you`;
+      console.log(notificationBody);
+    }
+
+      const notification = new Notification({
+          userId,      
+          senderId,    
+          type,        
+          title,
+          body: notificationBody,
+          isRead: false, // Mark as unread initially
+      });
+
+      console.log(notification);
+      await notification.save();
+      console.log("notificatiion saved in schema");
+
+      // Send notification (assuming sendNotification function is implemented)
+      await sendNotification(userId, title, notificationBody);
+
+
+
+      res.json({ success: true, message: "Notification sent and saved successfully" });
+
+  } catch (error) {
+      console.error("🚨 Error sending notification:", error);
+      res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
 
 
 

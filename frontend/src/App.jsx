@@ -4,15 +4,12 @@ import Login from './components/Login';
 import WelcomeOverlay from './components/Welcome';
 
 
+
 const App = () => {
-    // const [isLogin, setIsLogin] = useState(true);
+  
 
-    
 
-    // const handleSwitch = () => {
-    //     console.log('swotched');
-    //     setIsLogin((prev) => !prev);
-    // };
+  
 
     return (
         <div>

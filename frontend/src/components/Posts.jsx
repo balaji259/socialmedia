@@ -89,7 +89,7 @@ const removeButtonStyle = {
 // };
 
 const submitButtonStyle = {
-  backgroundColor: '#007bff',
+  backgroundColor: '#3b5998',
   color: '#fff',
   padding: '10px 20px', // Ensure uniform padding
   border: 'none',
@@ -102,7 +102,7 @@ const submitButtonStyle = {
 };
 
 const customUploadButtonStyle = {
-  backgroundColor: '#007bff',
+  backgroundColor: '#3b5998',
   color: '#fff',
   padding: '10px 20px', // Same padding as the submit button
   border: 'none',
