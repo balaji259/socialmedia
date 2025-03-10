@@ -73,21 +73,21 @@ const SearchSuggestions = () => {
       );
 
       // ✅ Send notification **ONLY** for "follow" action
-      console.log("outside if in notifictaions");
-      if (action === "follow") {
-           console.log("inside if in notifictaions");
-           console.log("calling axios");
+      // console.log("outside if in notifictaions");
+      // if (action === "follow") {
+      //      console.log("inside if in notifictaions");
+      //      console.log("calling axios");
            
-          await axios.post("/send-notification", {
-              userId, 
-              senderId: currentUserId,
-              type: "Follow Notification",
-              title: "New Follower",
-              body: `${currentUserId} started following you!!`,
-          }, { headers: { Authorization: `Bearer ${token}` } });
+      //     await axios.post("/send-notification", {
+      //         userId, 
+      //         senderId: currentUserId,
+      //         type: "Follow Notification",
+      //         title: "New Follower",
+      //         body: `${currentUserId} started following you!!`,
+      //     }, { headers: { Authorization: `Bearer ${token}` } });
 
-          console.log("Follow notification sent successfully!");
-      }
+      //     console.log("Follow notification sent successfully!");
+      // }
 
     } catch (error) {
       console.error(`Error performing ${action} action:`  , error);

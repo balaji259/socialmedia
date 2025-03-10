@@ -67,15 +67,15 @@ export default function Updates() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      if (action === "follow") {
-        await axios.post("/send-notification", {
-          userId: targetId,
-          senderId: userId,
-          type: "Follow Notification",
-          title: "New Follower",
-          body: `${userId} started following you!!`,
-        }, { headers: { Authorization: `Bearer ${token}` } });
-      }
+      // if (action === "follow") {
+      //   await axios.post("/send-notification", {
+      //     userId: targetId,
+      //     senderId: userId,
+      //     type: "Follow Notification",
+      //     title: "New Follower",
+      //     body: `${userId} started following you!!`,
+      //   }, { headers: { Authorization: `Bearer ${token}` } });
+      // }
 
       if (notificationId) {
         handleDelete(notificationId);
