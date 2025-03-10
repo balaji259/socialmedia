@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
+import {useNavigate} from 'react-router-dom';
 
 const Notifications = () => {
   const [notifications, setNotifications] = useState([]);
+
+  const navigate=useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -43,9 +46,9 @@ const Notifications = () => {
       <div className="bg-[#3B5998] text-white p-4 flex items-center justify-between shadow-md">
         <div className="text-xl font-bold">friendsbook</div>
         <div className="flex space-x-4">
-          <a href="/profile" className="text-sm">Profile</a>
-          <a href="/find-friends" className="text-sm">Find Friends</a>
-          <a href="/account" className="text-sm">Account</a>
+          <p onClick={()=>{navigate('/profile')}} className="text-sm">Profile</p>
+          <p onClick={()=>{navigate('/friends')}} className="text-sm">Find Friends</p>
+          {/* <p  className="text-sm">Account</p> */}
         </div>
       </div>
 

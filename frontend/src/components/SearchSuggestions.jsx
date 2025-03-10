@@ -13,9 +13,7 @@ const SearchSuggestions = () => {
   const renderurl="https://socialmedia-backend-2njs.onrender.com";
   const navigate = useNavigate();
   const { setChatUserId, profileId, setProfileId } = useChatStore();
-  // const { users, selectedUser, setSelectedUser, chatUserId, setChatUserId , profileId, setProfileId} = useChatStore();
-  // const { getUsers,clearUsers,users, selectedUser, setSelectedUser, chatUserId, setChatUserId, isUsersLoading, profileId, setProfileId } = useChatStore();
-
+  
   const {onlineUsers} =useSocket();
 
   const getUserIdFromToken = () => {

@@ -77,7 +77,7 @@ const Dashboard = () => {
           {/* <br /> */}
       
           {/* Search */}
-          <span className="menu-text">Find Friends</span>
+          <span className="menu-text">Explore</span>
           </button>
           <button className="menu-item tooltip" onClick={() => navigate("/friends")}> <span className="stacked-text">
           <FontAwesomeIcon icon={faUserGroup} id="friendcircle"  />

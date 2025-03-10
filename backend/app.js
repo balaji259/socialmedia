@@ -107,10 +107,14 @@ app.post('/send-notification', async (req, res) => {
 
      
       if (!userId || !senderId || !type || !title || !body) {
+        console.log("Missing fields");
           return res.status(400).json({ success: false, message: "Missing required fields" });
       }
 
-      console.log("📩 New Notification Request:", req.body);
+      if(userId!=senderId){
+
+        
+        console.log("📩 New Notification Request:", req.body);
 
 
     let notificationBody = body; 
@@ -123,32 +127,66 @@ app.post('/send-notification', async (req, res) => {
       }
       console.log("sender isername");
       console.log(sender.username);
-
+      
       notificationBody = `${sender.username} followed you`;
       console.log(notificationBody);
     }
-
-      const notification = new Notification({
-          userId,      
-          senderId,    
-          type,        
-          title,
-          body: notificationBody,
-          isRead: false, // Mark as unread initially
+    
+    
+    else if(type==="Like Notification"){
+      
+      const sender = await User.findById(senderId);
+      if (!sender) {
+        return res.status(404).json({ success: false, message: "Sender not found" });
+      }
+      console.log("sender isername");
+      console.log(sender.username);
+      
+      notificationBody = `${sender.username} liked your post`;
+      console.log(notificationBody);
+      
+    }
+    
+    else if(type==='Comment Notification'){
+      console.log("inside comment notfication!");
+      // const sender = await User.findById(senderId);
+      const sender = await User.findById(senderId)
+      
+      if (!sender) {
+        console.error("❌ Sender not found in DB");
+        return res.status(404).json({ success: false, message: "Sender not found" });
+      }
+      console.log("sender isername");
+      console.log(sender.username);
+      
+      notificationBody = `${sender.username} commented on your post`;
+      console.log(notificationBody);
+      
+    }
+    
+    const notification = new Notification({
+      userId,      
+      senderId,    
+      type,        
+      title,
+      body: notificationBody,
+      isRead: false, // Mark as unread initially
       });
 
       console.log(notification);
       await notification.save();
       console.log("notificatiion saved in schema");
-
+      
       // Send notification (assuming sendNotification function is implemented)
       await sendNotification(userId, title, notificationBody);
-
-
-
+      
+      
+      
       res.json({ success: true, message: "Notification sent and saved successfully" });
-
-  } catch (error) {
+      
+    }
+    
+    } catch (error) {
       console.error("🚨 Error sending notification:", error);
       res.status(500).json({ success: false, message: "Server error" });
   }

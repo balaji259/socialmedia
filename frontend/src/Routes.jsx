@@ -38,6 +38,8 @@ import NewLogin from "./components/Newlogin.jsx"
 import FAQ from "./components/Faq.jsx"
 import Coming from "./components/Comingsoon.jsx";
 import Notifications from './components/Notifications.jsx'; 
+import Updates from "./components/Updates.jsx"
+import Fest from "./components/Fest";
 
 const RoutesComponent = () => {
     return (
@@ -61,11 +63,13 @@ const RoutesComponent = () => {
                 <Route path="/profile" element={<NewProfile />} />
                 <Route path="/edit" element={<EditProfile />} />
                 <Route path="/profile/:userId" element={<UserProfile />} /> 
-                <Route path="/search" element={<Search />} />
+                {/* <Route path="/search" element={<Search />} /> */}
+                <Route path="/search" element={<Updates />} />
                 <Route path="/searchsug" element={<SearchSuggestions />} />
                 <Route path="/chat/sidebar" element={<Sidebar />} />
                 <Route path="/chats" element={<ChatHomePage />} />
                 <Route path="/friends" element={<Friends /> } />
+                {/* <Route path="/friends" element={<Updates /> } /> */}
                 <Route path="/friendlist" element={<FriendList />} />
                 <Route path="/newposts" element={<NewPosts /> } />
                 <Route path="/other" element={<OtherProfile />} />
@@ -80,7 +84,10 @@ const RoutesComponent = () => {
                 <Route path="/contact" element={<NewFeedbackForm /> } />
                 <Route path="/notifications" element={<Notifications />} />  
 
-   
+                <Route path="/update" element={<Updates />} />
+
+                <Route path="/fest" element={<Fest />} />
+
             </Routes>
         </Router>
         </SocketProvider>

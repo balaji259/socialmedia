@@ -161,7 +161,7 @@ const SuggestionsSidebar = () => {
         {/* <button style={continueButtonStyle}>Continue</button> */}
       </div>
 
-      <div style={headingSuggestionsStyle}>User Suggestions</div>
+      {/* <div style={headingSuggestionsStyle}>User Suggestions</div>
 
       <div style={suggestionsContainerStyle}>
         {suggestions.map((user) => (
@@ -175,7 +175,7 @@ const SuggestionsSidebar = () => {
             <button style={followButtonStyle} onClick={() => handleFollow(user._id)}>Follow</button>
           </div>
         ))}
-      </div>
+      </div> */}
     </div>
   );
 

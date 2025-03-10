@@ -6,6 +6,7 @@ import "./Posts.css"
 import {useSocket} from "./useSocket";
 import { useChatStore } from './useChatStore';
 import axios from "axios";
+import Fest from "./Fest";
 
 // Define all styles at the top
 const postComponentContainerStyle = {
@@ -539,8 +540,10 @@ const PostComponent = () => {
   
 
 
-  const handleLikeToggle = async (postId) => {
+  const handleLikeToggle = async (postId,postCreatorId) => {
     const token = localStorage.getItem("token");
+    console.log("postId");
+    console.log(postId);
   
     if (!token) {
       alert("No token found. Please log in again.");
@@ -566,7 +569,9 @@ const PostComponent = () => {
   
       if (response.ok) {
         const data = await response.json();  // Response includes updated likes count and liked status
-  
+        console.log("likeddataresponse");
+        console.log(data);
+        console.log(data.liked);
         // Update the post state with the new like status and count
         setPosts((prevPosts) =>
           prevPosts.map((post) => {
@@ -580,12 +585,36 @@ const PostComponent = () => {
             return post;
           })
         );
-      } else {
-        console.log("Failed to update like status");
+
+        //addon
+        // ✅ Check if the user actually liked the post
+      console.log("outside if");
+      if (data.liked === true) {
+        console.log("inside if - sending notification");
+
+        // ✅ Correct Axios POST Request
+        await axios.post("/send-notification", {
+          userId: postCreatorId,  // The owner of the post
+          senderId: userId,      // The person who liked the post
+          type: "Like Notification",
+          title: "New Like",
+          body: "liked your post",
+        }, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          }
+        });
+
+        console.log("✅ Notification Sent Successfully");
       }
+    } else {
+      console.log("Failed to update like status");
+    }
+
     } catch (error) {
       console.error("Error updating like status:", error);
-      // alert("Error updating like status");
+    
     }
   };
   
@@ -704,12 +733,26 @@ const deletePost = async (postId) => {
   
 
 
-  const handleAddComment = async (postId) => {
+  const handleAddComment = async (postId,postCreatorId) => {
   const token = localStorage.getItem("token");
+  console.log("postCreatorId")
+  console.log(postCreatorId)
   if (!token) {
     alert("No token found. Please log in again.");
     return;
   }
+
+   // ✅ Decode token to get userId (commenter)
+   const base64Url = token.split(".")[1];
+   const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+   const jsonPayload = decodeURIComponent(
+     atob(base64)
+       .split("")
+       .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+       .join("")
+   );
+   const { userId } = JSON.parse(jsonPayload);
+ 
 
   try {
     const response = await fetch(`/posts/comment/${postId}`, {
@@ -722,8 +765,36 @@ const deletePost = async (postId) => {
     });
 
     if (response.ok) {
+      console.log("response.ok");
       await fetchPosts();
       setNewComment('');
+
+
+
+      //addon
+
+
+      // ✅ 2. Second API Call: Send Notification to Post Owner
+      console.log('📨 Calling the Notification API');
+
+      await axios.post("/send-notification",
+        {
+          userId: postCreatorId,    // The owner of the post
+          senderId: userId,         // The person who commented
+          type: "Comment Notification",
+          title: "New Comment",
+          body: "Commented on Your Post ",    // Send the comment text as notification body
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          }
+        }
+      );
+
+      console.log("✅ Notification Sent Successfully");
+
     } else {
       alert("Failed to add comment");
     }
@@ -956,6 +1027,8 @@ return (
 
 
   <div className="post-component-container" style={postComponentContainerStyle}>
+
+  <Fest />
   
   <div style={postInputContainerStyle}>
   <form onSubmit={handleSubmit}>
@@ -1098,7 +1171,7 @@ return (
           <div style={postFooterStyle}>
             <button
               style={postButtonStyle}
-              onClick={() => handleLikeToggle(post.postId)}
+              onClick={() => handleLikeToggle(post.postId,post.userId._id)}
             >
              <div className="flex items-center justify-center">
     <img src="/images/like.jpg" className="h-6 w-6 mr-2" alt="Like" />
@@ -1109,7 +1182,7 @@ return (
 
 
             </button>
-            <button style={postButtonStyle} onClick={() => toggleComments(post.postId)}>
+            <button style={postButtonStyle} onClick={() => toggleComments(post.postId,post.userId._id)}>
               {/* {`💬 Comment ${post.comments.length}`} */}
               <div className="flex items-center justify-center"> 
                 <img src="/images/comments.jpeg" className="w-6 h-6 mr-4" />
@@ -1245,7 +1318,7 @@ return (
       style={{ width: "100%", margin: "5px 0" }}
     />
     <div class="flex justify-end">
-      <button class="text-right pl-2 pr-2" onClick={() => handleAddComment(post.postId)}>Comment</button>
+      <button class="text-right pl-2 pr-2" onClick={() => handleAddComment(post.postId,post.userId._id)}>Comment</button>
     </div>
   </div>
 )}
