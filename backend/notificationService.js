@@ -1,7 +1,7 @@
 const admin = require('./firebaseAdmin');
 const User=require("./models/users")
 const Notification=require('./models/notification')
-const serviceAccount = require('./serviceAccountKey.json'); 
+// const serviceAccount = require('./serviceAccountKey.json'); 
 
 // admin.initializeApp({
 //     credential: admin.credential.cert(serviceAccount),
