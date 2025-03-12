@@ -588,26 +588,26 @@ const PostComponent = () => {
 
         //addon
         // ✅ Check if the user actually liked the post
-      // console.log("outside if");
-      // if (data.liked === true) {
-      //   console.log("inside if - sending notification");
+      console.log("outside if");
+      if (data.liked === true) {
+        console.log("inside if - sending notification");
 
-      //   // ✅ Correct Axios POST Request
-      //   await axios.post("/send-notification", {
-      //     userId: postCreatorId,  // The owner of the post
-      //     senderId: userId,      // The person who liked the post
-      //     type: "Like Notification",
-      //     title: "New Like",
-      //     body: "liked your post",
-      //   }, {
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //       Authorization: `Bearer ${token}`,
-      //     }
-      //   });
+        // ✅ Correct Axios POST Request
+        await axios.post("/send-notification", {
+          userId: postCreatorId,  // The owner of the post
+          senderId: userId,      // The person who liked the post
+          type: "Like Notification",
+          title: "New Like",
+          body: "liked your post",
+        }, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          }
+        });
 
-      //   console.log("✅ Notification Sent Successfully");
-      // }
+        console.log("✅ Notification Sent Successfully");
+      }
     } else {
       console.log("Failed to update like status");
     }
@@ -777,23 +777,23 @@ const deletePost = async (postId) => {
       // ✅ 2. Second API Call: Send Notification to Post Owner
       // console.log('📨 Calling the Notification API');
 
-      // await axios.post("/send-notification",
-      //   {
-      //     userId: postCreatorId,    // The owner of the post
-      //     senderId: userId,         // The person who commented
-      //     type: "Comment Notification",
-      //     title: "New Comment",
-      //     body: "Commented on Your Post ",    // Send the comment text as notification body
-      //   },
-      //   {
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //       Authorization: `Bearer ${token}`,
-      //     }
-      //   }
-      // );
+      await axios.post("/send-notification",
+        {
+          userId: postCreatorId,    // The owner of the post
+          senderId: userId,         // The person who commented
+          type: "Comment Notification",
+          title: "New Comment",
+          body: "Commented on Your Post ",    // Send the comment text as notification body
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          }
+        }
+      );
 
-      // console.log("✅ Notification Sent Successfully");
+      console.log("✅ Notification Sent Successfully");
 
     } else {
       alert("Failed to add comment");

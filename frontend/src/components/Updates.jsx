@@ -6,12 +6,13 @@ import { useSocket } from "./useSocket";
 import { useChatStore } from "./useChatStore";
 
 export default function Updates() {
-  const [activeTab, setActiveTab] = useState('requests');
+  const [activeTab, setActiveTab] = useState('friends');
   const [followRequests, setFollowRequests] = useState([]);
   const [query, setQuery] = useState('');
   const emptyquery='';
   const [suggestedUsers, setSuggestedUsers] = useState([]);
   const [allSuggestedUsers, setAllSuggestedUsers] = useState([]);
+  const [friends,setFriends]=useState([]);
 //   const userId = "67c343222142a971928c836c";
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
@@ -67,15 +68,15 @@ export default function Updates() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      // if (action === "follow") {
-      //   await axios.post("/send-notification", {
-      //     userId: targetId,
-      //     senderId: userId,
-      //     type: "Follow Notification",
-      //     title: "New Follower",
-      //     body: `${userId} started following you!!`,
-      //   }, { headers: { Authorization: `Bearer ${token}` } });
-      // }
+      if (action === "follow") {
+        await axios.post("/send-notification", {
+          userId: targetId,
+          senderId: userId,
+          type: "Follow Notification",
+          title: "New Follower",
+          body: `${userId} started following you!!`,
+        }, { headers: { Authorization: `Bearer ${token}` } });
+      }
 
       if (notificationId) {
         handleDelete(notificationId);
@@ -129,6 +130,23 @@ export default function Updates() {
   useEffect(()=>{
     fetchAllUserSuggestions();
   },[]);
+
+  const fetchFriends = async () => {
+    try {
+      console.log("Fetching friends for userId:", userId);
+      const response = await axios.get(`/user/${userId}/friends`);
+      
+      setFriends(response.data.friends);
+    
+    } catch (error) {
+      console.error("Error fetching friends:", error);
+    }
+  };
+
+  useEffect(()=>{
+    fetchFriends();
+  },[userId]);
+ 
 
 
   const goToUserProfile = (id) => {
@@ -204,6 +222,14 @@ export default function Updates() {
 
       <div className="max-w-2xl mx-auto bg-white border border-gray-300 mt-5 p-5">
         <div className="border-b border-gray-300 flex space-x-5 mb-5">
+
+        <button
+            className={`p-2 ${activeTab === 'friends' ? 'border-b-2 border-gray-500' : ''}`}
+            onClick={() => setActiveTab('friends')}
+          >
+            Friends
+          </button>
+
           <button
             className={`p-2 ${activeTab === 'requests' ? 'border-b-2 border-gray-500' : ''}`}
             onClick={() => setActiveTab('requests')}
@@ -333,6 +359,39 @@ export default function Updates() {
             ))}
           </div>
         )}
+
+
+{activeTab === 'friends' && (
+          <div>
+         
+            {friends.map(user => (
+              <div key={user._id} className="border border-gray-300 p-4 flex items-center mb-3">
+                <div className="w-16 h-16 bg-gray-200 flex items-center justify-center border mr-4">
+                  <img 
+                    src={user.profilePic} 
+                    alt="profile" 
+                    className="w-full h-full object-cover cursor-pointer"
+
+                    onClick={() => goToUserProfile(user._id)}
+                  />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-bold">{user.username}</h3>
+                  <div className="mt-2 flex space-x-2">
+                  
+                    <button
+                      onClick={() => handleChat(user._id)}
+                      className="bg-yellow-500 text-white text-sm px-3 py-1 rounded">
+                      Chat
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        
 
         
 

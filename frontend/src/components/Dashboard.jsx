@@ -73,19 +73,20 @@ const Dashboard = () => {
           <span className="menu-text">News Feed</span>
           </button>
           <button className="menu-item tooltip" onClick={() => navigate("/search")}>
-          <FontAwesomeIcon icon={faMagnifyingGlass} id="search" /> 
+          {/* <FontAwesomeIcon icon={faMagnifyingGlass} id="search" />  */}
+          <FontAwesomeIcon icon={faUserGroup} id="friendcircle"  />
           {/* <br /> */}
       
           {/* Search */}
-          <span className="menu-text">Explore</span>
+          <span className="menu-text">Friends</span>
           </button>
-          <button className="menu-item tooltip" onClick={() => navigate("/friends")}> <span className="stacked-text">
+          {/* <button className="menu-item tooltip" onClick={() => navigate("/friends")}> <span className="stacked-text">
           <FontAwesomeIcon icon={faUserGroup} id="friendcircle"  />
           {/* <br /> */}
     
           {/* Friend<br />Circle */}
-          <span className="menu-text">Friends</span>
-          </span></button>
+          {/* <span className="menu-text">Friends</span> */}
+          {/* </span></button>  */}
           <button className="menu-item tooltip" onClick={()=> navigate("/chats")}>
           <FontAwesomeIcon icon={faMessage} id="chats" />
 

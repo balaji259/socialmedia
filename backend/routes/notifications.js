@@ -24,6 +24,8 @@ const Notification = require('../models/notification');
 router.get('/getall/:userId', async (req, res) => {
   const { userId } = req.params;
 
+  console.log("feteching all notification !");
+
   try {
     // Fetch notifications and populate senderId with followers also
     const notifications = await Notification.find({ userId })

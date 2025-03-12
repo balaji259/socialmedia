@@ -37,6 +37,8 @@ const Profile = () => {
     const navigate=useNavigate();
     const backendBaseUrl="http://localhost:7000";
 
+    const token = localStorage.getItem("token");
+
     const fetchuserId= async ()=>{
         try{
           const token = localStorage.getItem("token");
@@ -193,7 +195,11 @@ async function getFriendsDetails(profileId) {
               `/profile/unfollow/${profileId}/${currentUserId}`);
           } else {
             // Follow API call
+            console.log("calling follow route ! ");
             await axios.post(`/profile/follow/${profileId}/${currentUserId}`);
+            console.log("success");
+
+
           }
           setIsFollowing(!isFollowing); // Toggle follow status locally
         } catch (error) {

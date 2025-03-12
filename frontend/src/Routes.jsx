@@ -72,20 +72,23 @@ const RoutesComponent = () => {
                 {/* <Route path="/friends" element={<Updates /> } /> */}
                 <Route path="/friendlist" element={<FriendList />} />
                 <Route path="/newposts" element={<NewPosts /> } />
+
                 <Route path="/other" element={<OtherProfile />} />
                 <Route path="/viewposts" element={<OtherPosts />} />
+
                 <Route path="/feedback" element={<NewFeedbackForm />} />
                 <Route path="/about" element={<About />} />
+
                 <Route path="/blog" element={<Blog />} />
                 <Route path="/newlogin" element={<NewLogin />} />
                 
                 
                 <Route path="/faq" element={<FAQ /> }/>
                 <Route path="/contact" element={<NewFeedbackForm /> } />
-                <Route path="/notifications" element={<Notifications />} />  
+                
 
                 <Route path="/update" element={<Updates />} />
-
+                <Route path="/notifications" element={<Notifications />} />
                 <Route path="/fest" element={<Fest />} />
 
             </Routes>

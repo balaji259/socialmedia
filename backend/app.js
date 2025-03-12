@@ -14,7 +14,7 @@ const notificationRouter=require("./routes/notifications.js");
 const User=require("./models/users.js");
 const Notification=require("./models/notification")
 
-// const {sendNotification} =require("./notificationService.js");
+const {sendNotification} =require("./notificationService.js");
 // const otpRoutes = require('./routes/otpRoutes')
 
 const {app,server} =require("./socket.js");
