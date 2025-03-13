@@ -39,7 +39,10 @@ import FAQ from "./components/Faq.jsx"
 import Coming from "./components/Comingsoon.jsx";
 import Notifications from './components/Notifications.jsx'; 
 import Updates from "./components/Updates.jsx"
+
 import Fest from "./components/Fest";
+
+import HolyBanner from "./components/Holy";
 
 const RoutesComponent = () => {
     return (
@@ -90,6 +93,7 @@ const RoutesComponent = () => {
                 <Route path="/update" element={<Updates />} />
                 <Route path="/notifications" element={<Notifications />} />
                 <Route path="/fest" element={<Fest />} />
+                <Route path="/holy" element={<HolyBanner />} />
 
             </Routes>
         </Router>

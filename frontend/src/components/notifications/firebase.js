@@ -23,5 +23,9 @@ const app = initializeApp(firebaseConfig);
 const messaging = getMessaging(app);
 // const analytics = getAnalytics(app);
 
+// ✅ Make `messaging` available globally
+window.messaging = messaging;
+
+
 
 export { messaging, getToken, onMessage };

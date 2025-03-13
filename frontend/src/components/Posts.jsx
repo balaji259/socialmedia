@@ -7,6 +7,7 @@ import {useSocket} from "./useSocket";
 import { useChatStore } from './useChatStore';
 import axios from "axios";
 import Fest from "./Fest";
+import HoliBanner from './Holy';
 
 // Define all styles at the top
 const postComponentContainerStyle = {
@@ -1028,7 +1029,8 @@ return (
 
   <div className="post-component-container" style={postComponentContainerStyle}>
 
-  <Fest />
+  {/* <Fest /> */}
+  <HoliBanner />
   
   <div style={postInputContainerStyle}>
   <form onSubmit={handleSubmit}>
