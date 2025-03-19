@@ -44,6 +44,7 @@ const MessageInput = () => {
         setAbortController(controller);
 
         try {
+            console.log("before sending message");
             await sendMessages(
                 {
                     text: text.trim(),
@@ -52,10 +53,13 @@ const MessageInput = () => {
                 },
                 controller.signal
             );
+            console.log("after sending message");
             setText("");
             setMediaPreview(null);
             setMediaType(null);
             if (fileInputRef.current) fileInputRef.current.value = "";
+
+            
         } catch (e) {
             if (e.name === "AbortError") {
                 console.log("Message sending canceled.");

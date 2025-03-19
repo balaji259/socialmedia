@@ -3,24 +3,47 @@ import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import {useNavigate} from 'react-router-dom';
 
+
 const Notifications = () => {
   const [notifications, setNotifications] = useState([]);
 
+
   const navigate=useNavigate();
+  // console.log("Navigate function:", navigate);
+
+
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      const decoded = jwtDecode(token);
-      const userId = decoded.userId;
-      fetchNotifications(userId);
+      try {
+        const decoded = jwtDecode(token);
+        console.log("decoded", decoded);
+        const userId = decoded.userId;
+  
+        fetchNotifications(userId); // Initial fetch
+        const interval = setInterval(() => fetchNotifications(userId), 5000); // Polling
+  
+        return () => clearInterval(interval); // ✅ Cleanup function always runs
+      } 
+      catch (err) {
+        console.log("Invalid token", err);
+        navigate('/login'); 
+      }
     }
+  
+    return () => {}; // ✅ Always return a function, even if token is missing or invalid
   }, []);
 
+  
   const fetchNotifications = async (userId) => {
     try {
       const res = await axios.get(`/notifications/getall/${userId}`);
-      setNotifications(res.data);
+      console.log("Notifications API Response:", res.data);
+
+      // setNotifications(res.data);
+          // ✅ Ensure data is always an array
+    setNotifications(Array.isArray(res.data) ? res.data : []);
     } catch (error) {
       console.error('Error fetching notifications', error);
     }
@@ -32,6 +55,7 @@ const Notifications = () => {
       
       // ✅ Instantly remove the notification from the UI without refreshing
       setNotifications(notifications.filter(notification => notification._id !== id));
+   
 
     } catch (error) {
       console.error('Error deleting notification', error);

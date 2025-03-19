@@ -83,22 +83,6 @@ app.post('/update-fcm-token', async (req, res) => {
 });
 
 
-// app.post('/send-notification', async (req, res) => {
-//   // const { userId, title, body } = req.body;
-//   const { userId, title } = req.body
-//   const body=req.body.message;
-//   console.log(req.body);
-//   console.log(req.body.message);
-
-//   try {
-//     await sendNotification(userId, title, body);
-//     res.json({ success: true, message: 'Notification sent successfully' });
-//   } catch (error) {
-//     console.error('🚨 Error sending notification:', error);
-//     res.status(500).json({ success: false, message: 'Server error' });
-//   }
-// });
-
 app.post('/send-notification', async (req, res) => {
   try {
     console.log("inside send notification route");
@@ -163,6 +147,40 @@ app.post('/send-notification', async (req, res) => {
       console.log(notificationBody);
       
     }
+
+    else if(type==='Profile View Notification'){
+      console.log("inside profile view notfication!");
+      // const sender = await User.findById(senderId);
+      const sender = await User.findById(senderId)
+      
+      if (!sender) {
+        console.error("❌ Sender not found in DB");
+        return res.status(404).json({ success: false, message: "Sender not found" });
+      }
+      console.log("sender isername");
+      console.log(sender.username);
+      
+      notificationBody = `${sender.username} viewed your profile`;
+      console.log(notificationBody);
+
+    }
+
+    else if(type==='Message Notification'){
+      console.log("inside message notfication!");
+      // const sender = await User.findById(senderId);
+      const sender = await User.findById(senderId)
+      
+      if (!sender) {
+        console.error("❌ Sender not found in DB");
+        return res.status(404).json({ success: false, message: "Sender not found" });
+      }
+      console.log("sender isername");
+      console.log(sender.username);
+      
+      notificationBody = `${sender.username} messaged you !`;
+      console.log(notificationBody);
+
+    }
     
     const notification = new Notification({
       userId,      
@@ -203,6 +221,10 @@ app.get('/verify',verifyToken,(req,res)=>{
     user:req.user
   })
 });
+
+
+
+
 
 app.get('*',(req,res)=>{
   res.sendFile(path.join(__dirname,'..','frontend','dist','index.html'));

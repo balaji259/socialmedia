@@ -36,28 +36,56 @@ export default function Updates() {
 
   const userId = getUserIdFromToken();
 
-  useEffect(() => {
-    const fetchNotifications = async () => {
-      try {
-        const response = await axios.get(`/notifications/getall/${userId}`);
-        const notifications = response.data;
+  // useEffect(() => {
+  //   const fetchNotifications = async () => {
+  //     try {
+  //       console.log("active tab chnaged to requests");
+  //       const response = await axios.get(`/notifications/getall/${userId}`);
+  //       const notifications = response.data;
 
-        const filteredRequests = notifications.filter(notif => 
-          notif.type === 'Follow Notification' &&
-          notif.senderId && 
-          notif.senderId.followers && 
-          !notif.senderId.followers.some(follower => follower._id === userId)
-        );
+  //       const filteredRequests = notifications.filter(notif => 
+  //         notif.type === 'Follow Notification' &&
+  //         notif.senderId && 
+  //         notif.senderId.followers && 
+  //         !notif.senderId.followers.some(follower => follower._id === userId)
+  //       );
 
-        setFollowRequests(filteredRequests);
-      } catch (error) {
-        console.error('Error fetching notifications:', error);
+  //       setFollowRequests(filteredRequests);
+  //     } catch (error) {
+  //       console.error('Error fetching notifications:', error);
+  //     }
+  //   };
+
+  //   fetchNotifications();
+  // }, [userId,activeTab]);
+
+  const fetchNotifications = async () => {
+    try {
+      console.log("Fetching notifications...");
+      const response = await axios.get(`/notifications/getall/${userId}`);
+  
+      console.log("API Response:", response.data); // Debugging log
+  
+      if (!response.data || !Array.isArray(response.data)) {
+        console.error("Error: Expected an array but got:", response.data);
+        setFollowRequests([]); // Ensure followRequests is always an array
+        return;
       }
-    };
-
-    fetchNotifications();
-  }, [userId]);
-
+  
+      const filteredRequests = response.data.filter(notif => 
+        notif.type === 'Follow Notification' &&
+        notif.senderId && 
+        notif.senderId.followers && 
+        !notif.senderId.followers.some(follower => follower._id === userId)
+      );
+  
+      setFollowRequests(filteredRequests);
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+      setFollowRequests([]); // Set an empty array in case of an error
+    }
+  };
+  
 
 
 
@@ -82,6 +110,11 @@ export default function Updates() {
         handleDelete(notificationId);
       } else {
         setSuggestedUsers(prev =>
+          prev.map(user =>
+            user._id === targetId ? { ...user, followStatus: action === 'follow' ? 'unfollow' : 'follow' } : user
+          )
+        );
+        setAllSuggestedUsers(prev =>
           prev.map(user =>
             user._id === targetId ? { ...user, followStatus: action === 'follow' ? 'unfollow' : 'follow' } : user
           )
@@ -114,6 +147,12 @@ export default function Updates() {
         params: { query },
         headers: { Authorization: `Bearer ${token}` }
       });
+      console.log(response);
+      if (!response.data || !Array.isArray(response.data.users)) {
+        console.error("Error: Expected an array but got:", response.data);
+        setSuggestedUsers([]); // Ensure followRequests is always an array
+        return;
+      }
       setSuggestedUsers(response.data.users);
     } catch (error) {
       console.error('Error fetching users:', error);
@@ -136,6 +175,13 @@ export default function Updates() {
       console.log("Fetching friends for userId:", userId);
       const response = await axios.get(`/user/${userId}/friends`);
       
+      if (!response.data || !Array.isArray(response.data.friends)) {
+        console.error("Error: Expected an array but got:", response.data);
+        setFriends([]); // Ensure followRequests is always an array
+        return;
+      }
+  
+
       setFriends(response.data.friends);
     
     } catch (error) {
@@ -199,12 +245,35 @@ export default function Updates() {
         params: { emptyquery },
         headers: { Authorization: `Bearer ${token}` }
       });
+      if (!response.data || !Array.isArray(response.data.users)) {
+        console.error("Error: Expected an array but got:", response.data);
+        setAllSuggestedUsers([]); // Ensure followRequests is always an array
+        return;
+      }
       setAllSuggestedUsers(response.data.users);
     } catch (error) {
       console.error('Error fetching users:', error);
     }
   }, []);
 
+
+  useEffect(()=>{
+
+    if(activeTab==='friends')
+    {
+      fetchFriends();
+    }
+   
+    else if(activeTab==='people'){
+      fetchAllUserSuggestions();
+
+    }
+    else if(activeTab==='search'){
+      fetchUsers();
+    }
+
+
+  },[activeTab])
 
 
   return (
@@ -253,36 +322,41 @@ export default function Updates() {
         </div>
 
         {activeTab === 'requests' && (
-          <div>
-            {followRequests.map((notif, index) => (
-              <div key={index} className="border border-gray-300 p-4 flex items-center mb-3">
-                <div className="w-16 h-16 bg-gray-200 flex items-center justify-center border mr-4">
-                  <img 
-                    src={notif.senderId.profilePic} 
-                    alt="profile" 
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-bold">{notif.senderId.fullname}</h3>
-                  <p className="text-sm text-gray-500">{notif.title}</p>
-                  <div className="mt-2 flex space-x-2">
-                    <button 
-                      onClick={() => handleFollowUnfollow(notif.senderId._id, 'follow', notif._id)}
-                      className="bg-blue-600 text-white text-sm px-3 py-1 rounded">
-                      Confirm
-                    </button>
-                    <button 
-                      onClick={() => handleDelete(notif._id)}
-                      className="bg-gray-200 text-sm px-3 py-1 rounded">
-                      Not Now
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
+  <div>
+    {followRequests.length > 0 ? (
+      followRequests.map((notif, index) => (
+        <div key={index} className="border border-gray-300 p-4 flex items-center mb-3">
+          <div className="w-16 h-16 bg-gray-200 flex items-center justify-center border mr-4">
+            <img 
+              src={notif.senderId.profilePic} 
+              alt="profile" 
+              className="w-full h-full object-cover"
+            />
           </div>
-        )}
+          <div className="flex-1">
+            <h3 className="font-bold">{notif.senderId.fullname}</h3>
+            <p className="text-sm text-gray-500">{notif.title}</p>
+            <div className="mt-2 flex space-x-2">
+              <button 
+                onClick={() => handleFollowUnfollow(notif.senderId._id, 'follow', notif._id)}
+                className="bg-blue-600 text-white text-sm px-3 py-1 rounded">
+                Confirm
+              </button>
+              <button 
+                onClick={() => handleDelete(notif._id)}
+                className="bg-gray-200 text-sm px-3 py-1 rounded">
+                Not Now
+              </button>
+            </div>
+          </div>
+        </div>
+      ))
+    ) : (
+      <p>No follow requests</p>
+    )}
+  </div>
+)}
+
 
 
         {activeTab === 'search' && (

@@ -15,7 +15,7 @@ import { fetchUserDetails } from "./userPosts.js";
 import { messaging, getToken, onMessage } from './notifications/firebase.js';
 // import {  onMessage } from './notifications/firebase';
 
-
+import { useChatStore } from "./useChatStore";
 
 const Home = () => {
   const [currentuser, setCurrentUser] = useState({ username: "", profilePic: "" });
@@ -23,8 +23,24 @@ const Home = () => {
   const {user,setUser,socket,connectSocket}= useSocket();
   const [isLoading, setIsLoading] = useState(true); 
   const backendBaseUrl="http://localhost:7000"; 
+  // const { startNotificationPolling, stopNotificationPolling } = useChatStore();
   const renderurl="https://socialmedia-backend-2njs.onrender.com";
  
+
+
+//   useEffect(() => {
+//     console.log("POLLING STARTED!")
+//     startNotificationPolling();
+    
+
+//     return () => {
+//         console.log("POLLING STOPPED!");
+//         stopNotificationPolling(); 
+//     };
+
+
+// }, []);
+
 //for push notifications ! 
  
   onMessage(messaging, (payload) => {
@@ -52,7 +68,7 @@ const Home = () => {
             console.log('✅ FCM Token:', token);
             
             // 🔹 Send token to backend
-            await axios.post('http://localhost:7000/update-fcm-token', {
+            await axios.post('/update-fcm-token', {
               userId:user.userId,
               token,
             });
@@ -161,6 +177,7 @@ const Home = () => {
         setUser(res.data);
     }
     catch(e){
+      console.log("error here in catch");
       console.log(e);
     }
   }

@@ -386,7 +386,7 @@ const PostComponent = () => {
   const fetchPosts = async () => {
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch(`/posts/get`, {
+      const response = await fetch(`http://localhost:7000/posts/get`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (!response.ok) {
@@ -875,14 +875,88 @@ const goToUserProfile = (userId) => {
   // userId===currentuserId?navigate(`/profile`):navigate(`/other/${userId}`);
 };
 
-useEffect(()=>{
-  if(profileId!=null){
-    if(profileId==currentuserId)
+// useEffect(async ()=>{
+//   if(profileId!=null){
+//     if(profileId==currentuserId){
+      
+//       navigate('/profile');
+//     }
+//     else {
+
+//       const token=localStorage.getItem('token');
+//       if(!token)
+//         return;
+//       await axios.post("http://localhost:7000/send-notification",
+//         {
+//           userId: profileId,    // The owner of the post
+//           senderId: currentuserId,         // The person who commented
+//           type: "Profile View Notification",
+//           title: "Profile View",
+//           body: "Viewed Your Profile ",    // Send the comment text as notification body
+//         },
+//         {
+//           headers: {
+//             "Content-Type": "application/json",
+//             Authorization: `Bearer ${token}`,
+//           }
+//         }
+//       );
+
+//       console.log("✅ View Notification Sent Successfully");
+
+//       alert("navigating to other profile! ");
+//       console.log("before navigating!");
+//       console.log(profileId)
+//       console.log(currentuserId);
+
+//       navigate('/other');
+//     }
+//   }
+// },[profileId]);
+
+useEffect(() => {
+  const sendNotification = async () => {
+    if (profileId != null) {
+      if (profileId === currentuserId) {
         navigate('/profile');
-    else 
-        navigate('/other');
-  }
-},[profileId]);
+      } else {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+
+        try {
+          await axios.post(
+            "/send-notification",
+            {
+              userId: profileId, // The owner of the post
+              senderId: currentuserId, // The person who commented
+              type: "Profile View Notification",
+              title: "Profile View",
+              body: "Viewed Your Profile", // Send the comment text as notification body
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          console.log("✅ View Notification Sent Successfully");
+          alert("Navigating to other profile!");
+          console.log("Before navigating!");
+          console.log("Profile ID:", profileId);
+          console.log("Current User ID:", currentuserId);
+
+          navigate('/other');
+        } catch (error) {
+          console.error("Error sending notification:", error);
+        }
+      }
+    }
+  };
+
+  sendNotification(); // Call the async function inside useEffect
+}, [profileId]);
 
 // const handleMediaChange = (e) => {
 //   const file = e.target.files[0];
@@ -1030,7 +1104,7 @@ return (
   <div className="post-component-container" style={postComponentContainerStyle}>
 
   {/* <Fest /> */}
-  <HoliBanner />
+  {/* <HoliBanner /> */}
   
   <div style={postInputContainerStyle}>
   <form onSubmit={handleSubmit}>

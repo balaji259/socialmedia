@@ -43,6 +43,10 @@ import Updates from "./components/Updates.jsx"
 import Fest from "./components/Fest";
 
 import HolyBanner from "./components/Holy";
+import Groups from "./components/Groups"
+import Community from "./components/Community.jsx";
+
+import Create from "./components/Create.jsx"
 
 const RoutesComponent = () => {
     return (
@@ -94,6 +98,10 @@ const RoutesComponent = () => {
                 <Route path="/notifications" element={<Notifications />} />
                 <Route path="/fest" element={<Fest />} />
                 <Route path="/holy" element={<HolyBanner />} />
+                <Route path="/groups" element={<Groups />} />
+                <Route path="/community" element={<Community />} />
+
+                <Route path="/create" element={<Create />} /> 
 
             </Routes>
         </Router>

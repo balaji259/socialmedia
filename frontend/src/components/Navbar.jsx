@@ -23,37 +23,44 @@ const Navbar = ({ username, profilePic }) => {
       navigate('/feedback');
     }
 
-     // ✅ Function to fetch unread notifications count
-  const fetchNotificationCount = async (userId) => {
+ 
+ 
+   // ✅ Function to fetch unread notifications count
+   const fetchNotificationCount = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (!token) return;
-      
+
+      const decoded = jwtDecode(token);
+      const userId = decoded.userId;
+
       const res = await axios.get(`/notifications/unread/count/${userId}`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
+      console.log("res");
+      console.log(res);
 
-      // ✅ Set the notification count
+      // ✅ Update notification count
       setNotificationCount(res.data.unreadCount);
-
     } catch (error) {
       console.error("Error fetching notification count", error);
     }
   };
 
-  // useEffect(() => {
-  //   fetchNotificationCount();
-  // },[]);
-
+  // ✅ Fetch notifications every 5 seconds
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      const decoded = jwtDecode(token);
-      const userId = decoded.userId;
-      fetchNotificationCount(userId);
-    }
+    fetchNotificationCount(); // Fetch once on mount
+
+    const intervalId = setInterval(() => {
+      fetchNotificationCount();
+    }, 5000);
+
+    return () => clearInterval(intervalId); // Cleanup interval on unmount
   }, []);
-    
+
+
+
+
   return (
     <nav className="fixed top-0 left-0 w-full flex flex-wrap justify-between items-center py-3 px-4 bg-gray-100 border-b-2 border-gray-300 z-10 shadow-md">
       {/* Left side: Brand Logo and Tagline */}
@@ -65,29 +72,10 @@ const Navbar = ({ username, profilePic }) => {
         </div>
       </div>
 
-
-       {/* Center: Valentine's Text */}
-       {/* <div className="hidden sm:flex items-center justify-center space-x-2">
-        <span className="text-red-500 text-xl sm:text-2xl">❤️</span>
-        <div className="text-center">
-          <h2 className="text-red-500 font-semibold text-sm sm:text-lg">
-            Celebrate Valentine's with Friendsbook
-          </h2>
-          <p className="text-pink-500 text-xs sm:text-sm">
-            Share the love with your circle! 💖
-          </p>
-        </div>
-        <span className="text-red-500 text-xl sm:text-2xl">❤️</span>
-      </div> */}
-
       {/* Right side: Profile Picture and Username */}
       <div className="flex items-center space-x-2 cursor-pointer" > 
 
-     {/* //added */}
 
-     {/* <button class="pr-2 text-red-500" onClick={sendFeedback}>
-      Feedback
-     </button> */}
      <div className="relative cursor-pointer mr-4" onClick={()=>{navigate('/notifications')}}>
       <FaBell size={24} color="#3b5998" />
 

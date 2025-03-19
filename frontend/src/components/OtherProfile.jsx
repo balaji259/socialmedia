@@ -28,7 +28,6 @@ const Profile = () => {
     const {onlineUsers} =useSocket();   
     const {profileId, setProfileId, chatUserId, setChatUserId}=useChatStore();
     // const userId=profileId;
-
     
     
   
@@ -42,7 +41,11 @@ const Profile = () => {
     const fetchuserId= async ()=>{
         try{
           const token = localStorage.getItem("token");
-
+          if(!token){
+            alert("No token bro!")
+            return;
+          }
+          
           // Decode the JWT token to get the userId
           const payload = parseJwt(token);
           if (!payload || !payload.userId) {
@@ -63,6 +66,12 @@ const Profile = () => {
 
       const parseJwt = (token) => {
         try {
+            if(!token)
+            {
+              alert("error here");
+              return;
+
+            }
             const base64Url = token.split(".")[1];
             const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
             return JSON.parse(window.atob(base64));
@@ -74,7 +83,8 @@ const Profile = () => {
 
     useEffect(()=>{
       console.log("target user uid",profileId);
-        fetchuserId();
+      
+      fetchuserId();
       },[currentUserId])
 
 useEffect(()=>{
@@ -84,8 +94,11 @@ useEffect(()=>{
 
       const handleChat = (profileId) => {
 
+        if(profileId){
+          
           setChatUserId(profileId);
           navigate("/chats");
+        }
     
       };
 
@@ -98,7 +111,7 @@ useEffect(()=>{
 
       useEffect(() => {
         // Fetch user data by userId
-        if(profileId){
+        if(profileId && profileId !== undefined){
           console.log("useriod from fetching-",profileId);
           axios.get(`/user/viewProfile/${profileId}`)
               .then((response) => {
@@ -115,6 +128,10 @@ useEffect(()=>{
 
  const checkConnection = async () => {
     try {
+      if(!currentUserId || !profileId){
+        alert("error here");
+        return;
+      }
       const response = await axios.get(`/profile/check-connection/${currentUserId}/${profileId}`);
       setConnectionStatus(response.data);
     } catch (error) {
@@ -140,7 +157,7 @@ const fetchMutualFriends = async () => {
 async function getFriendsDetails(profileId) {
     try {
       console.log("before");
-      const response = await fetch(`/profile/getfriends/${profileId}`);
+      const response = await fetch(`http://localhost:7000/profile/getfriends/${profileId}`);
       console.log("after");
       console.log(response);
       if (!response.ok) {
@@ -163,27 +180,33 @@ async function getFriendsDetails(profileId) {
    // Fetch connection status
  
    if(profileId && currentUserId)
-        checkConnection();
-        fetchMutualFriends();
-        getFriendsDetails(profileId);
-        fetchFollowStatus();
+    {
+
+      checkConnection();
+      fetchMutualFriends();
+      getFriendsDetails(profileId);
+      fetchFollowStatus();
+    }
  }, [currentUserId, profileId]);
 
 
    // Fetch initial follow status
    const fetchFollowStatus = async () => {
-    try {
+    if(profileId && currentUserId){
+
+      try {
       const response = await axios.get(
         `/profile/isFollowing/${profileId}/${currentUserId}`);
-      
-      console.log("follow status");
-      console.log(response.data.isFollowing);
-      setIsFollowing(response.data.isFollowing); // Assuming API returns { isFollowing: true/false }
-    } catch (error) {
-      console.error("Error fetching follow status:", error);
+        
+        console.log("follow status");
+        console.log(response.data.isFollowing);
+        setIsFollowing(response.data.isFollowing); // Assuming API returns { isFollowing: true/false }
+      } catch (error) {
+        console.error("Error fetching follow status:", error);
+      }
     }
-  };
-
+    };
+    
     // Toggle Follow/Unfollow
     const handleFollowToggle = async () => {
         setLoading(true); // Show loading indicator on button
@@ -269,7 +292,7 @@ async function getFriendsDetails(profileId) {
 
           <div className="profile-photo relative">
   {/* Online indicator */}
-  {onlineUsers && Array.isArray(onlineUsers) && onlineUsers.includes(profileId) && (
+  {onlineUsers && Array.isArray(onlineUsers) && profileId && onlineUsers.includes(profileId) && (
     <div className="absolute top-0 left-0 flex items-center gap-1 bg-black bg-opacity-70 px-2 py-1 rounded-br-md">
       <span className="w-3 h-3 bg-green-500 rounded-full" />
       <span className="text-white text-sm">Online</span>

@@ -4,21 +4,9 @@ const router=express.Router();
 
 const Notification = require('../models/notification');
 
-// Route to fetch all notifications of a specific user
-// router.get('/getall/:userId', async (req, res) => {
-//   const { userId } = req.params;
+const { sendNotification } = require('../socket');
 
-//   try {
-//     const notifications = await Notification.find({ userId })
-//       .populate('senderId', 'username fullname profilePic')
-//       .sort({ createdAt: -1 });
 
-//     res.status(200).json(notifications);
-//   } catch (error) {
-//     console.error('Error fetching notifications:', error);
-//     res.status(500).json({ message: 'Server error' });
-//   }
-// });
 
 // Route to fetch all notifications of a specific user
 router.get('/getall/:userId', async (req, res) => {
@@ -78,5 +66,38 @@ router.get('/unread/count/:userId', async (req, res) => {
     }
   });
 
+
+
+// Create notification route
+router.post('/create', async (req, res) => {
+  try {
+    const { userId, senderId, body, type } = req.body;
+    
+    // Create notification in database
+    const newNotification = new Notification({
+      userId,
+      senderId,
+      body,
+      type,
+      isRead: false 
+    });
+    
+    const savedNotification = await newNotification.save();
+    
+    // Populate sender information before sending via socket
+    const populatedNotification = await Notification.findById(savedNotification._id)
+      .populate('senderId', 'username profilePic');
+    
+    // Send real-time notification via socket
+    sendNotification(userId, populatedNotification);
+    
+    res.status(201).json(savedNotification);
+  } catch (error) {
+    console.error('Error creating notification', error);
+    res.status(500).json({ message: 'Failed to create notification' });
+  }
+});
+
+  
 
 module.exports = router;
