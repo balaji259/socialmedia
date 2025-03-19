@@ -386,7 +386,7 @@ const PostComponent = () => {
   const fetchPosts = async () => {
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch(`http://localhost:7000/posts/get`, {
+      const response = await fetch(`/posts/get`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (!response.ok) {
