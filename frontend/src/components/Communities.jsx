@@ -3,35 +3,31 @@ import {useNavigate} from "react-router-dom";
 
 import axios from "axios";
 
-const Groups = () => {
+const Communities = () => {
 
   const navigate=useNavigate();
 
 
-  const [groups, setGroups] = useState([]);
+  const [communities, setCommunities] = useState([]);
 
   useEffect(() => {
-    const fetchGroups = async () => {
+    const fetchCommunities = async () => {
       try {
-        const response = await axios.get("/group/get/all");
+        const response = await axios.get("/community/get/all");
         console.log(response);
-        setGroups(response.data);
+        setCommunities(response.data);
       } catch (error) {
-        console.error("Error fetching groups:", error);
+        console.error("Error fetching communities:", error);
       }
     };
 
-    fetchGroups();
+    fetchCommunities();
   }, []);
 
 
   const handleNavigation=(id)=>{
     // console.log(id);
-    navigate(`/group/${id}`);
-  }
-
-  const creategroup=()=>{
-    navigate('/cgroup');
+    navigate(`/community/${id}`);
   }
 
 
@@ -49,10 +45,10 @@ const Groups = () => {
             />
           </div>
           <div className="ml-auto flex space-x-4">
-            <a onClick={()=>{navigate('/home')}} className="text-white text-sm font-semibold mr-4 cursor-pointer">Home</a>
-            <a onClick={()=>{navigate('/profile')}} className="text-white text-sm font-semibold mr-4 cursor-pointer">Profile</a>
-            <a onClick={()=>{navigate('/chats')}} className="text-white text-sm font-semibold mr-4 cursor-pointer">Messages</a>
-            <a onClick={()=>{navigate('/notifications')}} className="text-white text-sm font-semibold mr-4 cursor-pointer">Notifications</a>
+            <a onClick={()=>{navigate('/home')}} className="text-white text-sm font-semibold mr-4">Home</a>
+            <a onClick={()=>{navigate('/profile')}} className="text-white text-sm font-semibold mr-4">Profile</a>
+            <a onClick={()=>{navigate('/chats')}} className="text-white text-sm font-semibold mr-4">Messages</a>
+            <a onClick={()=>{navigate('/notifications')}} className="text-white text-sm font-semibold mr-4">Notifications</a>
           </div>
         </div>
       </nav>
@@ -73,26 +69,26 @@ const Groups = () => {
         {/* Groups Section */}
         <div className="w-3/4 bg-white p-4 shadow-sm rounded-md flex-1 h-full overflow-y-auto">
           <div className="flex justify-between items-center mb-4">
-            <h1 className="text-xl font-bold">Your Groups</h1>
-            <button onClick={creategroup} className="bg-[#4267B2] text-white px-4 py-1 text-sm font-semibold rounded-md hover:bg-[#3b5998]">
-              + Create New Group
+            <h1 className="text-xl font-bold">Your Communities</h1>
+            <button onClick={()=>{navigate('/ccom')}} className="bg-[#4267B2] text-white px-4 py-1 text-sm font-semibold rounded-md hover:bg-[#3b5998]">
+              + Create New Community
             </button>
           </div>
           {/* Groups Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {groups.map((group) => (
-              <div key={group._id} className="border border-gray-300 rounded-md overflow-hidden">
+            {communities.map((com) => (
+              <div key={com._id} className="border border-gray-300 rounded-md overflow-hidden">
                 <div className="h-36 bg-gray-300">
-                  <img src={group.profilePicture}  alt="Profile Picture" className="w-full h-full object-cover" />
+                  <img src={com.profilePicture}  alt="Profile Picture" className="w-full h-full object-cover" />
                   
 
                 </div>
                 <div className="p-3">
-                  <h3 className="text-[#3b5998] font-bold text-sm">{group.name}</h3>
-                  <p className="text-gray-600 text-xs">{group.members.length} members • {group.posts.length} posts</p>
-                  <p className="text-gray-800 text-xs mt-1">{group.description}</p>
-                  <button className="w-full mt-2 bg-gray-200 text-[#3b5998] py-1 text-sm font-semibold rounded-md hover:bg-gray-300" onClick={()=>{handleNavigation(group._id)}}>
-                    View Group
+                  <h3 className="text-[#3b5998] font-bold text-sm">{com.name}</h3>
+                  <p className="text-gray-600 text-xs">{com.members.length} members • {com.posts.length} posts</p>
+                  <p className="text-gray-800 text-xs mt-1">{com.description}</p>
+                  <button className="w-full mt-2 bg-gray-200 text-[#3b5998] py-1 text-sm font-semibold rounded-md hover:bg-gray-300" onClick={()=>{handleNavigation(com._id)}}>
+                    View Community
                   </button>
                 </div>
               </div>
@@ -104,4 +100,4 @@ const Groups = () => {
   );
 };
 
-export default Groups;
+export default Communities;

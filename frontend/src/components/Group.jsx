@@ -1,41 +1,52 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
+import {useNavigate} from "react-router-dom";
 
-const CommunityPage = () => {
+const GroupPage = () => {
   const { id } = useParams(); // Get groupId from URL
-  const [community, setCommunity] = useState(null);
+  const [group, setGroup] = useState(null);
   const [loading, setLoading] = useState(true);
   const [recentMembers, setRecentMembers] = useState([]);
 
+  const navigate=useNavigate(); 
+
+
   const token=localStorage.getItem('token');
+  if(!token)
+  {
+    alert("Please login first");
+  }
+
   const decoded=jwtDecode(token);
   const userId=decoded.userId;
 
+
   useEffect(() => {
-    const fetchCommunity = async () => {
+    const fetchGroup = async () => {
       try {
-        console.log("CommunityId", id);
-        const response = await fetch(`/community/${id}`);
-        if (!response.ok) throw new Error("Failed to fetch community data");
+        console.log("groupId", id);
+        const response = await fetch(`/group/${id}`);
+        if (!response.ok) throw new Error("Failed to fetch group data");
         
         const data = await response.json();
         console.log("data", data);
-        setCommunity(data);
+        setGroup(data);
       } catch (error) {
-        console.error("Error fetching community:", error);
+        console.error("Error fetching group:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchCommunity();
+    fetchGroup();
   }, [id]);
+
 
   useEffect(() => {
     const fetchRecentMembers = async () => {
       try {
-        const response = await fetch(`/community/${id}/recent-members`);
+        const response = await fetch(`/group/${id}/recent-members`);
         if (!response.ok) throw new Error("Failed to fetch recent members");
 
         const data = await response.json();
@@ -52,10 +63,13 @@ const CommunityPage = () => {
 
 
 
-  const handleJoinCommunity = async () => {
+
+
+
+  const handleJoinGroup = async () => {
 
     try {
-      const response = await fetch(`/community/${id}/join`, {
+      const response = await fetch(`/group/${id}/join`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -79,9 +93,11 @@ const CommunityPage = () => {
     }
   };
 
+  
+
 
   if (loading) return <div className="text-center p-10">Loading...</div>;
-  if (!community) return <div className="text-center p-10">Community not found</div>;
+  if (!group) return <div className="text-center p-10">Group not found</div>;
 
   return (
     <div className="bg-gray-100 min-h-screen">
@@ -89,39 +105,39 @@ const CommunityPage = () => {
         <h1 className="text-2xl font-bold">friendsbook</h1>
         <input type="text" placeholder="Search" className="p-2 text-black rounded w-1/3" />
         <nav className="space-x-6">
-          <a href="#" className="hover:underline">Home</a>
-          <a href="#" className="hover:underline">Profile</a>
-          <a href="#" className="hover:underline">Messages</a>
+          <a onClick={()=>{navigate('/home')}} className="hover:underline cursor-pointer">Home</a>
+          <a onClick={()=>{navigate('/profile')}} className="hover:underline cursor-pointer">Profile</a>
+          <a onClick={()=>{navigate('/chats')}} className="hover:underline cursor-pointer">Messages</a>
         </nav>
       </header>
 
       <div
         className="h-52 flex items-center justify-center text-gray-600 text-2xl font-semibold"
-        style={{ backgroundImage: `url(${community.coverPhoto || "https://via.placeholder.com/800x200"})`, backgroundSize: "cover", backgroundPosition: "center" }}
+        style={{ backgroundImage: `url(${group.coverPhoto || "https://via.placeholder.com/800x200"})`, backgroundSize: "cover", backgroundPosition: "center" }}
       />
 
       <div className="max-w-6xl mx-auto p-6 grid grid-cols-4 gap-6">
         {/* Left Sidebar */}
         <div className="space-y-6">
           <div className="bg-white p-5 rounded shadow-lg">
-            <h3 className="font-bold text-lg">About This Community</h3>
-            <p className="text-sm text-gray-600">{community.description || "No description available."}</p>
-            <p className="text-sm text-gray-600">Created on: {new Date(community.createdAt).toDateString()}</p>
-            <p className="text-sm font-bold">Type: {community.privacy.charAt(0).toUpperCase() + community.privacy.slice(1)} Community</p>
-            {/* <button className="bg-blue-700 text-white px-4 py-2 rounded mt-4 w-full hover:bg-blue-800">Join Community</button> */}
-            {!community.members.includes(userId) && (
+            <h3 className="font-bold text-lg">About This Group</h3>
+            <p className="text-sm text-gray-600">{group.description || "No description available."}</p>
+            <p className="text-sm text-gray-600">Created on: {new Date(group.createdAt).toDateString()}</p>
+            <p className="text-sm font-bold">Type: {group.privacy.charAt(0).toUpperCase() + group.privacy.slice(1)} Group</p>
+            {/* <button className="bg-blue-700 text-white px-4 py-2 rounded mt-4 w-full hover:bg-blue-800">Join Group</button> */}
+            {!group.members.includes(userId) && (
             <button
-              onClick={handleJoinCommunity}
+              onClick={handleJoinGroup}
               className="bg-blue-700 text-white px-4 py-2 rounded mt-4 w-full hover:bg-blue-800"
             >
-              Join Community
+              Join Group
             </button>
           )}
           </div>
           <div className="bg-white p-5 rounded shadow-lg">
-            <h3 className="font-bold text-lg">Community Admins</h3>
-            {community.admins.length > 0 ? (
-              community.admins.map((admin) => <p key={admin._id} className="text-sm text-gray-600">{admin.name}</p>)
+            <h3 className="font-bold text-lg">Group Admins</h3>
+            {group.admins.length > 0 ? (
+              group.admins.map((admin) => <p key={admin._id} className="text-sm text-gray-600">{admin.name}</p>)
             ) : (
               <p className="text-sm text-gray-600">No admins available.</p>
             )}
@@ -142,8 +158,8 @@ const CommunityPage = () => {
             </div>
           </div>
 
-          {community.posts.length > 0 ? (
-            community.posts.map((post) => (
+          {group.posts.length > 0 ? (
+            group.posts.map((post) => (
               <div key={post._id} className="bg-white p-5 rounded shadow-lg">
                 <div className="flex space-x-4">
                   <div className="bg-gray-300 w-12 h-12 rounded-full"></div>
@@ -170,7 +186,13 @@ const CommunityPage = () => {
         <div className="space-y-6">
           <div className="bg-white p-5 rounded shadow-lg">
             <h3 className="font-bold text-lg">Recent Photos</h3>
-            
+            {/* {group.events.length > 0 ? (
+              group.events.map((event) => (
+                <p key={event._id} className="text-sm text-gray-600">{event.name} - {new Date(event.date).toDateString()}</p>
+              ))
+            ) : (
+              <p className="text-sm text-gray-600">No upcoming events.</p>
+            )} */}
 
               <p className="text-sm text-gray-600">No Recent Photos available</p>  
 
@@ -197,4 +219,4 @@ const CommunityPage = () => {
   );
 };
 
-export default CommunityPage;
+export default GroupPage;

@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const GroupSchema = new mongoose.Schema(
+const CommunitySchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -66,5 +66,5 @@ const GroupSchema = new mongoose.Schema(
   }
 );
 
-const Group = mongoose.model("Group", GroupSchema);
-module.exports = Group;
+const Community = mongoose.model("Community", CommunitySchema);
+module.exports = Community;

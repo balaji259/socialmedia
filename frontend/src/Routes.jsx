@@ -43,10 +43,15 @@ import Updates from "./components/Updates.jsx"
 import Fest from "./components/Fest";
 
 import HolyBanner from "./components/Holy";
-import Groups from "./components/Groups"
+import Groups from "./components/Groups";
+import Communities from "./components/Communities";
 import Community from "./components/Community.jsx";
 
 import Create from "./components/Create.jsx"
+import CreateGroup from "./components/Creategroup.jsx";
+import CreateCommunity from "./components/CreateCommunity.jsx";
+
+import Group from "./components/Group.jsx";
 
 const RoutesComponent = () => {
     return (
@@ -99,9 +104,15 @@ const RoutesComponent = () => {
                 <Route path="/fest" element={<Fest />} />
                 <Route path="/holy" element={<HolyBanner />} />
                 <Route path="/groups" element={<Groups />} />
-                <Route path="/community" element={<Community />} />
+                <Route path="/communities" element={<Communities />} />
 
                 <Route path="/create" element={<Create />} /> 
+                <Route path="/cgroup" element={<CreateGroup />} />
+
+                <Route path="/ccom" element={<CreateCommunity />} />
+
+                <Route path="/group/:id" element={<Group />} />
+                <Route path="/community/:id" element={<Community />} />
 
             </Routes>
         </Router>

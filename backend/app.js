@@ -11,8 +11,10 @@ const streakRouter=require('./routes/streak');
 const chatRouter=require("./routes/message");
 const feedbackRouter=require("./routes/feedback.js");
 const notificationRouter=require("./routes/notifications.js");
+const groupRouter=require("./routes/group.js");
 const User=require("./models/users.js");
 const Notification=require("./models/notification")
+const communityRouter=require("./routes/community.js");
 
 const {sendNotification} =require("./notificationService.js");
 // const otpRoutes = require('./routes/otpRoutes')
@@ -61,6 +63,8 @@ app.use('/streak',streakRouter);
 app.use('/messages',chatRouter);
 app.use('/feedback',feedbackRouter);
 app.use('/notifications',notificationRouter);
+app.use('/group',groupRouter);
+app.use('/community',communityRouter);
 
 
 
