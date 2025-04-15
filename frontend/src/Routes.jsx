@@ -48,10 +48,27 @@ import Communities from "./components/Communities";
 import Community from "./components/Community.jsx";
 
 import Create from "./components/Create.jsx"
-import CreateGroup from "./components/Creategroup.jsx";
+import CreateGroup from "./components/CreateGroup.jsx";
 import CreateCommunity from "./components/CreateCommunity.jsx";
 
 import Group from "./components/Group.jsx";
+import ExploreCommunities from "./components/ExploreCommunities.jsx";
+
+import ExploreGroups from "./components/ExploreGroups.jsx";
+
+import CreateEvent from "./components/CreateEvent.jsx";
+import Sections from "./components/Sections.jsx";
+
+import Events from "./components/Events.jsx";
+import Members from "./components/CommunityMembers.jsx";
+
+import CommunityMediaGallery from './components/CommunityMediaGallery.jsx';
+// import DiscussionPage from "./components/CommunityDiscussion.jsx";
+import DiscussionPage from "./components/CommunityDiscussion.jsx";
+
+import Announcements from "./components/Announcements.jsx";
+
+import GroupSections from "./components/GroupSections.jsx";
 
 const RoutesComponent = () => {
     return (
@@ -107,12 +124,36 @@ const RoutesComponent = () => {
                 <Route path="/communities" element={<Communities />} />
 
                 <Route path="/create" element={<Create />} /> 
+                
                 <Route path="/cgroup" element={<CreateGroup />} />
 
                 <Route path="/ccom" element={<CreateCommunity />} />
 
                 <Route path="/group/:id" element={<Group />} />
                 <Route path="/community/:id" element={<Community />} />
+
+                <Route path="/explore/communities" element={<ExploreCommunities />} />
+
+                <Route path="/explore/groups" element={<ExploreGroups />} />
+
+                <Route path="/create/:id/event" element={ <CreateEvent /> } />
+
+                <Route path="/community/:id/sections" element={<Sections />} />
+
+                <Route path="/events" element={<Events />} />
+
+                <Route path="/community/members" element={<Members />} />
+
+                <Route path="/community/:id/media" element={<CommunityMediaGallery />} />
+
+                <Route path="/community/:id/discussion" element={<DiscussionPage />} />
+
+                <Route path="/community/:id/announcements" element={<Announcements />} />
+
+                <Route path="/group/:id/sections" element={<GroupSections />} />
+
+            
+
 
             </Routes>
         </Router>

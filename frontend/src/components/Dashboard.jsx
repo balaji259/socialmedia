@@ -12,12 +12,15 @@ import { faMessage } from "@fortawesome/free-solid-svg-icons";
 import { faUserGroup } from "@fortawesome/free-solid-svg-icons";
 import { faRotate } from "@fortawesome/free-solid-svg-icons";
 import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
-// import { faArrowLeftFromBracket } from "@fortawesome/free-solid-svg-icons";
+
 import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { faNewspaper } from "@fortawesome/free-solid-svg-icons";
 import { faEnvelope, faCommentDots } from "@fortawesome/free-solid-svg-icons";
-{/* <FontAwesomeIcon icon="fa-regular fa-newspaper" /> */}
-{/* <FontAwesomeIcon icon={faArrowRightFromBracket} /> */}
+
+import { faUsers, faPeopleGroup, faNetworkWired, faCircleNodes } from '@fortawesome/free-solid-svg-icons';
+
+
+
 
 
 
@@ -95,19 +98,33 @@ const Dashboard = () => {
            <span className="menu-text">Chats</span>
             </button>
           
-          <button className="menu-item tooltip" onClick={() => navigate("/profile")}>
+          {/* <button className="menu-item tooltip" onClick={() => navigate("/profile")}>
            <FontAwesomeIcon icon={faUser}  id="profile" />
 
-           {/* <br /> */}
-           {/* Profile */}
+      
            <span className="menu-text">Profile</span>
+          </button> */}
+
+
+          <button className="menu-item tooltip" onClick={()=>{navigate('/communities')}}>
+         
+           <FontAwesomeIcon icon={faUsers} id="community" /> 
+
+           <span className="menu-text">Communities</span>
           </button>
+
+          <button className="menu-item tooltip" onClick={()=>{navigate('/groups')}}>
+         
+         <FontAwesomeIcon icon={faUsers} id="groups" /> 
+
+         <span className="menu-text">Groups</span>
+        </button>
+
+
 
           <button className="menu-item tooltip" onClick={inviteFriends}>
            <FontAwesomeIcon icon={faUserPlus} id="invite-friends" />
 
-           {/* <br /> */}
-           {/* Invite Friends */}
            <span className="menu-text">Invite</span>
           </button>
 
@@ -119,10 +136,12 @@ const Dashboard = () => {
            <span className="menu-text">Refresh</span>
           </button>
 
-          <button className="menu-item tooltip" onClick={()=>{navigate('/feedback')}}>
+          {/* <button className="menu-item tooltip" onClick={()=>{navigate('/feedback')}}>
           <FontAwesomeIcon icon={faCommentDots} id="feedback" />  
            <span className="menu-text">Feedback</span>
-          </button>
+          </button> */}
+
+
 
 
 

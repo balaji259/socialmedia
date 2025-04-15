@@ -3,7 +3,7 @@ import { jwtDecode } from "jwt-decode";
 import {useNavigate} from "react-router-dom";
 
 
-const CreateCommunity = () => {
+const CreateGroup = () => {
 
   const navigate=useNavigate();
 
@@ -68,7 +68,7 @@ const CreateCommunity = () => {
         console.log(pair[0] + ": " + pair[1]); // Log the form data being sent
       }
 
-      const response = await fetch("/community/create", {
+      const response = await fetch("/group/create", {
         method: "POST",
         body: formDataToSend,
       });
@@ -80,13 +80,13 @@ const CreateCommunity = () => {
       const result = await response.json();
       if (response.ok) {
         // alert("Page created successfully!");
-        navigate('/communities'); 
+        navigate('/groups'); 
       } else {
         alert(`Error: ${result.message}`);
       }
     } catch (error) {
       console.error("Error submitting form:", error);
-      alert("Failed to create the page.");
+      alert("Failed to create the group");
     }
   };
 
@@ -117,22 +117,23 @@ const CreateCommunity = () => {
               </li>
             ))}
           </ul> */}
-        <ul>
 
-            <li className="py-2 px-4 font-bold hover:bg-gray-200 rounded-md " onClick={()=>{navigate('/communities')}} >Your Communities</li>
-            <li className="py-2 px-4 hover:bg-gray-200 cursor-pointer" onClick={()=>{navigate('/explore/communities')}}>Discover</li>
-            <li className="py-2 px-4 bg-gray-200 cursor-pointer">Create Community</li>
+        <ul className="mt-2 text-sm flex-1">
+            <li className="py-2 px-4 font-bold hover:bg-gray-200 rounded-md" onClick={()=>{navigate('/groups')}}>Your Groups</li>
+            <li className="py-2 px-4 hover:bg-gray-200 cursor-pointer" onClick={()=>{navigate('/explore/groups')}}>Discover</li>
+            <li className="py-2 px-4 bg-gray-200 cursor-pointer" >Create Group</li>
+            {/* <li className="py-2 px-4 hover:bg-gray-200 cursor-pointer">Settings</li> */}
+          </ul>
 
-        </ul>
         </aside>
 
         <main className="flex-1 bg-white p-6 shadow-md mx-4">
-          <h1 className="text-2xl font-bold">Create a Community</h1>
-          <p className="text-gray-600">Create a Community for your organization or interest group.</p>
+          <h1 className="text-2xl font-bold">Create a Group</h1>
+          <p className="text-gray-600">Create a Group for your organization or interest group.</p>
 
           <form className="mt-4" onSubmit={handleSubmit}>
             <div className="mb-4">
-              <label className="block font-semibold">Community Name*</label>
+              <label className="block font-semibold">Group Name*</label>
               <input type="text" name="name" value={formData.name} onChange={handleChange} required className="w-full border p-2 rounded mt-1" />
             </div>
 
@@ -194,7 +195,7 @@ const CreateCommunity = () => {
             </div>
 
             <div className="flex justify-start gap-4 mt-4">
-              <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded-md">Create Page</button>
+              <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded-md">Create Group</button>
               <button type="button" className="bg-gray-400 text-white px-4 py-2 rounded-md">Cancel</button>
             </div>
           </form>
@@ -204,4 +205,4 @@ const CreateCommunity = () => {
   );
 };
 
-export default CreateCommunity;
+export default CreateGroup;

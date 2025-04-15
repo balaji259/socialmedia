@@ -1,4 +1,4 @@
-import React, {useEffect,useState} from 'react';
+import React, {useEffect,useState, useRef} from 'react';
 import { useNavigate } from "react-router-dom";
 import logo from '/images/logo.jpeg';
 import { FaBell } from 'react-icons/fa';
@@ -9,6 +9,13 @@ import axios from 'axios';
 const Navbar = ({ username, profilePic }) => {
 
   const [notificationCount, setNotificationCount] = useState(0);
+
+
+  const [open, setOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  
+
 
   const BACKEND_URL = 'http://localhost:7000';
   const profilePicUrl =
@@ -22,6 +29,18 @@ const Navbar = ({ username, profilePic }) => {
       // console.log("Send feedback!");
       navigate('/feedback');
     }
+
+      // Close dropdown if clicked outside
+      useEffect(() => {
+        const handleClickOutside = (e) => {
+          if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+            setOpen(false);
+          }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+      }, []);
+    
 
  
  
@@ -59,6 +78,13 @@ const Navbar = ({ username, profilePic }) => {
   }, []);
 
 
+  const toggleGoogleTranslate = () => {
+    const translateDiv = document.getElementById('google_translate_element');
+    if (translateDiv) {
+      translateDiv.classList.toggle('hidden');
+    }
+  };
+
 
 
   return (
@@ -88,7 +114,7 @@ const Navbar = ({ username, profilePic }) => {
 
      </div>
 
-        <img
+        {/* <img
           src={profilePicUrl}
           alt="Profile"
           onClick={()=>navigate(`/profile`)}
@@ -96,7 +122,63 @@ const Navbar = ({ username, profilePic }) => {
         />
         <p className="text-sm sm:text-base font-medium text-gray-800 truncate max-w-[6rem] sm:max-w-[10rem]" onClick={()=>navigate(`/profile`)}>
           {username || 'Username'}
+        </p> */}
+
+<div className="relative inline-block text-left" ref={dropdownRef}>
+      {/* Profile Summary (clickable) */}
+      <div
+        onClick={() => setOpen(!open)}
+        className="flex items-center gap-2 cursor-pointer"
+      >
+        <img
+          src={profilePicUrl}
+          alt="Profile"
+          className="w-8 h-8 sm:w-10 sm:h-10 rounded-md object-cover"
+        />
+        <p className="text-sm sm:text-base font-medium text-gray-800 truncate max-w-[6rem] sm:max-w-[10rem]">
+          {username || 'Username'}
         </p>
+      </div>
+
+      {/* Dropdown Content */}
+      {open && (
+        <div className="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg z-50 border">
+          <button
+            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            onClick={() => {
+              navigate('/profile');
+              setOpen(false);
+            }}
+          >
+            View Profile
+          </button>
+       
+          {/* <button
+                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                onClick={() => {
+                  toggleGoogleTranslate();
+                  setOpen(false);
+                }}
+              >
+                Google Translate
+              </button> */}
+
+
+              
+
+          <button
+            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            onClick={() => {
+              navigate('/feedback');
+              setOpen(false);
+            }}
+          >
+            Feedback
+          </button>
+        </div>
+      )}
+    </div>
+
       </div>
     </nav>
   );

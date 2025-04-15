@@ -1,12 +1,40 @@
 const express = require("express");
 const multer = require("multer");
 const Community = require("../models/community"); // Import the Group model
+const Discussion=require('../models/discussion');
+const Announcement=require('../models/announcements');
+
 const router = express.Router();
 
+const CommunityPosts=require("../models/communityposts");
 
 const formidable = require("formidable");
 
 const cloudinary = require('../cloudinaryConfig');
+
+const fs = require("fs");
+const path = require("path");
+const multiparty = require("multiparty");
+
+
+
+
+router.get("/:id/getdiscussions",async (req,res)=>{
+  
+  console.log("inside discussios rpuite!");
+  const { id } = req.params; // this is the community ID
+
+  try {
+    const messages = await Discussion.find({ communityId: id }).sort({ createdAt: 1 });
+    console.log(messages);
+    res.json(messages);
+  } catch (err) {
+    console.error("Error fetching community discussions:", err);
+    res.status(500).json({ error: "Failed to fetch messages" });
+  }
+
+})
+
 
 
 
@@ -35,7 +63,7 @@ router.post("/create", async (req, res) => {
         name,
         category,
         description,
-        visibility, // Fixed: Previously privacy was undefined
+        visibility,
         joinMethod,
         allowPosts,
         allowComments,
@@ -97,6 +125,9 @@ router.post("/create", async (req, res) => {
           profilePicture: profilePictureUrl,
           coverPhoto: coverPhotoUrl,
           createdBy,
+          members: [createdBy], // Add creator to members
+          admins: [createdBy],  // Add creator to admins
+    
           visibility: visibility || "public",
           joinMethod: joinMethod || "anyone",
           permissions: {
@@ -135,6 +166,19 @@ router.get("/get/all", async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+
+
+router.get("/get/communities/:userId", async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const communities = await Community.find({ members: userId }).populate("members posts");
+    res.json(communities);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 
 
 
@@ -207,5 +251,265 @@ router.get("/:id/recent-members", async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+
+
+router.get("/:id/admins", async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // Find the community and get the last 3 members
+    const community = await Community.findById(id).populate({
+      path: "admins",
+      options: { sort: { _id: -1 }, limit: 3 }, // Assuming _id follows insertion order
+    });
+
+    if (!community) {
+      return res.status(404).json({ message: "Community not found" });
+    }
+
+    res.json({ admins: community.admins });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// GET /community/:id - Fetch community details by ID
+router.get("get-details/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    console.log("in try!");
+    const community = await Community.findById(id)
+      .populate("createdBy", "name email") // populate basic creator info
+      .populate("members", "_id name")     // you can customize the fields
+      .populate("admins", "_id name")
+      .populate("posts");                  // optional: customize if needed
+
+    if (!community) {
+      return res.status(404).json({ message: "Community not found" });
+    }
+
+    console.log(community);
+    res.status(200).json(community);
+  } catch (err) {
+    console.error("Error fetching community:", err);
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+});
+
+
+router.post("/:id/leave", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { userId } = req.body;
+
+    const community = await Community.findById(id);
+    if (!community) {
+      return res.status(404).json({ message: "Community not found" });
+    }
+
+    // Check if the user is a member
+    if (!community.members.includes(userId)) {
+      return res.status(400).json({ message: "You are not a member of this community" });
+    }
+
+    // Remove user from members list
+    community.members = community.members.filter((member) => member.toString() !== userId);
+
+    await community.save();
+
+    res.json({ message: "Successfully left the community" });
+  } catch (error) {
+    console.error("Error leaving community:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+router.post("/post", async (req, res) => {
+  try {
+
+      console.log("inside the post route!");
+
+      const form = new multiparty.Form();
+
+      form.parse(req, async (err, fields) => {
+          if (err) {
+              console.error("Form parse error:", err);
+              return res.status(500).json({ error: "Failed to parse form data" });
+          }
+
+          const userId = fields.userId?.[0];
+          const groupId = fields.groupId?.[0];
+          const caption = fields.caption?.[0]?.trim() || null;
+          const mediaUrl = fields.mediaContent?.[0] || null;
+
+          if (!userId || !groupId) {
+              return res.status(400).json({ error: "User ID and Group ID are required" });
+          }
+
+          let postType = "text";
+          if (mediaUrl) {
+              const ext = mediaUrl.split('.').pop().toLowerCase();
+              postType = ["mp4", "mov", "avi"].includes(ext) ? "video" : "image";
+          }
+
+          const post = new CommunityPosts({
+              user: userId,
+              group_id: groupId,
+              postType,
+              caption,
+              media: mediaUrl,
+          });
+
+          console.log(post);
+
+          await post.save();
+
+          res.status(201).json({ message: "Post created successfully", post });
+      });
+  } catch (error) {
+      console.error("Error creating post:", error);
+      res.status(500).json({ error: "Failed to create post" });
+  }
+});
+
+//get all posts of the community
+
+router.get('/posts/:groupId', async (req, res) => {
+  try {
+
+    const {groupId} = req.params;
+
+    const posts = await CommunityPosts.find( {group_id: groupId} )
+      .populate('user', 'name email profilePic username')           // Populate user details
+      .populate('group_id', 'name')             // Populate group details
+      .populate('comments')                     // Optional: populate comments if needed
+      .sort({ createdAt: -1 });                 // Sort newest first
+
+
+
+    console.log(posts);
+
+    res.status(200).json(posts);
+  } catch (error) {
+    console.error("Error fetching posts:", error);
+    res.status(500).json({ error: 'Failed to fetch posts' });
+  }
+});
+
+
+router.get("/:id/members", async (req, res) => {
+  try {
+    const community = await Community.findById(req.params.id).populate({
+      path: "members",
+      select: "fullname email profilePic", // 👈 use fields from your User schema
+    });
+
+    if (!community) {
+      return res.status(404).json({ message: "Community not found" });
+    }
+
+    console.log("Fetched members:", community.members);
+
+    res.json(community.members);
+  } catch (err) {
+    console.error("Error fetching members:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.get('/:id/media', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const mediaPosts = await CommunityPosts.find({
+      group_id: id,
+      postType: { $in: ['image', 'video'] },
+    })
+      .select('postType media caption createdAt') // only the necessary fields
+      .sort({ createdAt: -1 });
+
+    res.status(200).json(mediaPosts);
+  } catch (err) {
+    console.error('Error fetching media posts:', err);
+    res.status(500).json({ message: 'Server Error' });
+  }
+});
+
+
+//messages in discussion !
+
+router.get("/discussions",(req, res) => {
+  console.log("arey ikkade unnara ");
+  res.send("HEllow");
+});
+
+
+//announcement code below !
+
+// Get all announcements for a community
+router.get("/get/announcements/:communityId", async (req, res) => {
+  try {
+    console.log("Fetching announcements for community:", req.params.communityId);
+
+    const announcements = await Announcement.find({
+      cg_id: req.params.communityId,
+    })
+      .sort({ createdAt: -1 })
+      .populate("user", "name username profilePic"); // corrected from "createdBy"
+
+      console.log(announcements);
+    res.status(200).json(announcements);
+  } catch (err) {
+    console.log(`err: ${err}`);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
+
+// Route: /post/announcements/:id
+router.post("/post/announcements/:id", async (req, res) => {
+  try {
+    const { userId, cgId, caption, media } = req.body;
+
+    if (!userId || !cgId) {
+      return res.status(400).json({ message: "userId and comId are required" });
+    }
+
+    let postType = "text";
+    let mediaUrl = null;
+
+    if (media) {
+      mediaUrl = media;
+      const isVideo = media.includes(".mp4") || media.includes("video");
+      const isImage = media.includes(".jpg") || media.includes(".png") || media.includes("image");
+      postType = isVideo ? "video" : isImage ? "image" : "text";
+    }
+
+    const newAnnouncement = new Announcement({
+      user: userId,
+      cg_id:cgId,
+      caption,
+      postType,
+      media: mediaUrl,
+    });
+
+    console.log(newAnnouncement);
+
+    await newAnnouncement.save();
+
+    res.status(201).json({ message: "Announcement created successfully!", announcement: newAnnouncement });
+  } catch (error) {
+    console.error("Unexpected error:", error);
+    res.status(500).json({ message: "Unexpected Error", error: error.message });
+  }
+});
+
+
+
+
 
 module.exports = router;

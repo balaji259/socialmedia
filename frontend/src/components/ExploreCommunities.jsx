@@ -1,27 +1,19 @@
 import React, {useState, useEffect} from "react";
 import {useNavigate} from "react-router-dom";
-import {jwtDecode} from "jwt-decode";
+
 import axios from "axios";
 
-const Communities = () => {
+const ExploreCommunities = () => {
 
   const navigate=useNavigate();
 
+
   const [communities, setCommunities] = useState([]);
-
-
-  const token=localStorage.getItem('token');
-  if(!token){
-    alert('Login to access the page!');
-    navigate('/login');
-  }
-  const decoded=jwtDecode(token);
-  const userId=decoded.userId;
 
   useEffect(() => {
     const fetchCommunities = async () => {
       try {
-        const response = await axios.get(`/community/get/communities/${userId}`);
+        const response = await axios.get("/community/get/all");
         console.log(response);
         setCommunities(response.data);
       } catch (error) {
@@ -67,8 +59,8 @@ const Communities = () => {
         <div className="w-1/4 bg-white p-4 shadow-sm rounded-md h-full flex flex-col overflow-y-auto">
           <h2 className="text-[#3b5998] text-lg font-bold">Communities</h2>
           <ul className="mt-2 text-sm flex-1">
-            <li className="py-2 px-4 font-bold bg-gray-200 rounded-md " >Your Communities</li>
-            <li className="py-2 px-4 hover:bg-gray-200 cursor-pointer" onClick={()=>{navigate('/explore/communities')}}>Discover</li>
+            <li className="py-2 px-4 font-bold hover:bg-gray-200 rounded-md " onClick={()=>{navigate('/communities')}}>Your Communities</li>
+            <li className="py-2 px-4 bg-gray-200 cursor-pointer">Discover</li>
             <li className="py-2 px-4 hover:bg-gray-200 cursor-pointer" onClick={()=>{navigate('/ccom')}}>Create Community</li>
             {/* <li className="py-2 px-4 hover:bg-gray-200 cursor-pointer">Settings</li> */}
           </ul>
@@ -108,4 +100,4 @@ const Communities = () => {
   );
 };
 
-export default Communities;
+export default ExploreCommunities;

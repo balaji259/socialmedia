@@ -15,12 +15,14 @@ const groupRouter=require("./routes/group.js");
 const User=require("./models/users.js");
 const Notification=require("./models/notification")
 const communityRouter=require("./routes/community.js");
+const eventRouter=require("./routes/events.js");
+const morgan = require('morgan');
 
 const {sendNotification} =require("./notificationService.js");
 // const otpRoutes = require('./routes/otpRoutes')
 
 const {app,server} =require("./socket.js");
-
+app.use(morgan('dev'));
 const cors = require('cors');
 
 
@@ -65,6 +67,7 @@ app.use('/feedback',feedbackRouter);
 app.use('/notifications',notificationRouter);
 app.use('/group',groupRouter);
 app.use('/community',communityRouter);
+app.use('/events',eventRouter);
 
 
 

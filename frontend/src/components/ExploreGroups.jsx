@@ -1,41 +1,33 @@
 import React, {useState, useEffect} from "react";
 import {useNavigate} from "react-router-dom";
-import {jwtDecode} from "jwt-decode";
+
 import axios from "axios";
 
-const Communities = () => {
+const ExploreGroups = () => {
 
   const navigate=useNavigate();
 
-  const [communities, setCommunities] = useState([]);
 
-
-  const token=localStorage.getItem('token');
-  if(!token){
-    alert('Login to access the page!');
-    navigate('/login');
-  }
-  const decoded=jwtDecode(token);
-  const userId=decoded.userId;
+  const [groups, setGroups] = useState([]);
 
   useEffect(() => {
-    const fetchCommunities = async () => {
+    const fetchGroups = async () => {
       try {
-        const response = await axios.get(`/community/get/communities/${userId}`);
+        const response = await axios.get("/group/get/all");
         console.log(response);
-        setCommunities(response.data);
+        setGroups(response.data);
       } catch (error) {
         console.error("Error fetching communities:", error);
       }
     };
 
-    fetchCommunities();
+    fetchGroups();
   }, []);
 
 
   const handleNavigation=(id)=>{
     // console.log(id);
-    navigate(`/community/${id}`);
+    navigate(`/group/${id}`);
   }
 
 
@@ -67,9 +59,9 @@ const Communities = () => {
         <div className="w-1/4 bg-white p-4 shadow-sm rounded-md h-full flex flex-col overflow-y-auto">
           <h2 className="text-[#3b5998] text-lg font-bold">Communities</h2>
           <ul className="mt-2 text-sm flex-1">
-            <li className="py-2 px-4 font-bold bg-gray-200 rounded-md " >Your Communities</li>
-            <li className="py-2 px-4 hover:bg-gray-200 cursor-pointer" onClick={()=>{navigate('/explore/communities')}}>Discover</li>
-            <li className="py-2 px-4 hover:bg-gray-200 cursor-pointer" onClick={()=>{navigate('/ccom')}}>Create Community</li>
+            <li className="py-2 px-4 font-bold hover:bg-gray-200 rounded-md " onClick={()=>{navigate('/groups')}}>Your Groups</li>
+            <li className="py-2 px-4 bg-gray-200 cursor-pointer" onClick={()=>{navigate('/explore/groups')}}>Discover</li>
+            <li className="py-2 px-4 hover:bg-gray-200 cursor-pointer" onClick={()=>{navigate('/cgroup')}}>Create Group</li>
             {/* <li className="py-2 px-4 hover:bg-gray-200 cursor-pointer">Settings</li> */}
           </ul>
         </div>
@@ -77,14 +69,14 @@ const Communities = () => {
         {/* Groups Section */}
         <div className="w-3/4 bg-white p-4 shadow-sm rounded-md flex-1 h-full overflow-y-auto">
           <div className="flex justify-between items-center mb-4">
-            <h1 className="text-xl font-bold">Your Communities</h1>
-            <button onClick={()=>{navigate('/ccom')}} className="bg-[#4267B2] text-white px-4 py-1 text-sm font-semibold rounded-md hover:bg-[#3b5998]">
-              + Create New Community
+            <h1 className="text-xl font-bold">Your Groups</h1>
+            <button onClick={()=>{navigate('/cgroup')}} className="bg-[#4267B2] text-white px-4 py-1 text-sm font-semibold rounded-md hover:bg-[#3b5998]">
+              + Create New Group
             </button>
           </div>
           {/* Groups Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {communities.map((com) => (
+            {groups.map((com) => (
               <div key={com._id} className="border border-gray-300 rounded-md overflow-hidden">
                 <div className="h-36 bg-gray-300">
                   <img src={com.profilePicture}  alt="Profile Picture" className="w-full h-full object-cover" />
@@ -96,7 +88,7 @@ const Communities = () => {
                   <p className="text-gray-600 text-xs">{com.members.length} members • {com.posts.length} posts</p>
                   <p className="text-gray-800 text-xs mt-1">{com.description}</p>
                   <button className="w-full mt-2 bg-gray-200 text-[#3b5998] py-1 text-sm font-semibold rounded-md hover:bg-gray-300" onClick={()=>{handleNavigation(com._id)}}>
-                    View Community
+                    View Group
                   </button>
                 </div>
               </div>
@@ -108,4 +100,4 @@ const Communities = () => {
   );
 };
 
-export default Communities;
+export default ExploreGroups;

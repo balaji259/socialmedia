@@ -26,3 +26,4 @@ module.exports = {
     Post: mongoose.model('Post', postSchema),
     Comment: mongoose.model('Comment', commentSchema)
 };
+

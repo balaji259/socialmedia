@@ -4,6 +4,9 @@ const http = require("http");
 const express = require("express");
 const dotenv = require("dotenv");
 
+const Discussion = require("./models/discussion.js"); // Adjust the path as needed
+
+
 dotenv.config();
 
 const app = express();
@@ -61,6 +64,43 @@ io.on("connection", (socket) => {
 
   // Emit the updated list of online users
   io.emit("getOnlineUsers", Array.from(userSocketMap.keys()));
+
+
+  //discussions:
+  socket.on("joinCommunityRoom", ({ id, userName }) => {
+    console.log("In the join community room !");
+    console.log(id);
+    console.log(userName);
+    socket.join(id);
+    socket.to(id).emit("receiveMessage", {
+      sender: "System",
+      text: `${userName} joined the discussion`,
+      userId: null
+    });
+  });
+
+  socket.on("sendMessageToCommunity", async ({ communityId, userId, userName, text }) => {
+    console.log("Send message function !");
+    console.log({ communityId, userId, userName, text });
+    const newMsg = await Discussion.create({
+      communityId,
+      userId,
+      userName,
+      text
+    });
+
+    // io.to(communityId).emit("receiveMessage", {
+    //   sender: userName,
+    //   text,
+    //   userId
+    // });
+
+    io.to(communityId).emit("receiveMessage", {
+      ...newMsg.toObject()
+    });
+
+  });
+
 
   // Handle user disconnection
   socket.on("disconnect", () => {

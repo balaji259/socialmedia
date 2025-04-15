@@ -8,6 +8,23 @@
   </head>
   <body>
     <div id="root"></div>
+
+<!-- This is necessary so the global function is ready before script loads -->
+<script>
+  function googleTranslateElementInit() {
+    new google.translate.TranslateElement(
+      {
+        pageLanguage: 'en',
+        includedLanguages: 'en,hi,ta,te,kn,ml,bn,mr,gu,pa,ur',
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+      },
+      'google_translate_element'
+    );
+  }
+</script>
+<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

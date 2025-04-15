@@ -5,6 +5,9 @@ import WelcomeOverlay from './components/Welcome';
 // import { useChatStore } from "./components/useChatStore";
 
 
+
+
+
 const App = () => {
   
     // const { startNotificationPolling, stopNotificationPolling,startPostPolling, stopPostPolling } = useChatStore();
@@ -35,6 +38,7 @@ const App = () => {
 
     // }, []);
 
+    
 
   
 
@@ -42,6 +46,12 @@ const App = () => {
         <div>
            {/* {isLogin ? <Login onSwitch={handleSwitch} /> : <Register onSwitch={handleSwitch} />} */}
            <WelcomeOverlay />
+
+
+             {/* Google Translate Dropdown (Initially hidden, toggled from Navbar) */}
+      <div id="google_translate_element" className="hidden"></div>
+
+
         </div>
     );
 };
