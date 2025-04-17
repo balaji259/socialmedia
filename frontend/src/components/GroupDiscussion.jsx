@@ -5,7 +5,7 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { Send, Users } from "lucide-react";
 
-const backendBaseUrl = "http://localhost:7000";
+const backendBaseUrl = "https://friendsbook-cy0f.onrender.com";
 
 let socket;
 

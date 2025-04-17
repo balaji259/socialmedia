@@ -3,6 +3,7 @@ import { Navigate, useParams } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import axios from 'axios';
 import {useNavigate} from"react-router-dom";
+import { toast } from 'react-hot-toast';
 
 const CommunityPage = () => {
   const { id } = useParams(); // Get groupId from URL
@@ -10,6 +11,9 @@ const CommunityPage = () => {
   const [loading, setLoading] = useState(true);
   const [recentMembers, setRecentMembers] = useState([]);
   const [admins,setAdmins]=useState([]);
+  const [recentPhotos, setRecentPhotos] = useState([]);
+  const [selectedImage, setSelectedImage] = useState(null);
+
   const [user,setUser]=useState(null);
 
   const navigate=useNavigate();
@@ -49,6 +53,8 @@ const CommunityPage = () => {
 
 useEffect(()=>{
   getUserData();
+
+
 },[]);
 
 
@@ -110,6 +116,23 @@ useEffect(()=>{
     fetchAdmins();
   }, [id]);
 
+   useEffect(() => {
+        fetchRecentPhotos();
+  }, [id]);
+
+  const fetchRecentPhotos = async () => {
+    try {
+      const res = await axios.get(`/community/${id}/recent-photos`);
+      console.log("recent photos");
+      console.log(res);
+      setRecentPhotos(res.data);
+    } catch (error) {
+      console.error("Failed to fetch recent photos:", error);
+    }
+  };
+
+  
+
 
 
   const handleJoinCommunity = async () => {
@@ -132,7 +155,7 @@ useEffect(()=>{
           members: [...prev.members, userId], // Update frontend state
         }));
       } else {
-        alert(data.message);
+        toast.error(data.message);
       }
     } catch (error) {
       console.error("Error joining group:", error);
@@ -157,7 +180,7 @@ useEffect(()=>{
           members: prev.members.filter((member) => member !== userId), // Update frontend state
         }));
       } else {
-        alert(data.message);
+        toast.error(data.message);
       }
     } catch (error) {
       console.error("Error leaving community:", error);
@@ -173,32 +196,7 @@ useEffect(()=>{
   };
 
 
-  // const handleSubmit = async () => {
-  //   if (!text && !image) return;
-    
-  //   const formData = new FormData();
-  //   formData.append("text", text);
-  //   if (image) formData.append("image", image);
-    
-  //   try {
-  //     console.log("formdata");
-  //     // console.log(formData);
-  //     for (let pair of formData.entries()) {
-  //       console.log(pair[0], pair[1]);
-  //     }
-  //     const response = await fetch("/community/post", {
-  //       method: "POST",
-  //       body: formData,
-  //     });
-  //     if (response.ok) {
-  //       console.log("Post submitted successfully");
-  //       setText("");
-  //       setImage(null);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error submitting post", error);
-  //   }
-  // };
+  
 
 
   const handleSubmit = async (e) => {
@@ -207,12 +205,12 @@ useEffect(()=>{
     
     const token = localStorage.getItem("token");
     if (!token) {
-        alert("No token found. Please log in again.");
+        toast.error("No token found. Please log in again.");
         return;
     }
     
     if (!text?.trim() && !media) {
-        alert("Post cannot be empty!");
+        toast.error("Post cannot be empty!");
         // setIsPosting(false);
         return;
     }
@@ -277,10 +275,11 @@ useEffect(()=>{
         // setPostContent("");
         // setMediaContent(null);
         // if (fileInputRef.current) fileInputRef.current.value = "";
-        alert("Post created successfully");
+        toast.success("Post created successfully");
         setText("");
         setMedia(null);
         getAllPosts(); // Refresh posts
+        fetchRecentPhotos();
     } catch (error) {
         console.error("Error submitting form:", error);
         // toast.error("Error in creating post. Please try again.");
@@ -476,13 +475,24 @@ useEffect(()=>{
 
         {/* Right Sidebar (Newly Added) */}
         <div className="space-y-6">
-          <div className="bg-white p-5 rounded shadow-lg">
-            <h3 className="font-bold text-lg">Recent Photos</h3>
-            
-
-              <p className="text-sm text-gray-600">No Recent Photos available</p>  
-
+        <div className="bg-white p-5 rounded shadow-lg">
+        <h3 className="font-bold text-lg mb-2">Recent Photos</h3>
+        {recentPhotos.length > 0 ? (
+          <div className="flex overflow-x-auto space-x-4">
+            {recentPhotos.map((photo, idx) => (
+              <img
+                key={idx}
+                src={photo.media}
+                alt={`Recent ${idx}`}
+                className="w-24 h-24 object-cover rounded cursor-pointer"
+                onClick={() => setSelectedImage(photo.media)}
+              />
+            ))}
           </div>
+        ) : (
+          <p className="text-sm text-gray-600">No Recent Photos available</p>
+        )}
+      </div>
           <div className="bg-white p-5 rounded shadow-lg">
             <h3 className="font-bold text-lg">Recent Members</h3>
             <div className="flex space-x-4">
@@ -501,7 +511,38 @@ useEffect(()=>{
           </div>
         </div>
       </div>
+
+      {selectedImage && (
+  <div
+    className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50"
+    onClick={() => setSelectedImage(null)}
+  >
+    <div onClick={(e) => e.stopPropagation()} className="relative">
+      <img
+        src={selectedImage}
+        alt="Enlarged"
+        className="max-w-[90vw] max-h-[80vh] rounded shadow-lg"
+      />
+      <button
+        onClick={() => setSelectedImage(null)}
+        className="absolute top-2 right-2 bg-white text-black px-2 py-1 rounded hover:bg-gray-200"
+      >
+        ✖
+      </button>
     </div>
+  </div>
+)}
+
+
+
+
+
+    </div>
+
+
+ 
+
+
   );
 };
 

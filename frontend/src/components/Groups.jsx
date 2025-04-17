@@ -69,7 +69,7 @@ const Groups = () => {
           <ul className="mt-2 text-sm flex-1">
             <li className="py-2 px-4 font-bold bg-gray-200 rounded-md ">Your Groups</li>
             <li className="py-2 px-4 hover:bg-gray-200 cursor-pointer" onClick={()=>{navigate('/explore/groups')}}>Discover</li>
-            <li className="py-2 px-4 hover:bg-gray-200 cursor-pointer" onClick={()=>{navigate('/cgroup')}}>Create Community</li>
+            <li className="py-2 px-4 hover:bg-gray-200 cursor-pointer" onClick={()=>{navigate('/cgroup')}}>Create Group</li>
             {/* <li className="py-2 px-4 hover:bg-gray-200 cursor-pointer">Settings</li> */}
           </ul>
         </div>

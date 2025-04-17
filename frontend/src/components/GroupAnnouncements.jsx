@@ -190,7 +190,7 @@ const GroupAnnouncements = () => {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-6">
-      <h1 className="text-2xl font-bold mb-6 text-center">Announcements</h1>
+      <h1 className="text-2xl font-bold mb-6 text-center text-[#3b5998]">Announcements</h1>
 
       {/* {isAdmin && (
         <div className="bg-white shadow-md rounded p-4 mb-6">

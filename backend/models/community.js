@@ -42,7 +42,7 @@ const CommunitySchema = new mongoose.Schema(
     posts: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Post",
+        ref: "CommunityPosts",
       },
     ],
     privacy: {

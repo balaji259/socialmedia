@@ -363,6 +363,14 @@ router.post("/post", async (req, res) => {
               media: mediaUrl,
           });
 
+
+      //      // Update the Community to include this post
+      // await Community.findByIdAndUpdate(
+      //   {group_id:groupId},
+      //   { $push: { posts: post._id } },
+      //   { new: true }
+      // );
+
           console.log(post);
 
           await post.save();
@@ -510,6 +518,26 @@ router.post("/post/announcements/:id", async (req, res) => {
 
 
 
+// Get recent image posts for a community
+router.get('/:id/recent-photos', async (req, res) => {
+  try {
+    const communityId = req.params.id;
+
+    const recentPhotos = await CommunityPosts.find({
+      group_id: communityId,
+      postType: 'image',
+      media: { $exists: true, $ne: '' },
+    })
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .select('media createdAt');
+
+    res.status(200).json(recentPhotos);
+  } catch (error) {
+    console.error('Error fetching recent photos:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
 
 
 module.exports = router;

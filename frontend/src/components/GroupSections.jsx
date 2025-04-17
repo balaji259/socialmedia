@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 import Events from "./Events";
@@ -12,14 +12,15 @@ const tabs = ["Announcements", "Discussion", "Members", "Events", "Photos", "Cha
 
 const GroupSections = () => {
   const [activeTab, setActiveTab] = useState("Announcements");
-  const [group,setGroup]=useState();
-  const [formattedDate,setFormattedDate]=useState();
+  const [group, setGroup] = useState();
+  const [formattedDate, setFormattedDate] = useState();
 
+  const { id } = useParams();
+  const navigate = useNavigate();
 
-  const {id}=useParams();
-  
-
-  
+  const handleGoBack = () => {
+    navigate(-1);
+  };
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -40,72 +41,78 @@ const GroupSections = () => {
     }
   };
 
-
-
-  const fetchGroup=async ()=>{
-    try{
+  const fetchGroup = async () => {
+    try {
       console.log("Consoling!");
-      const response=await axios.get(`/group/${id}`)
+      const response = await axios.get(`/group/${id}`)
       setGroup(response.data);
       const isoDate = response.data.createdAt;
       const date = new Date(isoDate);
 
       const newdate = date.toLocaleDateString('en-US', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric'
-        });
-        setFormattedDate(newdate);
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+      setFormattedDate(newdate);
       console.log(response);
       console.log(formattedDate);
     }
-    catch(e){
+    catch (e) {
       console.log(`Error: ${e}`);
     }
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     fetchGroup();
-  },[])
-
-
+  }, [])
 
   return (
-        
     <div className="bg-[#f5f5f9] min-h-screen px-4 py-6">
-    {/* Community Header */}
-    <div className="max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold text-[#3b2db8]">{group?.name} </h1>
-      <p className="text-sm text-gray-600">
-        {group?.members?.length} members · Created on {formattedDate}
-      </p>
-
-      {/* Tabs */}
-      <div className="flex border-b mt-4">
-        {tabs.map((tab) => (
-          <button
-            key={tab}
-            className={`px-4 py-2 text-sm font-medium border-b-2 transition-all duration-200 ${
-              activeTab === tab
-                ? 'border-[#3b2db8] text-[#3b2db8]'
-                : 'border-transparent text-gray-600 hover:text-[#3b2db8]'
-            }`}
-            onClick={() => setActiveTab(tab)}
-          >
-            {tab}
-          </button>
-        ))}
+      {/* Go Back Button */}
+      <div className="max-w-4xl mx-auto mb-4">
+        <button 
+          onClick={handleGoBack}
+          className="flex items-center text-[#3b5998] font-medium hover:underline"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+          Go Back
+        </button>
       </div>
+      
+      {/* Community Header */}
+      <div className="max-w-4xl mx-auto">
+        <h1 className="text-2xl font-bold text-[#3b5998]">{group?.name} </h1>
+        <p className="text-sm text-gray-600">
+          {group?.members?.length} members · Created on {formattedDate}
+        </p>
 
-      {/* Tab Content */}
-      <div className="bg-white mt-4 rounded-lg shadow-sm">
-        {renderTabContent()}
+        {/* Tabs */}
+        <div className="flex border-b mt-4">
+          {tabs.map((tab) => (
+            <button
+              key={tab}
+              className={`px-4 py-2 text-sm font-medium border-b-2 transition-all duration-200 ${
+                activeTab === tab
+                  ? 'border-[#3b2db8] text-[#3b5998]'
+                  : 'border-transparent text-gray-600 hover:text-[#3b5998]'
+              }`}
+              onClick={() => setActiveTab(tab)}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
+
+        {/* Tab Content */}
+        <div className="bg-white mt-4 rounded-lg shadow-sm">
+          {renderTabContent()}
+        </div>
       </div>
     </div>
-  </div>
-);
-
-
+  );
 };
 
 export default GroupSections;

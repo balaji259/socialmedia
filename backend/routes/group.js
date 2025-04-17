@@ -578,6 +578,28 @@ router.get("/:id/getdiscussions",async (req,res)=>{
 })
 
 
+// Get recent image posts for a group 
+router.get('/:id/recent-photos', async (req, res) => {
+  try {
+    const groupId = req.params.id;
+
+    const recentPhotos = await GroupPosts.find({
+      group_id: groupId,
+      postType: 'image',
+      media: { $exists: true, $ne: '' },
+    })
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .select('media createdAt');
+
+    res.status(200).json(recentPhotos);
+  } catch (error) {
+    console.error('Error fetching recent photos:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+
 
 
 
