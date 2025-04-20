@@ -93,7 +93,7 @@ const Communities = () => {
                 </div>
                 <div className="p-3">
                   <h3 className="text-[#3b5998] font-bold text-sm">{com.name}</h3>
-                  <p className="text-gray-600 text-xs">{com.members.length} members • {com.posts.length} posts</p>
+                  <p className="text-gray-600 text-xs">{com.members.length} members • {com.postCount} posts</p>
                   <p className="text-gray-800 text-xs mt-1">{com.description}</p>
                   <button className="w-full mt-2 bg-gray-200 text-[#3b5998] py-1 text-sm font-semibold rounded-md hover:bg-gray-300" onClick={()=>{handleNavigation(com._id)}}>
                     View Community

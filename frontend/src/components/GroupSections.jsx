@@ -44,7 +44,7 @@ const GroupSections = () => {
   const fetchGroup = async () => {
     try {
       console.log("Consoling!");
-      const response = await axios.get(`/group/${id}`)
+      const response = await axios.get(`/group/get/${id}`)
       setGroup(response.data);
       const isoDate = response.data.createdAt;
       const date = new Date(isoDate);
@@ -69,18 +69,16 @@ const GroupSections = () => {
 
   return (
     <div className="bg-[#f5f5f9] min-h-screen px-4 py-6">
-      {/* Go Back Button */}
-      <div className="max-w-4xl mx-auto mb-4">
-        <button 
-          onClick={handleGoBack}
-          className="flex items-center text-[#3b5998] font-medium hover:underline"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-          Go Back
-        </button>
-      </div>
+      
+               {/* Back Button */}
+               <div className="max-w-4xl mx-auto mb-4">
+          <button
+            onClick={() => navigate(-1)}
+            className="text-white bg-blue-600 px-4 py-2 rounded-md text-base font-medium hover:bg-blue-700 transition"
+          >
+            ← Back
+          </button>
+        </div>
       
       {/* Community Header */}
       <div className="max-w-4xl mx-auto">

@@ -182,7 +182,7 @@ router.get("/get/communities/:userId", async (req, res) => {
 
 
 
-router.get("/:groupId", async (req, res) => {
+router.get("/get/:groupId", async (req, res) => {
   try {
     const com = await Community.findById(req.params.groupId)
       .populate("admins", "name")
@@ -364,16 +364,18 @@ router.post("/post", async (req, res) => {
           });
 
 
-      //      // Update the Community to include this post
-      // await Community.findByIdAndUpdate(
-      //   {group_id:groupId},
-      //   { $push: { posts: post._id } },
-      //   { new: true }
-      // );
+     
 
-          console.log(post);
+          // console.log(post);
 
           await post.save();
+
+                // 🔥 Increment postCount and add post reference in group
+      await Community.findByIdAndUpdate(groupId, {
+        $inc: { postCount: 1 },
+        $push: { posts: post._id },
+      });
+
 
           res.status(201).json({ message: "Post created successfully", post });
       });
@@ -432,14 +434,28 @@ router.get('/:id/media', async (req, res) => {
   try {
     const { id } = req.params;
 
-    const mediaPosts = await CommunityPosts.find({
+    // Fetch media posts from CommunityPosts
+    const communityMedia = await CommunityPosts.find({
       group_id: id,
       postType: { $in: ['image', 'video'] },
     })
-      .select('postType media caption createdAt') // only the necessary fields
+      .select('postType media caption createdAt')
       .sort({ createdAt: -1 });
 
-    res.status(200).json(mediaPosts);
+    // Fetch media posts from Announcements
+    const announcementMedia = await Announcement.find({
+      cg_id: id,
+      postType: { $in: ['image', 'video'] },
+    })
+      .select('postType media caption createdAt')
+      .sort({ createdAt: -1 });
+
+    // Combine and sort all media posts by createdAt (descending)
+    const allMediaPosts = [...communityMedia, ...announcementMedia].sort(
+      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+    );
+
+    res.status(200).json(allMediaPosts);
   } catch (err) {
     console.error('Error fetching media posts:', err);
     res.status(500).json({ message: 'Server Error' });
@@ -519,25 +535,67 @@ router.post("/post/announcements/:id", async (req, res) => {
 
 
 // Get recent image posts for a community
+// router.get('/:id/recent-photos', async (req, res) => {
+//   try {
+//     const communityId = req.params.id;
+
+//     const recentPhotos = await CommunityPosts.find({
+//       group_id: communityId,
+//       postType: 'image',
+//       media: { $exists: true, $ne: '' },
+//     })
+//       .sort({ createdAt: -1 })
+//       .limit(5)
+//       .select('media createdAt');
+
+//     res.status(200).json(recentPhotos);
+//   } catch (error) {
+//     console.error('Error fetching recent photos:', error);
+//     res.status(500).json({ message: 'Server error' });
+//   }
+// });
+
 router.get('/:id/recent-photos', async (req, res) => {
   try {
     const communityId = req.params.id;
 
-    const recentPhotos = await CommunityPosts.find({
+    // Get image posts from CommunityPosts
+    const communityPhotosPromise = CommunityPosts.find({
       group_id: communityId,
       postType: 'image',
       media: { $exists: true, $ne: '' },
     })
-      .sort({ createdAt: -1 })
-      .limit(5)
-      .select('media createdAt');
+      .select('media createdAt')
+      .lean(); // lean makes it a plain JS object for easier merging
 
-    res.status(200).json(recentPhotos);
+    // Get image posts from Announcements
+    const announcementPhotosPromise = Announcement.find({
+      cg_id: communityId,
+      postType: 'image',
+      media: { $exists: true, $ne: '' },
+    })
+      .select('media createdAt')
+      .lean();
+
+    // Await both promises in parallel
+    const [communityPhotos, announcementPhotos] = await Promise.all([
+      communityPhotosPromise,
+      announcementPhotosPromise,
+    ]);
+
+    // Combine both arrays
+    const combined = [...communityPhotos, ...announcementPhotos];
+
+    // Sort combined by createdAt descending and get the latest 5
+    const latestFive = combined
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .slice(0, 5);
+
+    res.status(200).json(latestFive);
   } catch (error) {
     console.error('Error fetching recent photos:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });
-
 
 module.exports = router;

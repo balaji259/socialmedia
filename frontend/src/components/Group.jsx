@@ -13,6 +13,11 @@ const GroupPage = () => {
   const [admins,setAdmins]=useState([]);
   const [recentPhotos, setRecentPhotos] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
+  
+  const [entering,setEntering]=useState(false);
+  const [leaving,setLeaving]=useState(false);
+  const [sending,setSending]=useState(false);
+  
   const [user,setUser]=useState(null);
 
   const navigate=useNavigate();
@@ -60,7 +65,7 @@ useEffect(()=>{
     const fetchGroup = async () => {
       try {
         console.log("GroupId", id);
-        const response = await fetch(`/group/${id}`);
+        const response = await fetch(`/group/get/${id}`);
         if (!response.ok) throw new Error("Failed to fetch group data");
         
         const data = await response.json();
@@ -76,8 +81,9 @@ useEffect(()=>{
     fetchGroup();
   }, [id]);
 
-  useEffect(() => {
-    const fetchRecentMembers = async () => {
+
+
+  const fetchRecentMembers = async () => {
       try {
         const response = await fetch(`/group/${id}/recent-members`);
         if (!response.ok) throw new Error("Failed to fetch recent members");
@@ -90,6 +96,10 @@ useEffect(()=>{
         console.error("Error fetching recent members:", error);
       }
     };
+
+
+  useEffect(() => {
+    
 
     fetchRecentMembers();
   }, [id]);
@@ -118,6 +128,7 @@ useEffect(()=>{
   const handleJoinGroup = async () => {
 
     try {
+      setEntering(true);
       const response = await fetch(`/group/${id}/join`, {
         method: "POST",
         headers: {
@@ -137,8 +148,12 @@ useEffect(()=>{
       } else {
         toast.error(data.message);
       }
+       fetchRecentMembers();
     } catch (error) {
       console.error("Error joining group:", error);
+    }
+    finally{
+       setEntering(false);
     }
   };
 
@@ -164,6 +179,9 @@ try {
 
   const handleLeaveGroup = async () => {
     try {
+
+        setLeaving(true);
+
       const response = await fetch(`/group/${id}/leave`, {
         method: "POST",
         headers: {
@@ -174,15 +192,19 @@ try {
   
       const data = await response.json();
       if (response.ok) {
-        setCommunity((prev) => ({
+        setGroup((prev) => ({
           ...prev,
           members: prev.members.filter((member) => member !== userId), // Update frontend state
         }));
       } else {
         toast.error(data.message);
       }
+        fetchRecentMembers();
     } catch (error) {
       console.error("Error leaving Group:", error);
+    }
+      finally{
+      setLeaving(false);
     }
   };
 
@@ -199,7 +221,8 @@ try {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // setIsPosting(true);
+    setSending(true);
+    
     
     const token = localStorage.getItem("token");
     if (!token) {
@@ -280,6 +303,9 @@ try {
         // console.error("Error submitting form:", error);
         toast.error("Error in creating post. Please try again.");
     } 
+    finally{
+      setSending(false);
+    }
 };
 
 
@@ -310,22 +336,37 @@ useEffect(()=>{
 
   return (
     <div className="bg-gray-100 min-h-screen">
-      <header className="bg-blue-900 text-white p-4 flex justify-between items-center">
+      {/* <header className="bg-blue-900 text-white p-4 flex justify-between items-center">
         <h1 className="text-2xl font-bold">friendsbook</h1>
         <input type="text" placeholder="Search" className="p-2 text-black rounded w-1/3" />
         <nav className="space-x-6">
-          <a href="#" className="hover:underline">Home</a>
-          <a href="#" className="hover:underline">Profile</a>
-          <a className="hover:underline cursor-pointer" onClick={()=>{navigate(`/group/${id}/sections`)}}>Sections</a>
-          {/* <a href="#" className="hover:underline">Messages</a> */}
+          <a onClick={()=>{navigate('/home')}} className="hover:underline cursor-pointer ">Home</a>
+          <a onClick={()=>{navigate('/profile')}} className="hover:underline cursor-pointer">Profile</a>
+   
         </nav>
-      </header>
+      </header> */}
 
-      {/* <div
-        className="h-52 flex items-center justify-center text-gray-600 text-2xl font-semibold"
-        style={{ backgroundImage: `url(${community.coverPhoto || "https://via.placeholder.com/800x200"})`, backgroundSize: "cover", backgroundPosition: "center" }}
-      /> */}
+<nav className="bg-[#3b5998] h-12 fixed top-0 w-full shadow-md z-50">
+        <div className="max-w-6xl mx-auto flex items-center h-full px-4">
+          <a href="#" className="text-white text-lg font-bold">friendsbook</a>
+          <div className="bg-white ml-4 px-3 h-7 flex items-center rounded-md w-72">
+            <input
+              type="text"
+              placeholder="Search Groups"
+              className="w-full outline-none text-sm"
+            />
+          </div>
+          <div className="ml-auto flex space-x-4">
+            <a onClick={()=>{navigate('/home')}} className="text-white text-sm font-semibold mr-4">Home</a>
+            <a onClick={()=>{navigate('/profile')}} className="text-white text-sm font-semibold mr-4">Profile</a>
+            {/* <a onClick={()=>{navigate('/chats')}} className="text-white text-sm font-semibold mr-4">Messages</a> */}
+            {/* <a onClick={()=>{navigate('/notifications')}} className="text-white text-sm font-semibold mr-4">Notifications</a> */}
+          </div>
+        </div>
+      </nav>
 
+
+  
       {/* Cover Photo with Profile Picture */}
       <div className="relative w-full h-52">
         <img
@@ -345,27 +386,41 @@ useEffect(()=>{
         {/* Left Sidebar */}
         <div className="space-y-6">
           <div className="bg-white p-5 rounded shadow-lg">
-            <h3 className="font-bold text-lg">About This Community</h3>
+            <h3 className="font-bold text-lg">About This Group</h3>
             <p className="text-sm text-gray-600">{group.description || "No description available."}</p>
             <p className="text-sm text-gray-600">Created on: {new Date(group.createdAt).toDateString()}</p>
             <p className="text-sm font-bold">Type: {group.privacy.charAt(0).toUpperCase() + group.privacy.slice(1)} Group</p>
-            {/* <button className="bg-blue-700 text-white px-4 py-2 rounded mt-4 w-full hover:bg-blue-800">Join Community</button> */}
-            {group.members.includes(userId) ? (
-      <button
-        onClick={handleLeaveGroup}
-        className="bg-red-600 text-white px-4 py-2 rounded mt-4 w-full hover:bg-red-700"
-      >
-        Leave Group
-      </button>
-    ) : (
-      <button
-        onClick={handleJoinGroup}
-        className="bg-blue-700 text-white px-4 py-2 rounded mt-4 w-full hover:bg-blue-800"
-      >
-        Join Group
-      </button>
-    )}
+      
+    {group.members.includes(userId) ? (
+              <>
+                <button
+                  onClick={() => navigate(`/group/${id}/sections`)}
+                  disabled={entering}
+                  className={`bg-green-600 text-white px-4 py-2 rounded mt-4 w-full hover:bg-green-700 ${entering && 'cursor-not-allowed'}`}
+                >
+                  {entering ? "Entering Group...." : "Enter Group"}
+                </button>
+                <button
+                  onClick={handleLeaveGroup}
+                  disabled={leaving}
+                  className={`bg-red-600 text-white px-4 py-2 rounded mt-2 w-full hover:bg-red-700 ${leaving && 'cursor-not-allowed'}`}
+                >
+                  {leaving ? "Leaving Group...." : "Leave Group"}
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={handleJoinGroup}
+                className="bg-blue-700 text-white px-4 py-2 rounded mt-4 w-full hover:bg-blue-800"
+              >
+                Join Group
+              </button>
+            )}
+
+
           </div>
+
+
           <div className="bg-white p-5 rounded shadow-lg">
             <h3 className="font-bold text-lg">Group Admins</h3>
             {admins.map((member) => (
@@ -395,11 +450,13 @@ useEffect(()=>{
           onChange={(e) => setText(e.target.value)}
         />
         <button
-          onClick={handleSubmit}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg"
-        >
-          Send
-        </button>
+                onClick={handleSubmit}
+                disabled={sending}
+                className={`bg-blue-600 text-white px-4 py-2 rounded-lg ${sending && 'cursor-not-allowed'}`}
+                
+              >
+                {sending ? "Posting ...." : "Post"}
+              </button>
       </div>
       {media && (
         <div className="mt-3">

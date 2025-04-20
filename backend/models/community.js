@@ -45,6 +45,10 @@ const CommunitySchema = new mongoose.Schema(
         ref: "CommunityPosts",
       },
     ],
+    postCount: {
+      type: Number,
+      default: 0,
+    },    
     privacy: {
       type: String,
       enum: ["public", "college", "members"],

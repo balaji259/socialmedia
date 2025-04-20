@@ -94,6 +94,8 @@ io.on("connection", (socket) => {
     //   text,
     //   userId
     // });
+    console.log("before emitting receiving message");
+    console.log(newMsg);
 
     io.to(communityId).emit("receiveMessage", {
       ...newMsg.toObject()

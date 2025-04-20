@@ -14,6 +14,10 @@ const CommunityPage = () => {
   const [recentPhotos, setRecentPhotos] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
 
+  const [entering,setEntering]=useState(false);
+  const [leaving,setLeaving]=useState(false);
+  const [sending,setSending]=useState(false);
+
   const [user,setUser]=useState(null);
 
   const navigate=useNavigate();
@@ -63,7 +67,7 @@ useEffect(()=>{
     const fetchCommunity = async () => {
       try {
         console.log("CommunityId", id);
-        const response = await fetch(`/community/${id}`);
+        const response = await fetch(`/community/get/${id}`);
         if (!response.ok) throw new Error("Failed to fetch community data");
         
         const data = await response.json();
@@ -79,21 +83,25 @@ useEffect(()=>{
     fetchCommunity();
   }, [id]);
 
+
+
+  const fetchRecentMembers = async () => {
+    try {
+      const response = await fetch(`/community/${id}/recent-members`);
+      if (!response.ok) throw new Error("Failed to fetch recent members");
+
+      const data = await response.json();
+      setRecentMembers(data.recentMembers);
+      console.log("members");
+      console.log(data.recentMembers);
+    } catch (error) {
+      console.error("Error fetching recent members:", error);
+    }
+  };
+
+
   useEffect(() => {
-    const fetchRecentMembers = async () => {
-      try {
-        const response = await fetch(`/community/${id}/recent-members`);
-        if (!response.ok) throw new Error("Failed to fetch recent members");
-
-        const data = await response.json();
-        setRecentMembers(data.recentMembers);
-        console.log("members");
-        console.log(data.recentMembers);
-      } catch (error) {
-        console.error("Error fetching recent members:", error);
-      }
-    };
-
+   
     fetchRecentMembers();
   }, [id]);
 
@@ -138,6 +146,7 @@ useEffect(()=>{
   const handleJoinCommunity = async () => {
 
     try {
+      setEntering(true);
       const response = await fetch(`/community/${id}/join`, {
         method: "POST",
         headers: {
@@ -157,14 +166,22 @@ useEffect(()=>{
       } else {
         toast.error(data.message);
       }
+
+      fetchRecentMembers();
     } catch (error) {
       console.error("Error joining group:", error);
+    }
+    finally{
+      setEntering(false);
     }
   };
 
 
   const handleLeaveCommunity = async () => {
     try {
+
+      setLeaving(true);
+
       const response = await fetch(`/community/${id}/leave`, {
         method: "POST",
         headers: {
@@ -182,8 +199,12 @@ useEffect(()=>{
       } else {
         toast.error(data.message);
       }
+      fetchRecentMembers();
     } catch (error) {
       console.error("Error leaving community:", error);
+    }
+    finally{
+      setLeaving(false);
     }
   };
 
@@ -201,7 +222,7 @@ useEffect(()=>{
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // setIsPosting(true);
+    setSending(true);
     
     const token = localStorage.getItem("token");
     if (!token) {
@@ -284,6 +305,9 @@ useEffect(()=>{
         console.error("Error submitting form:", error);
         // toast.error("Error in creating post. Please try again.");
     } 
+    finally{
+      setSending(false);
+    }
 };
 
 
@@ -314,23 +338,27 @@ useEffect(()=>{
 
   return (
     <div className="bg-gray-100 min-h-screen">
-      <header className="bg-blue-900 text-white p-4 flex justify-between items-center">
-        <h1 className="text-2xl font-bold">friendsbook</h1>
-        <input type="text" placeholder="Search" className="p-2 text-black rounded w-1/3" />
-        <nav className="space-x-6">
-          <a href="#" className="hover:underline">Home</a>
-          <a href="#" className="hover:underline">Profile</a>
-          <a className="hover:underline cursor-pointer" onClick={()=>{navigate(`/community/${id}/sections`)}}>Sections</a>
-          {/* <a href="#" className="hover:underline">Messages</a> */}
-        </nav>
-      </header>
-
-      {/* <div
-        className="h-52 flex items-center justify-center text-gray-600 text-2xl font-semibold"
-        style={{ backgroundImage: `url(${community.coverPhoto || "https://via.placeholder.com/800x200"})`, backgroundSize: "cover", backgroundPosition: "center" }}
-      /> */}
-
-      {/* Cover Photo with Profile Picture */}
+     
+ 
+     <nav className="bg-[#3b5998] h-12 fixed top-0 w-full shadow-md z-50">
+        <div className="max-w-6xl mx-auto flex items-center h-full px-4">
+          <a href="#" className="text-white text-lg font-bold">friendsbook</a>
+          <div className="bg-white ml-4 px-3 h-7 flex items-center rounded-md w-72">
+            <input
+              type="text"
+              placeholder="Search Groups"
+              className="w-full outline-none text-sm"
+            />
+          </div>
+          <div className="ml-auto flex space-x-4">
+            <a onClick={()=>{navigate('/home')}} className="text-white text-sm font-semibold mr-4">Home</a>
+            <a onClick={()=>{navigate('/profile')}} className="text-white text-sm font-semibold mr-4">Profile</a>
+            <a onClick={()=>{navigate('/chats')}} className="text-white text-sm font-semibold mr-4">Messages</a>
+            <a onClick={()=>{navigate('/notifications')}} className="text-white text-sm font-semibold mr-4">Notifications</a>
+          </div>
+        </div>
+      </nav>
+  
       <div className="relative w-full h-52">
         <img
           src={community.coverPhoto || "https://via.placeholder.com/800x200"}
@@ -343,127 +371,156 @@ useEffect(()=>{
           className="absolute bottom-0 translate-y-8 left-5 w-[95px] h-[95px] object-cover border-4 border-white rounded-full"
         />
       </div>
-
-
+  
       <div className="max-w-6xl mx-auto p-6 grid grid-cols-4 gap-6">
         {/* Left Sidebar */}
         <div className="space-y-6">
           <div className="bg-white p-5 rounded shadow-lg">
             <h3 className="font-bold text-lg">About This Community</h3>
-            <p className="text-sm text-gray-600">{community.description || "No description available."}</p>
-            <p className="text-sm text-gray-600">Created on: {new Date(community.createdAt).toDateString()}</p>
-            <p className="text-sm font-bold">Type: {community.privacy.charAt(0).toUpperCase() + community.privacy.slice(1)} Community</p>
-            {/* <button className="bg-blue-700 text-white px-4 py-2 rounded mt-4 w-full hover:bg-blue-800">Join Community</button> */}
+            <p className="text-sm text-gray-600">
+              {community.description || "No description available."}
+            </p>
+            <p className="text-sm text-gray-600">
+              Created on: {new Date(community.createdAt).toDateString()}
+            </p>
+            <p className="text-sm font-bold">
+              Type:{" "}
+              {community.privacy.charAt(0).toUpperCase() +
+                community.privacy.slice(1)}{" "}
+              Community
+            </p>
+  
             {community.members.includes(userId) ? (
-      <button
-        onClick={handleLeaveCommunity}
-        className="bg-red-600 text-white px-4 py-2 rounded mt-4 w-full hover:bg-red-700"
-      >
-        Leave Community
-      </button>
-    ) : (
-      <button
-        onClick={handleJoinCommunity}
-        className="bg-blue-700 text-white px-4 py-2 rounded mt-4 w-full hover:bg-blue-800"
-      >
-        Join Community
-      </button>
-    )}
+              <>
+                <button
+                  onClick={() => navigate(`/community/${id}/sections`)}
+                  disabled={entering}
+                  className={`bg-green-600 text-white px-4 py-2 rounded mt-4 w-full hover:bg-green-700 ${entering && 'cursor-not-allowed'}`}
+                >
+                  {entering ? "Entering Community...." : "Enter Community"}
+                </button>
+                <button
+                  onClick={handleLeaveCommunity}
+                  disabled={leaving}
+                  className={`bg-red-600 text-white px-4 py-2 rounded mt-2 w-full hover:bg-red-700 ${leaving && 'cursor-not-allowed'}`}
+                >
+                  {leaving ? "Leaving Community...." : "Leave Community"}
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={handleJoinCommunity}
+                className="bg-blue-700 text-white px-4 py-2 rounded mt-4 w-full hover:bg-blue-800"
+              >
+                Join Community
+              </button>
+            )}
           </div>
+  
           <div className="bg-white p-5 rounded shadow-lg">
             <h3 className="font-bold text-lg">Community Admins</h3>
             {admins.map((member) => (
-          <div key={member._id} className="flex flex-col items-center">
-            <img
-              src={member.profilePic}
-              alt={member.name}
-              className="w-12 h-12 rounded-full object-cover"
-            />
-            {/* <p className="text-sm text-gray-600">{member.name}</p> */}
-          </div>
-        ))}
+              <div key={member._id} className="flex flex-col items-center">
+                <img
+                  src={member.profilePic}
+                  alt={member.name}
+                  className="w-12 h-12 rounded-full object-cover"
+                />
+              </div>
+            ))}
           </div>
         </div>
-
+  
         {/* Main Content */}
         <div className="col-span-2 space-y-6">
-       
-        <div className="bg-white p-5 rounded shadow-lg">
-      <div className="flex items-center space-x-4">
-        <img src={user?.profilePic} className="w-12 h-12 rounded-full" alt="Profile" />
-        <input
-          type="text"
-          placeholder="Write something..."
-          className="flex-1 border p-3 rounded-lg"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-        />
-        <button
-          onClick={handleSubmit}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg"
-        >
-          Send
-        </button>
-      </div>
-      {media && (
-        <div className="mt-3">
-        
-        {media.type.startsWith('video') ? (
-          <video
-            src={URL.createObjectURL(media)}
-            controls
-            className="w-20 h-20 object-cover rounded"
-      
-          />
-        ) : (
-          <img
-            src={URL.createObjectURL(media)}
-            alt="Preview"
-            className="w-20 h-20 object-cover rounded"
-           
-          />
-        )}
-
-        </div>
-      )}
-      <div className="flex space-x-6 mt-3 text-blue-600 text-sm font-semibold">
-        <label htmlFor="imageUpload" className="cursor-pointer">📷 Photo</label>
-        <input
-          type="file"
-          id="imageUpload"
-          className="hidden"
-          accept="image/*,video/*"
-          onChange={handleMediaChange}
-        />
-        {/* <span>📁 File</span> */}
-        {/* <span>📌 Poll</span> */}
-      </div>
-    </div>
-
+          <div className="bg-white p-5 rounded shadow-lg">
+            <div className="flex items-center space-x-4">
+              <img
+                src={user?.profilePic}
+                className="w-12 h-12 rounded-full"
+                alt="Profile"
+              />
+              <input
+                type="text"
+                placeholder="Write something..."
+                className="flex-1 border p-3 rounded-lg"
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+              />
+              <button
+                onClick={handleSubmit}
+                disabled={sending}
+                className={`bg-blue-600 text-white px-4 py-2 rounded-lg ${sending && 'cursor-not-allowed'}`}
+                
+              >
+                {sending ? "Posting ...." : "Post"}
+              </button>
+            </div>
+  
+            {media && (
+              <div className="mt-3">
+                {media.type.startsWith("video") ? (
+                  <video
+                    src={URL.createObjectURL(media)}
+                    controls
+                    className="w-20 h-20 object-cover rounded"
+                  />
+                ) : (
+                  <img
+                    src={URL.createObjectURL(media)}
+                    alt="Preview"
+                    className="w-20 h-20 object-cover rounded"
+                  />
+                )}
+              </div>
+            )}
+  
+            <div className="flex space-x-6 mt-3 text-blue-600 text-sm font-semibold">
+              <label htmlFor="imageUpload" className="cursor-pointer">
+                📷 Photo
+              </label>
+              <input
+                type="file"
+                id="imageUpload"
+                className="hidden"
+                accept="image/*,video/*"
+                onChange={handleMediaChange}
+              />
+            </div>
+          </div>
+  
           {groupPhotos.length > 0 ? (
             groupPhotos.map((post) => (
               <div key={post._id} className="bg-white p-5 rounded shadow-lg">
                 <div className="flex space-x-4">
-                  {/* <div className="bg-gray-300 w-12 h-12 rounded-full"></div> */}
-                  <img src={post.user?.profilePic} className="w-12 h-12 rounded-full" alt="Profile" />
+                  <img
+                    src={post.user?.profilePic}
+                    className="w-12 h-12 rounded-full"
+                    alt="Profile"
+                  />
                   <div>
                     <h4 className="font-bold">{post.user?.username}</h4>
-                    <p className="text-sm text-gray-600">{new Date(post.createdAt).toLocaleString()}</p>
+                    <p className="text-sm text-gray-600">
+                      {new Date(post.createdAt).toLocaleString()}
+                    </p>
                     <p className="mt-2">{post.caption}</p>
-                    {/* {post.image && <img src={post.image} alt="Post" className="max-h-48 w-full object-cover rounded-lg mt-3" />} */}
-                    {post.postType=='image' && <img src={post.media} alt="Image" className="max-h-48 w-full object-cover rounded-lg mt-3" /> }
-
-                    {post.postType=='video' && <video src={post.media} alt="Video" controls className="max-h-48 w-full object-cover rounded-lg mt-3" /> }
-
-                    
-                    
-                    {/* <div className="flex space-x-6 text-blue-600 text-sm font-semibold mt-3">
-                      <span>👍 Like</span>
-                      <span>💬 Comment</span>
-                      <span>🔄 Share</span>
-                    </div> */}
-
-                    
+  
+                    {post.postType === "image" && (
+                      <img
+                        src={post.media}
+                        alt="Image"
+                        className="max-h-48 w-full object-cover rounded-lg mt-3"
+                      />
+                    )}
+  
+                    {post.postType === "video" && (
+                      <video
+                        src={post.media}
+                        alt="Video"
+                        controls
+                        className="max-h-48 w-full object-cover rounded-lg mt-3"
+                      />
+                    )}
                   </div>
                 </div>
               </div>
@@ -472,78 +529,73 @@ useEffect(()=>{
             <p className="text-center text-gray-600">No posts yet.</p>
           )}
         </div>
-
-        {/* Right Sidebar (Newly Added) */}
+  
+        {/* Right Sidebar */}
         <div className="space-y-6">
-        <div className="bg-white p-5 rounded shadow-lg">
-        <h3 className="font-bold text-lg mb-2">Recent Photos</h3>
-        {recentPhotos.length > 0 ? (
-          <div className="flex overflow-x-auto space-x-4">
-            {recentPhotos.map((photo, idx) => (
-              <img
-                key={idx}
-                src={photo.media}
-                alt={`Recent ${idx}`}
-                className="w-24 h-24 object-cover rounded cursor-pointer"
-                onClick={() => setSelectedImage(photo.media)}
-              />
-            ))}
+          <div className="bg-white p-5 rounded shadow-lg">
+            <h3 className="font-bold text-lg mb-2">Recent Photos</h3>
+            {recentPhotos.length > 0 ? (
+              <div className="flex overflow-x-auto space-x-4">
+                {recentPhotos.map((photo, idx) => (
+                  <img
+                    key={idx}
+                    src={photo.media}
+                    alt={`Recent ${idx}`}
+                    className="w-24 h-24 object-cover rounded cursor-pointer"
+                    onClick={() => setSelectedImage(photo.media)}
+                  />
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-gray-600">
+                No Recent Photos available
+              </p>
+            )}
           </div>
-        ) : (
-          <p className="text-sm text-gray-600">No Recent Photos available</p>
-        )}
-      </div>
+  
           <div className="bg-white p-5 rounded shadow-lg">
             <h3 className="font-bold text-lg">Recent Members</h3>
             <div className="flex space-x-4">
-        {recentMembers.map((member) => (
-          <div key={member._id} className="flex flex-col items-center">
-            <img
-              src={member.profilePic}
-              alt={member.name}
-              className="w-12 h-12 rounded-full object-cover"
-            />
-            {/* <p className="text-sm text-gray-600">{member.name}</p> */}
-          </div>
-        ))}
-      </div>
-            {/* <p className="text-sm text-gray-600">No recent members available.</p> */}
+              {recentMembers.map((member) => (
+                <div
+                  key={member._id}
+                  className="flex flex-col items-center"
+                >
+                  <img
+                    src={member.profilePic}
+                    alt={member.name}
+                    className="w-12 h-12 rounded-full object-cover"
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
-
+  
       {selectedImage && (
-  <div
-    className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50"
-    onClick={() => setSelectedImage(null)}
-  >
-    <div onClick={(e) => e.stopPropagation()} className="relative">
-      <img
-        src={selectedImage}
-        alt="Enlarged"
-        className="max-w-[90vw] max-h-[80vh] rounded shadow-lg"
-      />
-      <button
-        onClick={() => setSelectedImage(null)}
-        className="absolute top-2 right-2 bg-white text-black px-2 py-1 rounded hover:bg-gray-200"
-      >
-        ✖
-      </button>
+        <div
+          className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50"
+          onClick={() => setSelectedImage(null)}
+        >
+          <div onClick={(e) => e.stopPropagation()} className="relative">
+            <img
+              src={selectedImage}
+              alt="Enlarged"
+              className="max-w-[90vw] max-h-[80vh] rounded shadow-lg"
+            />
+            <button
+              onClick={() => setSelectedImage(null)}
+              className="absolute top-2 right-2 bg-white text-black px-2 py-1 rounded hover:bg-gray-200"
+            >
+              ✖
+            </button>
+          </div>
+        </div>
+      )}
     </div>
-  </div>
-)}
-
-
-
-
-
-    </div>
-
-
- 
-
-
   );
+  
 };
 
 export default CommunityPage;

@@ -45,6 +45,10 @@ const GroupSchema = new mongoose.Schema(
         ref: "Post",
       },
     ],
+    postCount: {
+      type: Number,
+      default: 0,
+    },    
     privacy: {
       type: String,
       enum: ["public", "college", "members"],

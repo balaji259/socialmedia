@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import { toast } from 'react-hot-toast';
 
 const Announcements = () => {
   const { id: communityId } = useParams();
@@ -15,6 +16,7 @@ const Announcements = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [text, setText] = useState("");
   const [media, setMedia] = useState(null);
+  const [posting,setPosting]=useState(false);
 
 
   useEffect(() => {
@@ -49,7 +51,7 @@ const Announcements = () => {
 
     try {
       console.log("user.userId:", user?.userId);
-      const res = await axios.get(`/community/${communityId}`);
+      const res = await axios.get(`/community/get/${communityId}`);
       console.log("response");
       console.log(res);
       console.log("admins from response:", res.data.admins);
@@ -69,6 +71,7 @@ const Announcements = () => {
   };
 
   const handlePost = async () => {
+    setPosting(true);
     if (!title || !content) return;
     try {
       await axios.post(
@@ -81,6 +84,9 @@ const Announcements = () => {
       fetchAnnouncements();
     } catch (err) {
       console.error("Failed to post announcement", err);
+    }
+    finally{
+      setPosting(false);
     }
   };
 
@@ -95,14 +101,15 @@ const Announcements = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();    
+    setPosting(true);
     const token = localStorage.getItem("token");
     if (!token) {
-        alert("No token found. Please log in again.");
+        toast.error("No token found. Please log in again.");
         return;
     }
     
     if (!text?.trim() && !media) {
-        alert("Post cannot be empty!");
+        toast.error("Post cannot be empty!");
         return;
     }
 
@@ -178,13 +185,16 @@ const Announcements = () => {
         setText("");
         setMedia(null);
         // if (fileInputRef.current) fileInputRef.current.value = "";
-        alert("Post created successfully"); 
+        toast.success("Announcement created successfully"); 
 
         fetchAnnouncements(); // Refresh posts
     } catch (error) {
         console.error("Error submitting form:", error);
         // toast.error("Error in creating post. Please try again.");
     } 
+    finally{
+      setPosting(false);
+    }
 };
 
 
@@ -192,30 +202,6 @@ const Announcements = () => {
     <div className="max-w-4xl mx-auto px-4 py-6">
       <h1 className="text-2xl font-bold mb-6 text-center text-[#3b5998]">Announcements</h1>
 
-      {/* {isAdmin && (
-        <div className="bg-white shadow-md rounded p-4 mb-6">
-          <h2 className="text-lg font-semibold mb-2">Create Announcement</h2>
-          <input
-            className="w-full p-2 border rounded mb-2"
-            placeholder="Title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-          <textarea
-            className="w-full p-2 border rounded mb-2"
-            placeholder="Content"
-            rows={4}
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-          />
-          <button
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-            onClick={handlePost}
-          >
-            Post
-          </button>
-        </div>
-      )} */}
 
 
       {isAdmin && (
@@ -233,9 +219,10 @@ const Announcements = () => {
   />
   <button
     onClick={handleSubmit}
-    className="bg-blue-600 text-white px-4 py-2 rounded-lg"
+    disabled={posting}
+    className={`bg-blue-600 text-white px-4 py-2 rounded-lg ${posting && 'cursor-not-allowed'}`}
   >
-    Send
+    {posting ? "Posting...." : "Post"}
   </button>
 </div>
 {media && (
@@ -268,8 +255,8 @@ const Announcements = () => {
     accept="image/*,video/*"
     onChange={handleMediaChange}
   />
-  <span>📁 File</span>
-  <span>📌 Poll</span>
+  {/* <span>📁 File</span>
+  <span>📌 Poll</span> */}
 </div>
 </div>
 
@@ -278,18 +265,6 @@ const Announcements = () => {
   {/* //form ended */}
 
       <div className="space-y-4">
-        {/* {announcements.map((a) => (
-          <div
-            key={a._id}
-            className="bg-white p-4 rounded shadow hover:shadow-md transition"
-          >
-            <h3 className="text-xl font-semibold">{a.title}</h3>
-            <p className="text-gray-700 mt-2">{a.caption}</p>
-            <p className="text-sm text-gray-500 mt-1">
-              Posted by {a.createdBy?.name || "Unknown"} on {new Date(a.createdAt).toLocaleString()}
-            </p>
-          </div>
-        ))} */}
 
 {announcements.length > 0 ? (
             announcements.map((a) => (

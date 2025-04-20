@@ -64,12 +64,14 @@ const DiscussionPage = () => {
 
     socket.on("receiveMessage", (msg) => {
       console.log("Received message:", msg);
+      console.log(messages);
       if (msg.communityId === id) {
         setMessages((prev) => [...prev, msg]);
       }
     });
 
     return () => {
+      console.log("offing....")
       socket.off("receiveMessage");
     };
   }, [id, user]);
@@ -129,19 +131,7 @@ const DiscussionPage = () => {
   return (
     <div className="flex flex-col h-screen bg-gray-50">
       {/* Header */}
-      {/* <header className="bg-white border-b border-gray-200 shadow-sm py-4 px-6">
-        <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="bg-indigo-100 p-2 rounded-full">
-              <Users className="h-5 w-5 text-indigo-600" />
-            </div>
-            <h1 className="text-xl font-bold text-gray-800">{communityName}</h1>
-          </div>
-          <div className="text-sm text-gray-500">
-            {messages.length} messages
-          </div>
-        </div>
-      </header> */}
+     
 
       {/* Chat container */}
       <div className="flex-1 overflow-hidden max-w-5xl w-full mx-auto px-4 py-6">

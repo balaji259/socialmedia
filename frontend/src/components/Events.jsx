@@ -3,9 +3,12 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import {useParams} from 'react-router-dom';
 
+
 const Events = () => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(false);
+
+
 
   const {id} =useParams();
 
@@ -46,7 +49,7 @@ const Events = () => {
     <h2 className="text-2xl font-bold">Events</h2>
     <a
       href={`/create/${id}/event`} // Use correct route
-      className="bg-[#3b5998] text-white px-4 py-2 rounded hover:bg-[#3a3191]"
+      className="bg-[#3b5998] text-white px-2 py-1 rounded hover:bg-[#3a3191]"
     >
       + Create Event
     </a>

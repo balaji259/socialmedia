@@ -55,8 +55,8 @@ const Groups = () => {
           <div className="ml-auto flex space-x-4">
             <a onClick={()=>{navigate('/home')}} className="text-white text-sm font-semibold mr-4">Home</a>
             <a onClick={()=>{navigate('/profile')}} className="text-white text-sm font-semibold mr-4">Profile</a>
-            <a onClick={()=>{navigate('/chats')}} className="text-white text-sm font-semibold mr-4">Messages</a>
-            <a onClick={()=>{navigate('/notifications')}} className="text-white text-sm font-semibold mr-4">Notifications</a>
+            {/* <a onClick={()=>{navigate('/chats')}} className="text-white text-sm font-semibold mr-4">Messages</a> */}
+            {/* <a onClick={()=>{navigate('/notifications')}} className="text-white text-sm font-semibold mr-4">Notifications</a> */}
           </div>
         </div>
       </nav>
@@ -65,7 +65,7 @@ const Groups = () => {
       <div className="w-full max-w-6xl mx-auto mt-16 p-4 flex gap-4 h-[calc(100vh-4rem)]">
         {/* Sidebar */}
         <div className="w-1/4 bg-white p-4 shadow-sm rounded-md h-full flex flex-col overflow-y-auto">
-          <h2 className="text-[#3b5998] text-lg font-bold">Communities</h2>
+          <h2 className="text-[#3b5998] text-lg font-bold">Groups</h2>
           <ul className="mt-2 text-sm flex-1">
             <li className="py-2 px-4 font-bold bg-gray-200 rounded-md ">Your Groups</li>
             <li className="py-2 px-4 hover:bg-gray-200 cursor-pointer" onClick={()=>{navigate('/explore/groups')}}>Discover</li>
@@ -93,7 +93,7 @@ const Groups = () => {
                 </div>
                 <div className="p-3">
                   <h3 className="text-[#3b5998] font-bold text-sm">{com.name}</h3>
-                  <p className="text-gray-600 text-xs">{com.members.length} members • {com.posts.length} posts</p>
+                  <p className="text-gray-600 text-xs">{com.members.length} members • {com.postCount} posts</p>
                   <p className="text-gray-800 text-xs mt-1">{com.description}</p>
                   <button className="w-full mt-2 bg-gray-200 text-[#3b5998] py-1 text-sm font-semibold rounded-md hover:bg-gray-300" onClick={()=>{handleNavigation(com._id)}}>
                     View Group

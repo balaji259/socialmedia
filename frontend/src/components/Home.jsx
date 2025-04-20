@@ -6,6 +6,7 @@ import { toast } from "react-hot-toast";
 import PostsComponent from "./Posts";
 import Quote from "./Quote.jsx";
 import {useSocket} from "./useSocket";
+import { useNavigate } from "react-router-dom";
 
 import axios from "axios";
 
@@ -16,6 +17,7 @@ import { messaging, getToken, onMessage } from './notifications/firebase.js';
 // import {  onMessage } from './notifications/firebase';
 
 import { useChatStore } from "./useChatStore";
+import { Navigate } from "react-router-dom";
 
 const Home = () => {
   const [currentuser, setCurrentUser] = useState({ username: "", profilePic: "" });
@@ -25,6 +27,8 @@ const Home = () => {
   const backendBaseUrl="http://localhost:7000"; 
   // const { startNotificationPolling, stopNotificationPolling } = useChatStore();
   const renderurl="https://socialmedia-backend-2njs.onrender.com";
+
+  const navigate=useNavigate();
  
 
 
@@ -144,6 +148,11 @@ const Home = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+    if(!token)
+    {
+     toast.error("Please login again !");
+     navigate('/'); 
+    }
 
     const getUserDetails = async () => {
       try {

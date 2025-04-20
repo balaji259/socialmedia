@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { toast } from 'react-hot-toast';
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 export default function CreateEvent() {
   const { id } = useParams(); // this assumes your route is set like /community/:communityId/sections
@@ -10,6 +10,8 @@ export default function CreateEvent() {
   const [time, setTime] = useState("");
   const [message, setMessage] = useState("");
   const [selectedTags, setSelectedTags] = useState([]);
+
+  const navigate=useNavigate();
 
   const tags = [
     "Party",
@@ -31,13 +33,7 @@ export default function CreateEvent() {
     );
   };
 
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-//     alert(
-//       `Event Created Successfully!\n\nTitle: ${title}\nTime: ${time}\nTags: ${selectedTags.join(", ")}`
-//     );
-//     console.log({ title, time, message, tags: selectedTags });
-//   };
+
 
 
 
@@ -53,13 +49,16 @@ const handleSubmit = async (e) => {
       });
   
       toast.success("🎉 Event created successfully!");
-      console.log(response.data);
+      
   
       // Reset form
       setTitle("");
       setTime("");
       setMessage("");
       setSelectedTags([]);
+
+      navigate(-1);
+
     } catch (error) {
       if (error.response && error.response.data?.error) {
         toast.error(`❌ Error: ${error.response.data.error}`);
@@ -73,27 +72,24 @@ const handleSubmit = async (e) => {
   return (
     <div className="min-h-screen bg-[#f2f2f2] text-[#333] font-sans">
       {/* Header */}
-      <div className="bg-[#3b5998] h-10 border-b border-[#133783] px-4 flex items-center justify-between">
-        <a href="#" className="text-white font-bold text-lg">
-          Create Event
-        </a>
-        <div className="flex items-center">
-          <input
-            type="text"
-            className="w-48 h-6 px-2 text-sm rounded border border-[#355088]"
-            placeholder="Search"
-          />
-          <a href="#" className="text-white ml-4 text-xs flex items-center">
-            <img
-              src="https://cdn-icons-png.flaticon.com/512/1077/1077063.png"
-              alt="icon"
-              className="h-4 w-4 mr-1"
+      <nav className="bg-[#3b5998] h-12 fixed top-0 w-full shadow-md z-50">
+        <div className="max-w-6xl mx-auto flex items-center h-full px-4">
+          <a href="#" className="text-white text-lg font-bold">friendsbook</a>
+          <div className="bg-white ml-4 px-3 h-7 flex items-center rounded-md w-72">
+            <input
+              type="text"
+              placeholder="Search Groups"
+              className="w-full outline-none text-sm"
             />
-            Profile
-          </a>
+          </div>
+          <div className="ml-auto flex space-x-4">
+            <a onClick={()=>{navigate('/home')}} className="text-white text-sm font-semibold mr-4 ">Home</a>
+            <a onClick={()=>{navigate('/profile')}} className="text-white text-sm font-semibold mr-4">Profile</a>
+            {/* <a onClick={()=>{navigate('/chats')}} className="text-white text-sm font-semibold mr-4">Messages</a> */}
+            {/* <a onClick={()=>{navigate('/notifications')}} className="text-white text-sm font-semibold mr-4">Notifications</a> */}
+          </div>
         </div>
-      </div>
-
+      </nav>
       {/* Main Form Container */}
       <div className="max-w-xl mx-auto my-5 bg-white border border-[#dddfe2] rounded shadow">
         <div className="bg-[#f5f6f7] px-4 py-2 border-b border-[#dddfe2]">

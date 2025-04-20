@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import {useNavigate} from "react-router-dom";
 
 import Events from "./Events";
 import Members from "./CommunityMembers";
@@ -16,9 +17,14 @@ const Sections = () => {
   const [formattedDate,setFormattedDate]=useState();
 
 
+
   const {id}=useParams();
   
+  const navigate=useNavigate();
 
+  const handleGoBack = () => {
+    navigate(-1);
+  };
   
 
   const renderTabContent = () => {
@@ -45,7 +51,7 @@ const Sections = () => {
   const fetchCommunity=async ()=>{
     try{
       console.log("Consoling!");
-      const response=await axios.get(`/community/${id}`)
+      const response=await axios.get(`/community/get/${id}`)
       setCommunity(response.data);
       const isoDate = response.data.createdAt;
       const date = new Date(isoDate);
@@ -73,6 +79,18 @@ const Sections = () => {
   return (
         
     <div className="bg-[#f5f5f9] min-h-screen px-4 py-6">
+    
+          {/* Back Button */}
+          <div className="max-w-4xl mx-auto mb-4">
+          <button
+            onClick={() => navigate(-1)}
+            className="text-white bg-blue-600 px-4 py-2 rounded-md text-base font-medium hover:bg-blue-700 transition"
+          >
+            ← Back
+          </button>
+        </div>
+            
+    
     {/* Community Header */}
     <div className="max-w-4xl mx-auto">
       <h1 className="text-2xl font-bold text-[#3b5998]">{Community?.name} </h1>
