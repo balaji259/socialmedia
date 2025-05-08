@@ -199,7 +199,19 @@ const userSchema = new mongoose.Schema(
     fcmToken: {
       type: String,
       default: '', // Stores the Firebase Cloud Messaging (FCM) token
+    },
+
+
+    friendsbookKey: {
+      key: String, // hashed and salted
+      active: Boolean,
+      lastModified: Date,
+      recovery: {
+        email: String,
+        phone: String,
+      }
     }
+
 
 
 

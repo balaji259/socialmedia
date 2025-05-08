@@ -69,6 +69,7 @@ import DiscussionPage from "./components/CommunityDiscussion.jsx";
 import Announcements from "./components/Announcements.jsx";
 
 import GroupSections from "./components/GroupSections.jsx";
+import Key from "./components/Key.jsx";
 
 const RoutesComponent = () => {
     return (
@@ -152,6 +153,7 @@ const RoutesComponent = () => {
 
                 <Route path="/group/:id/sections" element={<GroupSections />} />
 
+                <Route path="/key/management" element={<Key />} />
             
 
 
