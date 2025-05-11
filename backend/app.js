@@ -15,6 +15,7 @@ const groupRouter=require("./routes/group.js");
 const User=require("./models/users.js");
 const Notification=require("./models/notification")
 const communityRouter=require("./routes/community.js");
+const keyRouter=require("./routes/key.js");
 const eventRouter=require("./routes/events.js");
 const morgan = require('morgan');
 
@@ -68,6 +69,7 @@ app.use('/notifications',notificationRouter);
 app.use('/group',groupRouter);
 app.use('/community',communityRouter);
 app.use('/events',eventRouter);
+app.use('/key',keyRouter);
 
 
 

@@ -1,9 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import {jwtDecode} from 'jwt-decode';
+import { toast } from 'react-hot-toast';
+import {useNavigate} from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 export default function Key() {
-    
+
+  const [userId,setUserId]=useState(null);
+  const [userData,setUserData]=useState(null);
+  const navigate=useNavigate();
+
   const [keyState, setKeyState] = useState({
-    activeSection: true,
+    activeSection: false,
     inactiveSection: false,
     createKeySection: false
   });
@@ -30,36 +40,109 @@ export default function Key() {
     setKeyInputs({ createKey: '', confirmKey: '' });
   };
 
-  const activateKey = () => {
+  const activateKey = async () => {
     const { createKey, confirmKey } = keyInputs;
     
     if (createKey.length !== 6) {
-      alert('Your key must be exactly 6 characters.');
+      toast.error('Your key must be exactly 6 characters.');
       return;
     }
     
     if (createKey !== confirmKey) {
-      alert('Keys do not match. Please try again.');
+      toast.error('Keys do not match. Please try again.');
       return;
     }
-    
+
+    const token = localStorage.getItem('token');
+    if (!token) {
+      toast.error('User not logged in.');
+      return;
+    }
+  
+    // let userId;
+
+    // try {
+    //   const decoded = jwtDecode(token);
+    //   setUserId(decoded.userId) ; // adjust according to your JWT payload
+    // } catch (error) {
+    //   console.log(error);
+    //   console.log(error.message);
+    //   alert(error.message);
+    //   return;
+    // }
+
+    try {
+      const response = await axios.post(
+        '/key/activate',
+        { key: createKey,
+          userId
+
+        },
+
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}` // Adjust if using cookie/session instead
+          }
+        }
+      );
+  
     setKeyState({
       activeSection: true,
       inactiveSection: false,
       createKeySection: false
     });
-    setKeyInputs({ createKey: '', confirmKey: '' });
-    alert('Friendsbook Key created and activated successfully!');
-  };
 
-  const deactivateKey = () => {
+    setKeyInputs({ createKey: '', confirmKey: '' });
+    toast.success('Friendsbook Key activated successfully!');
+  } catch (error) {
+    const errorMessage = error.response?.data?.message || 'An error occurred. Please try again.';
+    console.error(error);
+    toast.error(errorMessage);
+  }
+};
+
+  
+const deactivateKey = async () => {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    toast.error('User not logged in.');
+    return;
+  }
+
+  // let userId;
+  // try {
+  //   const decoded = jwtDecode(token);
+  //   setUserId(decoded.userId) ;
+  // } catch (error) {
+  //   alert('Invalid token.');
+  //   return;
+  // }
+
+  try {
+    const response = await axios.post(
+      '/key/deactivate',
+      { userId },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
+
+    toast.success(response.data.message || 'Friendsbook Key deactivated.');
+    // Optionally update UI
     setKeyState({
       activeSection: false,
       inactiveSection: true,
       createKeySection: false
     });
-    alert('Friendsbook Key has been deactivated.');
-  };
+  } catch (error) {
+    const errorMessage = error.response?.data?.message || 'Error during deactivation.';
+    console.error(error);
+    toast.error(errorMessage);
+  }
+};
+
 
   const handleInputChange = (e) => {
     const { id, value } = e.target;
@@ -79,24 +162,116 @@ export default function Key() {
     });
   }
 
+  const changeKey=()=>{
+    setKeyState({
+      activeSection: false,
+      inactiveSection: false,
+      createKeySection: true
+    });
+  }
+
+
+
+  const getUserId=async()=>{
+
+    const token=localStorage.getItem('token');
+    if(!token)
+    {
+      toast.error("Token invalid.Login again!");
+      return;
+    }
+    try {
+      const decoded = jwtDecode(token);
+      setUserId(decoded.userId) ;
+    } catch (error) {
+      toast.error('Invalid token.');
+      return;
+    }
+
+  }
+
+
+
+  const getUserProfile=async()=>{
+    try{
+        console.log(`userId:${userId}`);
+        const response=await axios.get(`/user/viewProfile/${userId}`);
+        console.log(response);
+        setUserData(response.data);
+    }   
+    catch(error){
+        console.log(error);
+    }
+}
+
+useEffect(()=>{
+  console.log("getting userid");
+  getUserId();
+  console.log(userId);
+},[]);
+
+
+useEffect(()=>{
+  if(userData){
+    if(userData.friendsbookKey.active)
+    {
+      setKeyState({
+        activeSection: true,
+        inactiveSection: false,
+        createKeySection: false
+      });
+    }
+    else{
+      setKeyState({
+        activeSection: false,
+        inactiveSection: true,
+        createKeySection: false
+      });
+    }   
+  }
+},[userData])
+
+
+useEffect(()=>{
+    if(userId){
+
+      console.log("fetching user details !");
+      getUserProfile();
+    }
+},[userId])
+
+
+
+
   return (
-    <div className="min-h-screen bg-gray-100">
+    // <div className="min-h-screen w-full bg-gray-100">
+    <div className="min-h-screen w-full bg-gray-100 ">
+
       {/* Header */}
-      <header className="bg-blue-600 p-3 shadow-md">
-        <div className="container mx-auto flex justify-between items-center px-4">
-          <div className="text-white text-3xl font-bold">f</div>
-          <div className="flex items-center">
-            <span className="text-white mr-3">John Doe</span>
-            <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-blue-600 font-bold">
-              JD
-            </div>
+      <header className="bg-[#3b5998] p-3 shadow-md">
+      <div className="mx-auto flex justify-between items-center px-4">
+        {/* Back Button */}
+        <button
+        onClick={() => navigate(-1)}
+        className="text-white font-medium text-md  hover:bg-[#1d325e] px-3 py-1 rounded-md flex items-center gap-2"
+      >
+        <FontAwesomeIcon icon={faArrowLeft} size="lg" />
+        {/* Back */}
+      </button>
+
+        <div className="flex items-center">
+          <span className="text-white mr-3">{userData?.username}</span>
+          <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-blue-600 font-bold">
+            {userData?.username?.charAt(0)}
           </div>
         </div>
-      </header>
+      </div>
+    </header>
+
       
       {/* Main Content */}
-      <div className="container mx-auto py-5 px-4">
-        <div className="bg-white rounded-lg shadow p-6 max-w-4xl mx-auto">
+      <div className="w-full py-5">
+        <div className="bg-gray-100 rounded-lg shadow p-6 max-w-4xl mx-auto">
           <h1 className="text-2xl font-semibold mb-5 pb-4 border-b border-gray-200">Privacy & Security</h1>
           
           {/* Active Key Section */}
@@ -110,7 +285,7 @@ export default function Key() {
                   <span className="text-lg font-bold">Friendsbook Key</span>
                 </div>
                 <div className="bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-sm font-medium">
-                  Active
+                  {userData?.friendsbookKey?.active?'Active':'Inactive'}
                 </div>
               </div>
               
@@ -121,11 +296,21 @@ export default function Key() {
               <div className="bg-gray-50 rounded-lg p-4 mb-5">
                 <div className="flex justify-between py-2 border-b border-gray-200">
                   <span className="text-gray-500">Status</span>
-                  <span className="font-medium">Active</span>
+                  <span className="font-medium">{userData?.friendsbookKey?.active?'Active':'Inactive'}</span>
                 </div>
                 <div className="flex justify-between py-2 border-b border-gray-200">
                   <span className="text-gray-500">Last Modified</span>
-                  <span className="font-medium">May 2, 2025</span>
+                  {/* <span className="font-medium">{userData.friendsbookKey.lastModified}</span> */}
+
+                  <span className="font-medium">
+                    {new Date(userData?.friendsbookKey?.lastModified).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    })}
+                  </span>
+
+
                 </div>
                 <div className="flex justify-between py-2">
                   <span className="text-gray-500">Recovery Options</span>
@@ -140,7 +325,7 @@ export default function Key() {
                 >
                   Deactivate Key
                 </button>
-                <button className="bg-gray-200 hover:bg-gray-300 text-gray-900 px-4 py-2 rounded-md font-medium">
+                <button className="bg-gray-200 hover:bg-gray-300 text-gray-900 px-4 py-2 rounded-md font-medium" onClick={changeKey}>
                   Change Key
                 </button>
               </div>
@@ -243,14 +428,14 @@ export default function Key() {
                   <input type="checkbox" id="email-recovery" checked disabled className="mt-1" />
                   <label htmlFor="email-recovery" className="text-gray-500">
                     <div className="font-medium">Email Recovery</div>
-                    <div className="text-xs">j****e@example.com</div>
+                    <div className="text-xs">{userData?.email?`${userData?.email}`:"No email provided"}</div>
                   </label>
                 </div>
                 <div className="flex gap-2">
                   <input type="checkbox" id="phone-recovery" checked disabled className="mt-1" />
                   <label htmlFor="phone-recovery" className="text-gray-500">
                     <div className="font-medium">Phone Recovery</div>
-                    <div className="text-xs">+1 (***) ***-**90</div>
+                    <div className="text-xs">{userData?.mobileNumber?`${userData?.mobileNumber}`:"No mobile number provided"}</div>
                   </label>
                 </div>
               </div>

@@ -70,6 +70,7 @@ import Announcements from "./components/Announcements.jsx";
 
 import GroupSections from "./components/GroupSections.jsx";
 import Key from "./components/Key.jsx";
+import EnterKey from "./components/EnterKey.jsx";
 
 const RoutesComponent = () => {
     return (
@@ -154,6 +155,8 @@ const RoutesComponent = () => {
                 <Route path="/group/:id/sections" element={<GroupSections />} />
 
                 <Route path="/key/management" element={<Key />} />
+
+                <Route path="/enter-key" element={<EnterKey />} />
             
 
 

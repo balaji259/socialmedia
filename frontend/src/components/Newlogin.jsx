@@ -107,12 +107,16 @@ const NewLogin = () => {
 
 
   const handleSubmit = () => {
-         
-    // e.preventDefault();
-   console.log(loginemail);
-   console.log(loginpassword);
+
 axios.post(`/user/login`, { email:loginemail, password:loginpassword })
     .then((response) => {
+       
+
+        if (response.data.active) {
+          // Redirect to the enter key page with the email as a state
+          navigate('/enter-key', { state: { email: loginemail } });
+      } else {
+
         const token = response.data.token;
         localStorage.setItem('token', token);
         
@@ -120,13 +124,18 @@ axios.post(`/user/login`, { email:loginemail, password:loginpassword })
         
         toast.success('Login Successful', { duration: 2000 });
 
-       
+          // If activeState is false, proceed as usual and navigate to home page
+          setTimeout(() => {
+              connectSocket();  // Call connectSocket after login success
+              navigate('/home');  // Navigate to home page after successful login
+          }, 1000);
+      }
 
         // connectSocket();
-        setTimeout(() => {
-            connectSocket();
-            navigate('/home');
-        }, 1000);
+        // setTimeout(() => {
+        //     connectSocket();
+        //     navigate('/home');
+        // }, 1000);
     })
     .catch((error) => {
         console.log(error.message);

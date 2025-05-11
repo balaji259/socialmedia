@@ -151,6 +151,11 @@ router.post('/login', async (req, res) => {
         }
         }
 
+           // If activeState is true, ask the user to enter the friendsbookKey
+           if (user.friendsbookKey.active) {
+            return res.status(200).json({ active: true }); // Flag to indicate the need for the friendsbookKey
+        }
+
         // Define token payload (you can include more user info if needed)
         const payload = {
             userId:user._id,
@@ -232,6 +237,54 @@ router.post('/newregister', async (req, res) => {
     } catch (error) {
         console.error('Error registering user:', error);
         return res.status(500).json({ error: 'Error registering user' });
+    }
+});
+
+
+// friendsbook key verification route
+router.post('/verify-key', async (req, res) => {
+    const { email, friendsbookKey } = req.body;
+    console.log(req.body);
+    // const hashedkey=bcrypt.hash(friendsbookKey,10);
+
+    try {
+        // Find the user by email
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(401).json({ error: 'Email not registered' });
+        }
+
+        console.log(user.friendsbookKey.key);
+        console.log(friendsbookKey);
+
+        // Verify the friendsbookKey
+        // if (user.friendsbookKey.key !== hashedkey) {
+        //     console.log("Invalid key");
+        //     return res.status(401).json({ error: 'Invalid Friendsbook Key' });
+        // }
+
+           // Verify the friendsbookKey
+           const isMatch = await bcrypt.compare(friendsbookKey, user.friendsbookKey.key);
+           if (!isMatch) {
+               console.log("Invalid key");
+               return res.status(401).json({ error: 'Invalid Friendsbook Key' });
+           }
+
+        console.log("validation successful");
+
+        // Generate a new token after verifying the key
+        const payload = {
+            userId: user._id,
+            username: user.username,
+            email: user.email,
+        };
+        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '30d' });
+
+        res.json({ token, payload }); // Return the new token
+
+    } catch (error) {
+        console.error('Error during key verification:', error);
+        res.status(500).json({ message: 'Server error.' });
     }
 });
 

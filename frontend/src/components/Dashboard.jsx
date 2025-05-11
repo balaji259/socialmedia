@@ -12,7 +12,7 @@ import { faMessage } from "@fortawesome/free-solid-svg-icons";
 import { faUserGroup } from "@fortawesome/free-solid-svg-icons";
 import { faRotate } from "@fortawesome/free-solid-svg-icons";
 import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
-
+import { faKey } from '@fortawesome/free-solid-svg-icons';
 import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { faNewspaper } from "@fortawesome/free-solid-svg-icons";
 import { faEnvelope, faCommentDots } from "@fortawesome/free-solid-svg-icons";
@@ -120,6 +120,14 @@ const Dashboard = () => {
          <span className="menu-text">Groups</span>
         </button>
 
+
+
+          
+        <button className="menu-item tooltip" onClick={()=>{navigate('/key/management')}}>
+          <FontAwesomeIcon icon={faKey} id="access-key" />
+
+           <span className="menu-text">Key</span>
+          </button>
 
 
           <button className="menu-item tooltip" onClick={inviteFriends}>
