@@ -249,24 +249,29 @@ useEffect(()=>{
 
       {/* Header */}
       <header className="bg-[#3b5998] p-3 shadow-md">
-      <div className="mx-auto flex justify-between items-center px-4">
-        {/* Back Button */}
-        <button
+  <div className="mx-auto flex justify-between items-center px-4">
+    {/* Left Side: Back Button + Key Page Label */}
+    <div className="flex items-center gap-6">
+      <button
         onClick={() => navigate(-1)}
-        className="text-white font-medium text-md  hover:bg-[#1d325e] px-3 py-1 rounded-md flex items-center gap-2"
+        className="text-white font-medium text-md hover:bg-[#1d325e] px-3 py-1 rounded-md flex items-center gap-2"
       >
         <FontAwesomeIcon icon={faArrowLeft} size="lg" />
         {/* Back */}
       </button>
+      <span className="text-white text-lg font-semibold">Key Page</span>
+    </div>
 
-        <div className="flex items-center">
-          <span className="text-white mr-3">{userData?.username}</span>
-          <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-blue-600 font-bold">
-            {userData?.username?.charAt(0)}
-          </div>
-        </div>
+    {/* Right Side: User Info */}
+    <div className="flex items-center">
+      <span className="text-white mr-3">{userData?.username}</span>
+      <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-blue-600 font-bold">
+        {userData?.username?.charAt(0)}
       </div>
-    </header>
+    </div>
+  </div>
+</header>
+
 
       
       {/* Main Content */}
