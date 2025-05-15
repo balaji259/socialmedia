@@ -278,7 +278,7 @@ router.get("/get/:groupId", async (req, res) => {
       .populate("admins", "name")
       .populate({
         path: "posts",
-        populate: { path: "author", select: "name" }
+        populate: { path: "user", select: "name" }
       });
 
     if (!group) return res.status(404).json({ error: "Group not found" });

@@ -188,13 +188,14 @@ router.get("/get/:groupId", async (req, res) => {
       .populate("admins", "name")
       .populate({
         path: "posts",
-        populate: { path: "author", select: "name" }
+        populate: { path: "user", select: "name" }
       });
 
     if (!com) return res.status(404).json({ error: "Community not found" });
 
     res.json(com);
   } catch (error) {
+    console.error("Error fetching community:", error);  // Add this
     res.status(500).json({ error: "Server error" });
   }
 });
