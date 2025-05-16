@@ -942,10 +942,7 @@ useEffect(() => {
           );
 
           console.log("✅ View Notification Sent Successfully");
-          alert("Navigating to other profile!");
-          console.log("Before navigating!");
-          console.log("Profile ID:", profileId);
-          console.log("Current User ID:", currentuserId);
+         
 
           navigate('/other');
         } catch (error) {

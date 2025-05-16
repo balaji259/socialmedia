@@ -5,12 +5,7 @@ const Notification=require('./models/notification')
 
 
 const sendNotification = async (userId, title, body) => {
-  
 
-  console.log("send notictaions!");
-    console.log(userId);
-    console.log(title);
-    console.log(body);
 
 
 

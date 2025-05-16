@@ -119,11 +119,7 @@ export const useChatStore = create((set,get)=>({
             );
       
             console.log("✅ View Notification Sent Successfully");
-      
-            alert("sent notifictaion");
-            console.log("msg notification");
-            console.log(selectedUser._id)
-            console.log(userId);
+     
 
 
 

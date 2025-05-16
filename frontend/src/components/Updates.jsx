@@ -13,7 +13,7 @@ export default function Updates() {
   const [suggestedUsers, setSuggestedUsers] = useState([]);
   const [allSuggestedUsers, setAllSuggestedUsers] = useState([]);
   const [friends,setFriends]=useState([]);
-//   const userId = "67c343222142a971928c836c";
+
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
@@ -196,46 +196,82 @@ export default function Updates() {
 
 
   const goToUserProfile = (id) => {
-    console.log(id);
+
     setProfileId(id);
+
+    notify(userId,profileId);
     
   };
+
+  const notify = async (userId,profileId) =>{
+    try{
+    
+
+      const token=localStorage.getItem('token');
+      if(!token){
+        toast.error('Please login again !');
+        navigate('/')
+      }
+    
+ 
+    if(profileId && userId){
+      if(profileId != userId){
+     
+        await axios.post(
+          "/send-notification",
+          {
+            userId: profileId, // The owner of the post
+            senderId: userId, // The person who commented
+            type: "Profile View Notification",
+            title: "Profile View",
+            body: "Viewed Your Profile", // Send the comment text as notification body
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+     
+        console.log("✅ View Notification Sent Successfully");
+      
+      }
+
+
+  
+      }
+    }
+    
+  catch(e){
+    toast.error("Something went wrong !");
+  
+    console.log(e);
+  }
+
+  }
+
+   
 
   useEffect(()=>{
     console.log("navigating to user profile");
     console.log("now the profileId is:",profileId);
-    if(profileId!=null)
+
+
+      
+      
+     
+    if(profileId!=null){
+
+      
+      notify(userId,profileId);
       navigate(profileId === userId ? `/profile` : `/other`);
+    }
 
   },[profileId]);
 
 
-  // const fetchAllUserSuggestions = async () => {
-  //   try {
-  //     const token = localStorage.getItem('token');
-  //     const response = await fetch(`/user/suggestions`, {
-  //       method: 'GET',
-  //       headers: {
-  //         'Authorization': `Bearer ${token}`,
-  //         'Content-Type': 'application/json',
-  //       },
-  //     });
 
-  //     if (!response.ok) {
-  //       throw new Error('Unauthorized access');
-  //     }
-
-  //     const data = await response.json();
-
-  //     if (data.users && Array.isArray(data.users)) {
-  //       setAllSuggestedUsers(data.users);
-  //     } else {
-  //       console.error("Unexpected data format:", data);
-  //     }
-  //   } catch (error) {
-  //     console.error('Failed to fetch user suggestions:', error);
-  //   }
-  // };
 
   const fetchAllUserSuggestions = useCallback(async () => {
     // if (!query) return;
