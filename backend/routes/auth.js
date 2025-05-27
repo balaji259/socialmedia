@@ -134,6 +134,9 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
+    console.log(email);
+    console.log(password);
+
     try {
         // Find the user by email
         const user = await User.findOne({ email });
@@ -164,6 +167,10 @@ router.post('/login', async (req, res) => {
         };
         // Generate JWT token
         const token = jwt.sign(payload, process.env.JWT_SECRET,{expiresIn:'30d'});
+
+
+        console.log("payload");
+        console.log(payload);
 
 
         // Send token to the client

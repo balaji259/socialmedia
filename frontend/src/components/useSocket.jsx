@@ -30,21 +30,11 @@ useEffect(() => {
   }
 }, [onlineUsers]);
 
-// useEffect(() => {
-//   if (user) {
-   
-//     connectSocket();
-//   }
-// }, [user]);
 
   // Connect Socket
   const connectSocket = () => {
 
-    // if (!user?.userId) {
-      
-    //   console.error("Cannot connect socket: User ID is not available.");
-    //   return;
-    // }
+
     
     
     if (!user) {
@@ -63,13 +53,7 @@ useEffect(() => {
     return;
   }
     
-    // const newSocket = io(backendBaseUrl,{
-    //   query:{
-    //     userId:user.userId,
-    //   },
-      
-   
-    // });
+ 
 
     // Pass the token during the connection
   const newSocket = io(backendBaseUrl, {
@@ -78,10 +62,7 @@ useEffect(() => {
     },
   });
 
-    // newSocket.connect();
-
-    // console.log("Connecting socket...");
-
+    
     newSocket.on("connect", () => {
       console.log("Socket connected:", newSocket.id);
     });
@@ -122,15 +103,7 @@ useEffect(() => {
     }
   };
 
-  // Cleanup on unmount
-  // useEffect(() => {
-  //   return () => {
-  //     if (socket?.connected) {
-  //       // console.log("Cleaning up socket during unmount.");
-  //       disconnectSocket();
-  //     }
-  //   };
-  // }, [socket]);
+
 
   useEffect(() => {
     return () => {

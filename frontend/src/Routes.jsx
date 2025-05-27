@@ -71,13 +71,15 @@ import Announcements from "./components/Announcements.jsx";
 import GroupSections from "./components/GroupSections.jsx";
 import Key from "./components/Key.jsx";
 import EnterKey from "./components/EnterKey.jsx";
+import CommunityChat from "./components/CommunityChat.jsx";
+import LoginV2 from './components/LoginV2.jsx';
 
 const RoutesComponent = () => {
     return (
         <SocketProvider>
         <Router>
             <Routes>
-                <Route path="/" element={<NewLogin />} />
+                <Route path="/" element={<LoginV2 />} />
                 <Route path="/welcome" element={<WelcomeOverlay />} />
                 {/* <Route path="/register" element={<Register />} /> */}
                 {/* <Route path="/login" element={<Login />} /> */}
@@ -157,6 +159,8 @@ const RoutesComponent = () => {
                 <Route path="/key/management" element={<Key />} />
 
                 <Route path="/enter-key" element={<EnterKey />} />
+
+                <Route path="/cchat" element={<CommunityChat />} />
             
 
 

@@ -5,6 +5,7 @@ const User=require("../models/users");
 
 const cloudinary = require('../cloudinaryConfig');
 const Message=require("../models/message");
+const CommunityMessage = require("../models/CommunityMessage");
 const authenticateUser=require("./authenticate_user");
 
 const { getReceiverSocketId,io } = require("../socket");  // Adjust path if necessary
@@ -99,11 +100,92 @@ const sendMessage=async (req,res)=>{
 };  
 
 
+const sendCommunityMessage=async (req,res)=>{
+    try{
+        // const {text,image}=req.body;
+        const { text, communityId, media, mediaType } = req.body;
+        const {id:receiverId}=req.params;
+        const senderId= req.user.userId;
+
+        console.log("messageData");
+        console.log(text);
+        console.log(receiverId);
+        console.log(senderId);
+        console.log(communityId);
+        console.log(media);
+        console.log(mediaType);
+
+        let mediaUrl;
+        if(media){
+            const uploadResponse = await cloudinary.uploader.upload(media, {
+                resource_type: mediaType === "video" ? "video" : "image",
+            });
+            mediaUrl = uploadResponse.secure_url;
+        }
+
+        const newMessage=new CommunityMessage(
+            {
+                senderId,
+                receiverId,
+                text,
+                media: mediaUrl,
+                mediaType,
+                communityId
+            }
+        ); 
+        console.log("newMessage");
+        console.log(newMessage);
+
+        await newMessage.save();
+
+        //real time functinlity goes here!
+        console.log("real time msgh event!");
+        const receiverSocketId = getReceiverSocketId(receiverId);
+        if(receiverSocketId){
+            console.log("sending the emit event");
+            io.to(receiverSocketId).emit("newCommunityMessage",newMessage);
+        }
+
+
+        res.status(201).json(newMessage);
+
+    }
+    catch(e){
+        console.log(e);
+        res.status(500).json("Error in sending message",e.message);
+    }
+};  
+
+
+const getMessagesBetweenUsers = async (req, res) => {
+    const { communityId, receiverId } = req.params;
+    const senderId = req.user.userId; // comes from the authenticated token middleware
+  
+    try {
+      const messages = await CommunityMessage.find({
+        communityId,
+        $or: [
+          { senderId, receiverId },
+          { senderId: receiverId, receiverId: senderId }
+        ]
+      })
+      .sort({ createdAt: 1 }); // ascending order
+  
+      res.status(200).json(messages);
+    } catch (error) {
+      console.error("Error fetching messages:", error);
+      res.status(500).json({ message: "Failed to fetch messages" });
+    }
+  };
+
 
 //routers
 
 router.get("/get/:id",authenticateUser,getMessages);
 router.post("/send/:id",authenticateUser,sendMessage);
 router.get("/getusers",authenticateUser,getUsersForSideBar);
+router.post("/community/send/:id",authenticateUser,sendCommunityMessage);
+router.get('/community/:communityId/with/:receiverId', authenticateUser, getMessagesBetweenUsers);
+
 
 module.exports=router;
