@@ -30,7 +30,15 @@ const Home = () => {
 
   const navigate=useNavigate();
  
+useEffect(()=>{
+  const token=localStorage.getItem('token');
+  if(!token)
+  {
+    navigate('/');
+    return;
+  }
 
+},[])
 
 //   useEffect(() => {
 //     console.log("POLLING STARTED!")

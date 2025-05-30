@@ -62,7 +62,7 @@ const EnterKey = () => {
                 <div className="text-center">
                     <h2 className="text-3xl font-extrabold text-gray-900">Verify Your Account</h2>
                     <p className="mt-2 text-sm text-gray-600">
-                        Enter the 6-digit verification key sent to your email
+                        Enter the 6-digit verification key
                     </p>
                     {email && (
                         <p className="mt-1 text-sm font-medium text-blue-600">

@@ -192,7 +192,7 @@ const handleGoogleLogin = async (x) => {
           setTimeout(() => {
               
               connectSocket();
-              alert("check");;
+              // alert("check");;
               // navigate('/home');
           }, 1000);
       })
@@ -338,7 +338,7 @@ const checkUser=async ()=>{
             </h2>
             
             {/* Floating illustration placeholder */}
-            <div className="hidden lg:block w-80 h-64 bg-gradient-to-br from-blue-100 to-indigo-200 rounded-2xl flex items-center justify-center">
+            <div className="hidden lg:block w-96 h-72 bg-gradient-to-br from-blue-100 to-indigo-200 rounded-2xl flex items-center justify-center">
                   <video
                     src="./images/login_vid.mp4"
                     autoPlay
