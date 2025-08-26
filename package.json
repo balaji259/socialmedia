@@ -15,7 +15,7 @@
     "server": "cd backend && nodemon app.js",
   
       
-    "client": "cd frontend && vite"
+    "client": "cd frontend && npm run dev"
   
     },
   
