@@ -49,8 +49,8 @@ const EnterKey = () => {
                 }, 1000);
             }
         } catch (error) {
-            setError('Invalid Friendsbook Key');
-            toast.error('Invalid Friendsbook Key');
+            setError('Invalid peoplechat Key');
+            toast.error('Invalid peoplechat Key');
         } finally {
             setIsLoading(false);
         }
@@ -75,7 +75,7 @@ const EnterKey = () => {
                     <div className="rounded-md shadow-sm">
                         <div className="mb-2">
                             <label htmlFor="key" className="sr-only">
-                                Friendsbook Key
+                                peoplechat Key
                             </label>
                             <input
                                 id="key"

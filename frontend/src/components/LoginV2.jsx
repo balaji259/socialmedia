@@ -331,7 +331,7 @@ const checkUser=async ()=>{
         <div className="flex-1 p-8 lg:p-12 flex flex-col justify-center relative">
           <div className="max-w-md">
             <h1 className="text-4xl lg:text-5xl font-bold text-[#3b5998] mb-6">
-              friendsbook
+              peoplechat
             </h1>
             <h2 className="text-2xl lg:text-3xl text-gray-800 mb-8 leading-relaxed">
               Connect and share with the people in your life.

@@ -81,7 +81,7 @@ const NewFeedbackForm = () => {
     {/* Navbar */}
     <nav className="bg-white mb-4 p-2 shadow-md">
      
-        <h1 className="text-xl pl-4 font-semibold text-[#3b5998]">friendsbook</h1>
+        <h1 className="text-xl pl-4 font-semibold text-[#3b5998]">peoplechat</h1>
       
     </nav>
 
@@ -90,7 +90,7 @@ const NewFeedbackForm = () => {
       <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-lg">
         <h2 className="text-2xl font-semibold mb-4">Send Feedback</h2>
         <p className="text-gray-600 text-sm mb-4">
-          We’re always working to improve Friendsbook and your feedback helps us make it better
+          We’re always working to improve peoplechat and your feedback helps us make it better
           for everyone. Let us know what’s working and what isn’t.
         </p>
         
@@ -109,7 +109,7 @@ const NewFeedbackForm = () => {
             <option value="Other">Other</option>
           </select>
 
-          <label className="block text-sm font-medium text-gray-700">Which part of Friendsbook are you giving feedback on?</label>
+          <label className="block text-sm font-medium text-gray-700">Which part of peoplechat are you giving feedback on?</label>
           <select
             className="w-full p-2 border rounded mt-1 mb-4"
             value={feedbackPart}

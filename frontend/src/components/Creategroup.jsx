@@ -92,10 +92,10 @@ const CreateGroup = () => {
   return (
     <div className="min-h-screen bg-gray-100">
       <nav className="bg-[#3b5998] shadow-md p-4 flex justify-between items-center">
-        <a href="#" className="text-xl font-bold text-white">FriendsBook</a>
+        <a href="#" className="text-xl font-bold text-white">peoplechat</a>
         <input
           type="text"
-          placeholder="Search FriendsBook"
+          placeholder="Search peoplechat"
           className="border rounded-full px-4 py-2 w-1/3 focus:outline-none"
         />
         <div className="space-x-4">

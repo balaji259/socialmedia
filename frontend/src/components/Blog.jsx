@@ -29,7 +29,7 @@ const BlogPage = () => {
             </div>
             <div>
               <a href="#" className="text-[#3b5998]">▶ Site Tour</a>
-              <div className="text-gray-600 ml-3">Learn about Friendsbook.</div>
+              <div className="text-gray-600 ml-3">Learn about peoplechat.</div>
             </div>
           </div>
         </div>
@@ -37,11 +37,11 @@ const BlogPage = () => {
         {/* Main Content */}
         <main className="flex-1 p-4">
           <div className="bg-[#3b5998] text-white p-3 text-sm font-bold flex justify-center md:justify-start">
-            Friendsbook Blog
+            peoplechat Blog
           </div>
           <div className="p-4 text-sm">
             <div className="flex justify-between mb-4">
-              <span>Friendsbook Blog home</span>
+              <span>peoplechat Blog home</span>
               <div className="flex gap-2">
                 <a href="#" className="text-blue-700">Previous</a>
                 <a href="#" className="text-blue-700">Next</a>

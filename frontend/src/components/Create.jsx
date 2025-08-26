@@ -5,7 +5,7 @@ const Create= () => {
     <div className="min-h-screen bg-gray-100">
       {/* Navigation Bar */}
       <nav className="bg-[#3b5998] shadow-md p-4 flex justify-between items-center">
-        <a href="#" className="text-xl font-bold text-white">FriendsBook</a>
+        <a href="#" className="text-xl font-bold text-white">peoplechat</a>
         <input
           type="text"
           placeholder="Search FriendsBook"

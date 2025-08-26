@@ -93,7 +93,7 @@ export default function Key() {
     });
 
     setKeyInputs({ createKey: '', confirmKey: '' });
-    toast.success('Friendsbook Key activated successfully!');
+    toast.success('peoplechat Key activated successfully!');
   } catch (error) {
     const errorMessage = error.response?.data?.message || 'An error occurred. Please try again.';
     console.error(error);
@@ -129,7 +129,7 @@ const deactivateKey = async () => {
       }
     );
 
-    toast.success(response.data.message || 'Friendsbook Key deactivated.');
+    toast.success(response.data.message || 'peoplechat Key deactivated.');
     // Optionally update UI
     setKeyState({
       activeSection: false,
@@ -287,7 +287,7 @@ useEffect(()=>{
                   <div className="w-8 h-8 bg-blue-50 rounded-full flex items-center justify-center text-blue-600 mr-3">
                     🔒
                   </div>
-                  <span className="text-lg font-bold">Friendsbook Key</span>
+                  <span className="text-lg font-bold">peoplechat Key</span>
                 </div>
                 <div className="bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-sm font-medium">
                   {userData?.friendsbookKey?.active?'Active':'Inactive'}
@@ -295,7 +295,7 @@ useEffect(()=>{
               </div>
               
               <p className="text-gray-500 mb-5">
-                Friendsbook Key provides an additional layer of security for your account. Even if your password is compromised, no one can access your account without this key.
+                peoplechat Key provides an additional layer of security for your account. Even if your password is compromised, no one can access your account without this key.
               </p>
               
               <div className="bg-gray-50 rounded-lg p-4 mb-5">
@@ -345,7 +345,7 @@ useEffect(()=>{
                   <div className="w-8 h-8 bg-blue-50 rounded-full flex items-center justify-center text-blue-600 mr-3">
                     🔒
                   </div>
-                  <span className="text-lg font-bold">Friendsbook Key</span>
+                  <span className="text-lg font-bold">peoplechat Key</span>
                 </div>
                 <div className="bg-gray-100 text-gray-500 px-3 py-1 rounded-full text-sm font-medium">
                   Inactive
@@ -353,7 +353,7 @@ useEffect(()=>{
               </div>
               
               <p className="text-gray-500 mb-5">
-                Friendsbook Key is currently inactive. Activate this feature to add an extra layer of security to your account.
+                peoplechat Key is currently inactive. Activate this feature to add an extra layer of security to your account.
               </p>
               
               <div className="bg-gray-50 rounded-lg p-4 mb-5">
@@ -386,7 +386,7 @@ useEffect(()=>{
                   <div className="w-8 h-8 bg-blue-50 rounded-full flex items-center justify-center text-blue-600 mr-3">
                     🔒
                   </div>
-                  <span className="text-lg font-bold">Create Your Friendsbook Key</span>
+                  <span className="text-lg font-bold">Create Your peoplechat Key</span>
                 </div>
               </div>
               
@@ -465,7 +465,7 @@ useEffect(()=>{
           {/* Info Cards */}
           <div className="flex flex-col md:flex-row gap-5 mt-8">
             <div className="bg-white border border-gray-200 rounded-lg p-5 md:w-1/2">
-              <div className="text-base font-bold mb-2">How Friendsbook Key Works</div>
+              <div className="text-base font-bold mb-2">How peoplechat Key Works</div>
               <div className="text-gray-500 text-sm">
                 <p className="mb-2">When activated, you'll be asked to enter your 6-character key every time you sign in, even if your email and password are correct.</p>
                 <p>This means that even if someone gets your password, they still can't access your account without your personal key.</p>
@@ -482,7 +482,7 @@ useEffect(()=>{
         </div>
         
         <div className="text-center text-gray-500 text-xs mt-10">
-          <p>© 2025 Friendsbook · Privacy · Terms · Cookies</p>
+          <p>© 2025 peoplechat · Privacy · Terms · Cookies</p>
         </div>
       </div>
     </div>

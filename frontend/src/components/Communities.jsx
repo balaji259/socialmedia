@@ -44,7 +44,7 @@ const Communities = () => {
       {/* Navbar */}
       <nav className="bg-[#3b5998] h-12 fixed top-0 w-full shadow-md z-50">
         <div className="max-w-6xl mx-auto flex items-center h-full px-4">
-          <a href="#" className="text-white text-lg font-bold">friendsbook</a>
+          <a href="#" className="text-white text-lg font-bold">peoplechat</a>
           <div className="bg-white ml-4 px-3 h-7 flex items-center rounded-md w-72">
             <input
               type="text"

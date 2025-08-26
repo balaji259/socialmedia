@@ -94,20 +94,20 @@ const WelcomeOverlay = () => {
         <div className="relative w-screen h-screen flex items-center justify-center bg-gray-800 text-white p-4 sm:p-8">
             <div className="max-w-3xl text-center space-y-4">
                 <h1 className="text-4xl sm:text-5xl font-extrabold mb-4 text-purple-400">
-                    Friendsbook
+                    peoplechat
                 </h1>
                 <p className="text-base sm:text-lg mb-4">
-                    Friendsbook is the ultimate college network, connecting you to everyone that matters at MIT University and beyond!
+                    peoplechat is the ultimate college network, connecting you to everyone that matters at MIT University and beyond!
                 </p>
                 <p className="text-base sm:text-lg mb-6">
-                    We’ve opened up Friendsbook to MIT University – a space where every student can share their experiences, connect with friends, and dive into the social scene like never before.
+                    We’ve opened up peoplechat to MIT University – a space where every student can share their experiences, connect with friends, and dive into the social scene like never before.
                 </p>
                 <div className="text-left mb-6 space-y-3 text-sm sm:text-lg">
                     <p>
-                        <span className="font-semibold text-purple-400">Be Yourself:</span> Share your college experiences with the entire campus on Friendsbook.
+                        <span className="font-semibold text-purple-400">Be Yourself:</span> Share your college experiences with the entire campus on peoplechat.
                     </p>
                     <p>
-                        <span className="font-semibold text-purple-400">Find Your People:</span> Whether it’s friends, that special someone, or classmates, Friendsbook makes it easy to connect.
+                        <span className="font-semibold text-purple-400">Find Your People:</span> Whether it’s friends, that special someone, or classmates, peoplechat makes it easy to connect.
                     </p>
                     <p>
                         <span className="font-semibold text-purple-400">Make Your Mark:</span> Get social, get noticed, and be unforgettable.
@@ -129,7 +129,7 @@ const WelcomeOverlay = () => {
                     </button>
                 </div>
                 <p className="mt-6 text-xs sm:text-sm text-gray-400 italic">
-                    A Friendsbook Production | Copyright © 2024
+                    A peoplechat Production | Copyright © 2025
                 </p>
             </div>
         </div>

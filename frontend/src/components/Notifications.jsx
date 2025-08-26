@@ -68,7 +68,7 @@ const Notifications = () => {
     <div className="bg-[#E9EBEE] min-h-screen">
       {/* Navigation Bar */}
       <div className="bg-[#3B5998] text-white p-4 flex items-center justify-between shadow-md">
-        <div className="text-xl font-bold">friendsbook</div>
+        <div className="text-xl font-bold">peoplechat</div>
         <div className="flex space-x-4">
           <p onClick={()=>{navigate('/profile')}} className="text-sm">Profile</p>
           <p onClick={()=>{navigate('/friends')}} className="text-sm">Find Friends</p>

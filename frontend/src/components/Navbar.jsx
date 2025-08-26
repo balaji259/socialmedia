@@ -93,7 +93,7 @@ const Navbar = ({ username, profilePic }) => {
       <div className="flex items-center space-x-3">
         {/* <img src={logo} alt="Friendsbook logo" className="w-10 h-10 sm:w-12 sm:h-12" /> */}
         <div className="text-base sm:text-lg">
-          <h1 className="font-bold text-[#3b5998] text-xl">friendsbook</h1>
+          <h1 className="font-bold text-[#3b5998] text-xl">peoplechat</h1>
           <p className="text-xs sm:text-sm text-gray-600">Be Social . Be Popular</p>
         </div>
       </div>

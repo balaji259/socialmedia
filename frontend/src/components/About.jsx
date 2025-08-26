@@ -11,7 +11,7 @@ const About = () => {
       <div className="bg-[#3b5998] relative overflow-hidden">
      
         <div className="relative z-10 max-w-6xl mx-auto flex justify-between items-center p-4">
-          <a href="/" className="text-white text-2xl font-bold">friendsbook</a>
+          <a href="/" className="text-white text-2xl font-bold">peoplechat</a>
           <div className="hidden md:flex space-x-4">
             {/* <a href="/login" className="text-white text-sm">login</a>
             <a href="/register" className="text-white text-sm">register</a> */}
@@ -44,12 +44,12 @@ const About = () => {
 
           {/* About Section */}
           <div className="md:w-2/3 w-full">
-            <h2 className="text-2xl font-bold mb-4">About Friendsbook</h2>
+            <h2 className="text-2xl font-bold mb-4">About peoplechat</h2>
 
             <div className="mb-6">
               <div className="bg-[#3b5998] text-white p-2 font-bold">The Project</div>
               <div className="p-4 border border-[#3b5998]">
-                Friendsbook is an online directory that connects people through social networks at colleges and universities.
+                peoplechat is an online directory that connects people through social networks at colleges and universities.
               </div>
             </div>
 

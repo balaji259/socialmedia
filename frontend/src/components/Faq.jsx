@@ -26,7 +26,7 @@ useEffect(()=>
     <div className="bg-gray-100 min-h-screen text-gray-800">
       {/* Header */}
       <header className="bg-[#3b5998] text-white p-3 flex items-center justify-between px-6">
-        <h1 className="text-lg font-bold">Friendsbook</h1>
+        <h1 className="text-lg font-bold">peoplechat</h1>
         {/* <input
           type="text"
           placeholder="Search help topics..."
@@ -56,11 +56,11 @@ useEffect(()=>
 
         {/* Content Section */}
         <main className="flex-1 p-6">
-          <h2 className="text-lg font-semibold text-[#3b5998]">Friendsbook Help Center</h2>
+          <h2 className="text-lg font-semibold text-[#3b5998]">peoplechat Help Center</h2>
           <p className="text-sm text-gray-700">Home</p>
           <div className="mt-4 text-sm">
-            <p className="font-bold">Welcome to the Friendsbook Help Center!</p>
-            <p>Here you'll find answers to common questions about using Friendsbook.</p>
+            <p className="font-bold">Welcome to the peoplechat Help Center!</p>
+            <p>Here you'll find answers to common questions about using peoplechat.</p>
             <p className="mt-2">Choose a category from the menu on the left to get started.</p>
           </div>
           
@@ -78,7 +78,7 @@ useEffect(()=>
           
           {/* Contact Support */}
           <div className="mt-6 bg-gray-200 p-4 text-center rounded">
-            <p className="text-sm">Need more help with Friendsbook?</p>
+            <p className="text-sm">Need more help with peoplechat?</p>
             <button className="bg-[#3b5998] text-white text-sm px-4 py-1 mt-2 rounded hover:bg-[#3b5998]" onClick={() => { navigate('/contact') }}
 >
               Contact Support
@@ -88,12 +88,12 @@ useEffect(()=>
           {/* Getting Started Section */}
           {activeCategory === "Getting Started" && (
             <section className="mt-6 bg-gray-100 p-4 rounded border">
-              <h3 className="font-bold text-[#3b5998]">Getting Started with Friendsbook</h3>
+              <h3 className="font-bold text-[#3b5998]">Getting Started with peoplechat</h3>
               <p className="text-sm text-gray-700">Home &gt; Getting Started</p>
               <div className="mt-4 text-sm">
-                <h4 className="font-bold">How do I create a Friendsbook account?</h4>
+                <h4 className="font-bold">How do I create a peoplechat account?</h4>
                 <p>
-                  To create a Friendsbook account, visit our homepage at friendsbook.online and click "Sign Up". 
+                  To create a peoplechat account, visit our homepage at peoplechat.online and click "Sign Up". 
                   You'll need to provide your name, email or phone number, password, birthday, and gender. Follow the prompts to complete your profile setup.
                 </p>
                 
@@ -103,9 +103,9 @@ useEffect(()=>
                   date of birth, and gender. We use this information to help secure your account and personalize your experience.
                 </p>
                 
-                <h4 className="font-bold mt-4">Is Friendsbook free to use?</h4>
+                <h4 className="font-bold mt-4">Is peoplechat free to use?</h4>
                 <p>
-                  Yes, Friendsbook is completely free to use. We generate revenue through advertising tailored to your interests, 
+                  Yes, peoplechat is completely free to use. We generate revenue through advertising tailored to your interests, 
                   but all core features and functionalities will always remain free to use.
                 </p>
                 
@@ -138,7 +138,7 @@ useEffect(()=>
                 <h4 className="font-bold">How do I change my password?</h4>
                 <p>
                   To change your password, go to Account Settings &gt; Change Password. You'll need to enter your current password first, then enter and confirm your new password.
-                  We recommend using a strong, unique password for your Friendsbook account.
+                  We recommend using a strong, unique password for your peoplechat account.
                 </p>
                 
                 <h4 className="font-bold mt-4">How do I update my email address?</h4>
@@ -232,9 +232,9 @@ useEffect(()=>
                   Remember to adjust privacy settings for each upload.
                 </p>
                 
-                <h4 className="font-bold mt-4">What types of content are not allowed on Friendsbook?</h4>
+                <h4 className="font-bold mt-4">What types of content are not allowed on peoplechat?</h4>
                 <p>
-                  Friendsbook prohibits content that is illegal, fraudulent, discriminatory, threatening, or contains hate 
+                  peoplechat prohibits content that is illegal, fraudulent, discriminatory, threatening, or contains hate 
                   speech. We also remove content that violates intellectual property rights, promotes self-harm, or displays 
                   graphic violence. Please review our Community Standards for complete guidelines.
                 </p>
@@ -258,12 +258,12 @@ useEffect(()=>
               <div className="mt-4 text-sm">
                 <h4 className="font-bold">How do I find and add friends?</h4>
                 <p>
-                  You can find friends using the search bar, browse people from your school or workplace, or import email contacts. When you find someone you know, click "Add a Friend." They need to accept your request before you become friends on Friendsbook.
+                  You can find friends using the search bar, browse people from your school or workplace, or import email contacts. When you find someone you know, click "Add a Friend." They need to accept your request before you become friends on peoplechat.
                 </p>
                 
                 <h4 className="font-bold mt-4">How do I respond to friend requests?</h4>
                 <p>
-                  Click the friend request icon at the top of any Friendsbook page to see your pending requests. You can choose to confirm or ignore each request. If you’re not sure about a request, you can click "Not Now" to decide later.
+                  Click the friend request icon at the top of any peoplechat page to see your pending requests. You can choose to confirm or ignore each request. If you’re not sure about a request, you can click "Not Now" to decide later.
                 </p>
                 
                 <h4 className="font-bold mt-4">How do I unfriend someone?</h4>
@@ -295,7 +295,7 @@ useEffect(()=>
               <div className="mt-4 text-sm">
                 <h4 className="font-bold">How do I send a Private message?</h4>
                 <p>
-                Click on the Messages icon at the top of any Friendsbook page, then click "New Message". Enter the name(s) of the person or people you want to message, type your message, and press Enter to send it.   
+                Click on the Messages icon at the top of any peoplechat page, then click "New Message". Enter the name(s) of the person or people you want to message, type your message, and press Enter to send it.   
                  </p>
 
                 <h4 className="font-bold mt-4">Can I send messages to people who aren't my friends?</h4>
@@ -305,7 +305,7 @@ useEffect(()=>
 
                 <h4 className="font-bold mt-4">How do I know if someone has read my message?</h4>
                 <p>
-                Currently, Friendsbook does not show read receipts for messages. You won't be able to tell if someone has seen your message until they respond.
+                Currently, peoplechat does not show read receipts for messages. You won't be able to tell if someone has seen your message until they respond.
                  </p>
 
                  <h4 className="font-bold mt-4">How do I delete a message?</h4>
@@ -344,9 +344,9 @@ useEffect(()=>
                   Posts that violate our Community Standards are removed. This includes content that contains hate speech, bullying, harassment, graphic violence, nudity, or spam. If you believe your post was removed in error, you can appeal the decision through the notification you received.
                 </p>
 
-                <h4 className="font-bold mt-4">How do I report a problem with Friendsbook?</h4>
+                <h4 className="font-bold mt-4">How do I report a problem with peoplechat?</h4>
                 <p>
-                  Click on the "Help" link at the bottom of any Friendsbook page, then select "Report a Problem." Choose the type of issue you're experiencing and provide as much detail as possible to help us resolve it quickly.
+                  Click on the "Help" link at the bottom of any peoplechat page, then select "Report a Problem." Choose the type of issue you're experiencing and provide as much detail as possible to help us resolve it quickly.
                 </p>
               </div>
               <div className="mt-6 bg-gray-200 p-4 text-center rounded">
@@ -365,9 +365,9 @@ useEffect(()=>
               <h3 className="font-bold text-[#3b5998]">Community Standards</h3>
               <p className="text-sm text-gray-700">Home &gt; Community Standards</p>
               <div className="mt-4 text-sm">
-                <h4 className="font-bold">What are Friendsbook’s Community Standards?</h4>
+                <h4 className="font-bold">What are peoplechat’s Community Standards?</h4>
                 <p>
-                  Our Community Standards outline what is and isn’t allowed on Friendsbook. They’re designed to create a safe environment where people can express themselves. Key areas include violence and criminal behavior, safety, objectionable content, integrity and authenticity, and respecting intellectual property.
+                  Our Community Standards outline what is and isn’t allowed on peoplechat. They’re designed to create a safe environment where people can express themselves. Key areas include violence and criminal behavior, safety, objectionable content, integrity and authenticity, and respecting intellectual property.
                 </p>
 
                 <h4 className="font-bold mt-4">How do I report content that violates Community Standards?</h4>
@@ -401,7 +401,7 @@ useEffect(()=>
 
       {/* Footer */}
       <footer className="text-xs text-gray-600 text-center py-4 border-t mt-4">
-        &copy; 2025 Friendsbook.online | <a href="#" className="hover:underline">Terms of Service</a> | <a href="#" className="hover:underline">Privacy Policy</a> | <a href="#" className="hover:underline" onClick={()=>{navigate("/about")}}>About</a> | <a href="#" className="hover:underline" onClick={()=>{navigate("/contact")}}>Help</a>
+        &copy; 2025 peoplechat.online | <a href="#" className="hover:underline">Terms of Service</a> | <a href="#" className="hover:underline">Privacy Policy</a> | <a href="#" className="hover:underline" onClick={()=>{navigate("/about")}}>About</a> | <a href="#" className="hover:underline" onClick={()=>{navigate("/contact")}}>Help</a>
       </footer>
     </div>
   );
