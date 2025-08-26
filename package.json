@@ -12,7 +12,7 @@
     "start": "concurrently \"npm run server\" \"npm run client\"",
   
       
-    "server": "cd backend && nodemon server.js",
+    "server": "cd backend && nodemon app.js",
   
       
     "client": "cd frontend && vite"
